@@ -5,28 +5,28 @@
  *      Author: migueltoro
  */
 
-#include "tupla.h"
+#include "new_type.h"
 
 smax smax_of(int li,int ls,int suma){
 	smax s = {li,ls,suma};
 	return s;
 }
 
-int * smax_parse(smax * out, char * text){
+int * smax_parse(smax * out, char * text, type * t){
 	sscanf(text,"(%d,%d,%d)",&(out->li),&(out->ls),&(out->suma));
 	return out;
 }
 
-char * smax_tostring(const smax * e, char * mem){
+char * smax_tostring(const smax * e, char * mem, type * t){
     sprintf(mem,"(%d,%d,%d)",e->li,e->ls,e->suma);
     return mem;
 }
 
-bool smax_equals(const smax * e1, const smax * e2){
+bool smax_equals(const smax * e1, const smax * e2, type * t){
     return e1->li == e2->li && e1->ls == e2->ls && e1->suma == e2->suma;
 }
 
-int smax_naturalorder(const smax * e1,const smax * e2){
+int smax_naturalorder(const smax * e1,const smax * e2, type * t){
     int a = e1->suma;
     int b = e2->suma;
     int r;
@@ -36,17 +36,17 @@ int smax_naturalorder(const smax * e1,const smax * e2){
     return r;
 }
 
-type smax_type = {smax_equals,smax_tostring,smax_naturalorder,smax_parse,sizeof(smax)};
+type smax_type = {smax_equals,smax_tostring,smax_naturalorder,smax_parse,sizeof(smax),0,NULL};
 
 void test_tupla(){
 	char mem[256];
 	smax s = smax_of(2,3,45);
 	smax s2;
-	smax_type.parse(&s2,"(3,4,45)");
-	int r = smax_type.order(&s,&s2);
+	parse(&s2,"(3,4,45)",&smax_type);
+	int r = order(&s,&s2,&smax_type);
 	printf("%d\n",r);
-	smax_type.tostring(&s,mem);
+	tostring(&s,mem,&smax_type);
 	printf("%s\n",mem);
-	smax_type.tostring(&s2,mem);
+	tostring(&s2,mem,&smax_type);
 	printf("%s\n",mem);
 }

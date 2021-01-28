@@ -133,7 +133,7 @@ void n_problema59_b(char * file, long n){
 	write_iterable_to_file(file,&st);
 }
 
-void test_ejemplos(){
+void test_ejemplos_1(){
 //	hp = memory_heap_create();
 
 	printf("\n\n");

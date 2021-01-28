@@ -46,7 +46,7 @@ list n_problema61(char * file);
 
 void n_problema59(char * file,long n);
 
-void test_ejemplos();
+void test_ejemplos_1();
 void test_ejemplos1();
 
 #endif /* EJEMPLOS_H_ */

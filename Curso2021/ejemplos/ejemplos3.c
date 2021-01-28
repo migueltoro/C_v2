@@ -9,7 +9,7 @@
 #include "ejemplos3.h"
 
 list array_tolist(char * n, int ne){
-	list nls = list_empty(&pchar_type);
+	list nls = list_empty(&array_char_type);
 	for(int i =0; i<ne;i++){
 		list_add(&nls,n);
 	}
@@ -18,7 +18,7 @@ list array_tolist(char * n, int ne){
 
 void test_ejemplos3(){
 	char nombres[][Tam_String] = {"Antonio","Pepe","Juan","Asuncion"};
-	list nls = list_of(nombres,4,&pchar_type);
+	list nls = list_of(nombres,4,&array_char_type);
 	list_add(&nls,"Jose");
 	char mem[200];
 	char * s = list_tostring(&nls,mem);

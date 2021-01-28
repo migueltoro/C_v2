@@ -7,11 +7,10 @@
  *      Author: Miguel Toro
  */
 
-#include "ejercicio62.h"
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "ejercicio2.h"
 
 memory_heap hp;
 
@@ -19,22 +18,22 @@ void * to_data_time(time_t * t){
 	return memory_heap_copy_and_mem(&hp,t,sizeof(time_t));
 }
 
-void test_ejercicio62() {
+void test_ejercicio2() {
 	hp = memory_heap_create();
 	time_t a = time_create_date(28, 8, 2017);
 	time_t b = time_create_date(2, 11, 2018);
-	tofileWHILE("fechas.txt", a, b);
-	tofileRec("fechas.txt", a, b);
+	to_file_while("fechas.txt", a, b);
+	to_file_rec("fechas.txt", a, b);
 	memory_heap_free(&hp);
 }
 
-list leeIterativo(char * file, time_t a, time_t b) {
+list lee_iterativo(char * file, time_t a, time_t b) {
 	iterator f = file_iterable_pchar(file);
-	list lista = list_empty(time_type);
+	list lista = list_empty(&time_type);
 	while (iterable_has_next(&f)) {
 		char * linea = iterable_next(&f);
 		time_t fecha = time_parse_date(linea);
-		if (time_naturalorder(&fecha, &a) > 0 && time_naturalorder(&b, &fecha) > 0) {
+		if (time_naturalorder(&fecha, &a, NULL) > 0 && time_naturalorder(&b, &fecha, NULL) > 0) {
 			list_add(&lista, &fecha);
 		}
 	}
@@ -46,30 +45,30 @@ void rec(iterator * f, list * lis, time_t a, time_t b) {
 	} else {
 		char * linea = iterable_next(f);
 		time_t fecha = time_parse_date(linea);
-		if (time_naturalorder(&fecha, &a) > 0 && time_naturalorder(&b, &fecha) > 0) {
+		if (time_naturalorder(&fecha, &a, NULL) > 0 && time_naturalorder(&b, &fecha, NULL) > 0) {
 			list_add_pointer(lis, to_data_time(&fecha));
 		}
 		rec(f,lis,a,b);
 	}
 }
 
-list leeRecursivo(char * file, time_t a, time_t b) {
+list lee_recursivo(char * file, time_t a, time_t b) {
 	iterator f = file_iterable_pchar(file);
-	list lista = list_empty(time_type);
+	list lista = list_empty(&time_type);
 	rec(&f,&lista,a,b);
 	return lista;
 }
 
 
-void tofileWHILE(char * file, time_t a, time_t b) {
-	list lista = leeIterativo(file,a,b) ;
-	list_sort(&lista, time_naturalorder);
-	write_list_to_file("fechasOrdenadasWhile.txt",&lista,time_tostring);
+void to_file_while(char * file, time_t a, time_t b) {
+	list lista = lee_iterativo(file,a,b) ;
+	list_quick_sort(&lista, time_naturalorder);
+	write_list_to_file("fechas_ordenadas_while.txt",&lista,time_tostring);
 }
 
-void tofileRec(char * file, time_t a, time_t b) {
-	list lista = leeRecursivo(file,a,b) ;
-	list_sort(&lista, time_naturalorder);
-	write_list_to_file("fechasOrdenadasRecursivo.txt",&lista,time_tostring);
+void to_file_rec(char * file, time_t a, time_t b) {
+	list lista = lee_recursivo(file,a,b) ;
+	list_quick_sort(&lista, time_naturalorder);
+	write_list_to_file("fechas_ordenadas_recursivo.txt",&lista,time_tostring);
 }
 
