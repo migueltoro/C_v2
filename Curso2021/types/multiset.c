@@ -79,14 +79,14 @@ multiset complete_multiset() {
 	int tam = 50;
 	multiset st = multiset_empty(&double_type);
 	for (int i = 0; i < tam; i++) {
-		double a2 = get_double_aleatorio(0, 1000);
+		double a2 = double_aleatorio(0, 1000);
 		multiset_add(&st,&a2);
 	}
 	return st;
 }
 
 double * _random(double * out, long * in){
-	*out = get_double_aleatorio(0, 100);
+	*out = double_aleatorio(0, 100);
 	return out;
 }
 

@@ -53,12 +53,12 @@ iterator iterable_empty();
 iterator iterable_range_long(long a, long b, long c);
 iterator iterable_range_double(double a, double b, double c);
 iterator iterable_iterate(type * type,void * initial_value, bool (*hash_next)(void * element), void * (*next)(void * out, void * in));
-iterator file_iterable_pchar(char * file);
-iterator file_iterable_pchar_num(char * file, int num_chars_per_line);
-iterator text_to_iterable_pchar(char * text, const char * delimiters);
-iterator * text_to_iterable_pchar_function(iterator * out, char * text);
+iterator file_iterable_string_fix(char * file);
+iterator file_iterable_string_fix_tam(char * file, int num_chars_per_line);
+iterator text_to_iterable_string_fix(char * text, const char * delimiters);
+iterator * text_to_iterable_string_fix_function(iterator * out, char * text);
 
-extern pchar text_to_iterable_delimiters;
+extern string_fix text_to_iterable_delimiters;
 
 iterator iterable_map(iterator * st,type * type, void * (*map_function)(void * out, const void * in));
 iterator iterable_filter(iterator * st, bool (*map_filter)(void * in));
@@ -70,8 +70,8 @@ char * iterable_tostring(iterator * st, char * mem);
 char * iterable_tostring_sep(iterator * st, char * sep, char * prefix, char * suffix, char * mem);
 void iterable_toconsole(iterator * st);
 void iterable_toconsole_sep(iterator * st, char * sep, char * prefix, char * suffix);
-string iterable_tostring_sep_big(iterator * st,char * sep,char * prefix,char * suffix);
-string iterable_tostring_big(iterator * st);
+string_var iterable_tostring_sep_big(iterator * st,char * sep,char * prefix,char * suffix);
+string_var iterable_tostring_big(iterator * st);
 
 void write_iterable_to_file(char * file, iterator * st);
 
@@ -91,7 +91,6 @@ void iterable_free(iterator * in);
 void test_iterables_1();
 void test_iterables_2();
 void test_iterables_3();
-void test_iterables_4();
 void test_iterables_5();
 void test_iterables_6();
 void test_iterables_7();

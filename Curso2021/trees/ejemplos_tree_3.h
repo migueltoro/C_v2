@@ -1,12 +1,12 @@
 /*
- * ejemplos_trees_2.h
+ * ejemplos_tree_3.h
  *
  *  Created on: 8 ene. 2021
  *      Author: migueltoro
  */
 
-#ifndef EJEMPLOS_TREE_2_H_
-#define EJEMPLOS_TREE_2_H_
+#ifndef TREES_EJEMPLOS_TREE_3_H_
+#define TREES_EJEMPLOS_TREE_3_H_
 
 #include <limits.h>
 #include <stdio.h>
@@ -28,6 +28,6 @@
 #include "../types/hash_table.h"
 #include "../types/accumulators.h"
 
-void test_ejemplos_trees_2();
+void test_ejemplos_trees_3();
 
-#endif /* EJEMPLOS_TREE_2_H_ */
+#endif /* TREES_EJEMPLOS_TREE_3_H_ */

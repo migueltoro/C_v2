@@ -5,17 +5,17 @@
  *      Author: migueltoro
  */
 
-#include "ejemplos_esquemas.h"
+#include "../esquemas/ejemplos_esquemas.h"
 
 //Encontrar las frecuencias con las que se repiten los números de un fichero
 
 multiset frecuencias_en_fichero_1(char * file, type * t) {
-	iterator it = file_iterable_pchar(file);
+	iterator it = file_iterable_string_fix(file);
 	multiset ms = multiset_empty(t);
 	char e[t->size];
 	while (iterable_has_next(&it)) {
 		char * line = (char *) iterable_next(&it);
-		iterator it2 = text_to_iterable_pchar(line, " ,");
+		iterator it2 = text_to_iterable_string_fix(line, " ,");
 		while (iterable_has_next(&it2)) {
 			char * num = (char *) iterable_next(&it2);
 			parse(e, num, t);
@@ -29,13 +29,13 @@ multiset frecuencias_en_fichero_1(char * file, type * t) {
 
 list_multimap grupos_list_en_fichero_1(char * file, type *element_type, type *key_type,
 		void * f_key(void *out, void * in)) {
-	iterator it = file_iterable_pchar(file);
+	iterator it = file_iterable_string_fix(file);
 	list_multimap ms = list_multimap_empty(key_type,element_type);
 	char e[element_type->size];
 	char key[key_type->size];
 	while (iterable_has_next(&it)) {
 		char * line = (char *) iterable_next(&it);
-		iterator it2 = text_to_iterable_pchar(line, " ,");
+		iterator it2 = text_to_iterable_string_fix(line, " ,");
 		while (iterable_has_next(&it2)) {
 			char * num = (char *) iterable_next(&it2);
 			parse(e, num, element_type);
@@ -48,13 +48,13 @@ list_multimap grupos_list_en_fichero_1(char * file, type *element_type, type *ke
 
 set_multimap grupos_set_en_fichero_1(char * file, type * element_type, type * key_type,
 		void * f_key(void *out, void * in)) {
-	iterator it = file_iterable_pchar(file);
+	iterator it = file_iterable_string_fix(file);
 	set_multimap ms = set_multimap_empty(key_type,element_type);
 	char e[element_type->size];
 	char key[key_type->size];
 	while (iterable_has_next(&it)) {
 		char * line = (char *) iterable_next(&it);
-		iterator it2 = text_to_iterable_pchar(line, " ,");
+		iterator it2 = text_to_iterable_string_fix(line, " ,");
 		while (iterable_has_next(&it2)) {
 			char * num = (char *) iterable_next(&it2);
 			parse(e, num, element_type);
@@ -95,9 +95,9 @@ void test_esquemas() {
 	set_multimap sm = grupos_set_en_fichero_1("ficheros/numeros_2.txt",&long_type, &long_type, rest);
 	iterator it2 = set_multimap_iterable(&sm);
 	printf("3:\n");
-	string s= iterable_tostring_sep_big(&it2, "\n", "", "");
-	printf("4:\n\%s",string_tochar(&s));
+	string_var s= iterable_tostring_sep_big(&it2, "\n", "", "");
+	printf("4:\n\%s",string_var_data(&s));
 	set_multimap_free(&sm);
 	iterable_free(&it2);
-	string_free(&s);
+	string_var_free(&s);
 }

@@ -122,7 +122,7 @@ void new_rand(){
  */
 
 
-int get_entero_aleatorio(int a, int b) {
+int entero_aleatorio(int a, int b) {
 	long valor;
 	if (b - a == 1) {
 		valor = a;
@@ -132,8 +132,8 @@ int get_entero_aleatorio(int a, int b) {
 	return valor;
 }
 
-int * get_entero_aleatorio_f(int * out, int_pair * in){
-	*out = get_entero_aleatorio(in->a,in->b);
+int * entero_aleatorio_f(int * out, int_pair * in){
+	*out = entero_aleatorio(in->a,in->b);
 	return out;
 }
 
@@ -143,14 +143,14 @@ int * get_entero_aleatorio_f(int * out, int_pair * in){
  * @param b Límte Superior
  * @return Un double aleatorio que  está en el intervalo  a &le; = r &lt; b
  */
-double get_double_aleatorio(double a, double b) {
+double double_aleatorio(double a, double b) {
 	double r = ((double) rand() / (RAND_MAX));
 	r = a + (b - a) * r;
 	return r;
 }
 
-double * get_double_aleatorio_f(double * out, punto * in){
-	*out = get_double_aleatorio(in->x,in->y);
+double * double_aleatorio_f(double * out, punto * in){
+	*out = double_aleatorio(in->x,in->y);
 	return out;
 }
 

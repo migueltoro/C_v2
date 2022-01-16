@@ -9,11 +9,11 @@
 
 void testEjercicio1(char * path){
 	char mem[10000];
-	iterator it = file_iterable_pchar(path);
+	iterator it = file_iterable_string_fix(path);
 	list listaPrimos = list_empty(&int_type);
 	while(iterable_has_next(&it)){
 		char * linea = (char*) iterable_next(&it);
-		iterator it2 = text_to_iterable_pchar(linea, " ,");
+		iterator it2 = text_to_iterable_string_fix(linea, " ,");
 		while(iterable_has_next(&it2)){
 			char *trozos = (char*) iterable_next(&it2);
 			int num  = int_parse_s(trozos);

@@ -6,7 +6,7 @@
  */
 
 
-#include "ejercicio1.h"
+#include "ejemplos1.h"
 
 //ITERATIVO
 int ejercicio1iter(char* s1, char * s2){
@@ -32,8 +32,8 @@ int ejercicio1iter(char* s1, char * s2){
 
 
 list leeFichero1(char* file) {
-	list r = list_empty(&array_char_type);
-	iterator f = file_iterable_pchar(file);
+	list r = list_empty(&string_fix_type);
+	iterator f = file_iterable_string_fix(file);
 	while (iterable_has_next(&f)) {
 		char* s = iterable_next(&f);
 		list_add(&r, s);
@@ -46,7 +46,7 @@ void lecturaFichero1Iter(char * fichero) {
 	list l = leeFichero1(fichero);
 	int i = 0;
 	while (i < l.size) {
-		iterator it2 = text_to_iterable_pchar(list_get(&l, i), "#");
+		iterator it2 = text_to_iterable_string_fix(list_get(&l, i), "#");
 		char* a = (char*) iterable_next(&it2);
 		char* b = (char*) iterable_next(&it2);
 		printf("Entrada: (%s,%s) \n", a, b);

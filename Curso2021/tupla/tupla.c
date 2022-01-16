@@ -5,7 +5,7 @@
  *      Author: migueltoro
  */
 
-#include "new_type.h"
+#include "tupla.h"
 
 smax smax_of(int li,int ls,int suma){
 	smax s = {li,ls,suma};

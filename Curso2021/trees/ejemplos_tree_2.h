@@ -1,12 +1,12 @@
 /*
- * ejemplos_tree.h
+ * ejemplos_trees_2.h
  *
- *  Created on: 22 dic. 2020
+ *  Created on: 8 ene. 2021
  *      Author: migueltoro
  */
 
-#ifndef EJEMPLOS_TREE_1_H_
-#define EJEMPLOS_TREE_1_H_
+#ifndef TREES_EJEMPLOS_TREE_2_H_
+#define TREES_EJEMPLOS_TREE_2_H_
 
 #include <limits.h>
 #include <stdio.h>
@@ -22,12 +22,12 @@
 #include "../types/memory_heap.h"
 #include "../types/iterables.h"
 #include "../types/hash_table.h"
+#include "../types/multimap.h"
 #include "../types/list.h"
 #include "../types/tree.h"
 #include "../types/hash_table.h"
 #include "../types/accumulators.h"
 
-void test_ejemplos_trees_1();
-void test__ejemplos_trees_1_1();
+void test_ejemplos_trees_2();
 
-#endif /* EJEMPLOS_TREE_1_H_ */
+#endif /* TREES_EJEMPLOS_TREE_2_H_ */

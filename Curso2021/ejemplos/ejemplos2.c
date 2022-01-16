@@ -7,10 +7,11 @@
  *      Author: Miguel Toro
  */
 
+#include "ejemplos2.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "ejercicio2.h"
 
 memory_heap hp;
 
@@ -28,7 +29,7 @@ void test_ejercicio2() {
 }
 
 list lee_iterativo(char * file, time_t a, time_t b) {
-	iterator f = file_iterable_pchar(file);
+	iterator f = file_iterable_string_fix(file);
 	list lista = list_empty(&time_type);
 	while (iterable_has_next(&f)) {
 		char * linea = iterable_next(&f);
@@ -53,7 +54,7 @@ void rec(iterator * f, list * lis, time_t a, time_t b) {
 }
 
 list lee_recursivo(char * file, time_t a, time_t b) {
-	iterator f = file_iterable_pchar(file);
+	iterator f = file_iterable_string_fix(file);
 	list lista = list_empty(&time_type);
 	rec(&f,&lista,a,b);
 	return lista;

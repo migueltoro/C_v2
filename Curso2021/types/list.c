@@ -85,7 +85,7 @@ list list_of_double(int n, ...) {
 }
 
 list list_of_string(int n, ...) {
-	list r = list_empty(&array_char_type);
+	list r = list_empty(&string_fix_type);
 	va_list valist;
 	va_start(valist, n);
 	for (int i = 0; i < n; i++) {
@@ -121,7 +121,7 @@ list list_copy(list * in){
 
 
 list list_of_file_type(char * file, type * type) {
-	iterator it = file_iterable_pchar(file);
+	iterator it = file_iterable_string_fix(file);
 	list ls = list_empty(type);
 	char e[type->size];
 	while (iterable_has_next(&it)) {
@@ -134,12 +134,12 @@ list list_of_file_type(char * file, type * type) {
 
 list list_of_list_of_file_type(char * file, type * type){
 	list res = list_empty(&list_type);
-	iterator it1 = file_iterable_pchar(file);
+	iterator it1 = file_iterable_string_fix(file);
 	char e[type->size];
 	while(iterable_has_next(&it1)) {
 	      char* linea = (char*)iterable_next(&it1);
 	      list ls = list_empty(type);
-	      iterator it2 = text_to_iterable_pchar(linea, " ,");
+	      iterator it2 = text_to_iterable_string_fix(linea, " ,");
 	      while(iterable_has_next(&it2)) {
 	    	  	char * tx = iterable_next(&it2);
 	            parse(e,tx,type);
@@ -334,22 +334,24 @@ bool list_equals(const list * ls1, const list * ls2) {
 	return res;
 }
 
-pchar list_delimiters = "[ ,]";
+string_fix list_delimiters = "[ ,]";
 
 list * list_parse(list * out, char * text) {
-	iterator it = text_to_iterable_pchar(text,list_delimiters);
+	iterator it = text_to_iterable_string_fix(text,list_delimiters);
+	char tmp[out->type_element->size];
+	tmp_type = * out->type_element;
 	while(iterable_has_next(&it)){
-		void * e = iterable_next(&it);
-
-		list_add(out,e);
+		void * txt = iterable_next(&it);
+		parse_st(tmp,txt);
+		list_add(out,tmp);
 	}
 	iterable_free(&it);
 	return out;
 }
 
 list list_parse_s(char * text) {
-	list res = list_empty(&array_char_type);
-	iterator it = text_to_iterable_pchar(text, list_delimiters);
+	list res = list_empty(&string_fix_type);
+	iterator it = text_to_iterable_string_fix(text, list_delimiters);
 	while(iterable_has_next(&it)){
 			void * e = iterable_next(&it);
 			list_add(&res,e);
@@ -358,7 +360,7 @@ list list_parse_s(char * text) {
 	return res;
 }
 
-type list_type = {list_equals, list_tostring, NULL, list_parse, sizeof(list)};
+type list_type = {list_equals, list_tostring, NULL, list_parse, sizeof(list),0,NULL};
 
 
 void write_list_to_file(char * file, list * list, char * tostring(const void * source, char * mem)) {
@@ -371,11 +373,11 @@ void write_list_to_file(char * file, list * list, char * tostring(const void * s
 }
 
 list list_of_file(char * file){
-	list r = list_empty(&array_char_type);
-	iterator f = file_iterable_pchar(file);
+	list r = list_empty(&string_fix_type);
+	iterator f = file_iterable_string_fix(file);
 	while(iterable_has_next(&f)){
 		char * s = iterable_next(&f);
-		remove_eol_s(s);
+		remove_eol(s);
 		list_add(&r,s);
 	}
 	return r;
@@ -425,7 +427,7 @@ int bs(list * ls, void* key, int (*order)(const void * e1, const void * e2)){
 }
 
 void * piv(list * ls, int i, int j){
-	void *  pivote = list_get(ls,get_entero_aleatorio(i, j));
+	void *  pivote = list_get(ls,entero_aleatorio(i, j));
 	return pivote;
 }
 
@@ -642,7 +644,7 @@ void * k_esimo_naturalorder(list * ls,int k){
 list complete_list() {
 	list ls1 = list_empty(&double_type);
 	for (int i = 0; i < 50; i++) {
-		double r = 1. * get_entero_aleatorio(0, 100);
+		double r = 1. * entero_aleatorio(0, 100);
 		list_add(&ls1, &r);
 	}
 	return ls1;
@@ -675,8 +677,8 @@ void test_list_1() {
 	list ls4 = list_of(d,6,&double_type);
 	s = list_tostring(&ls4, mem);
 	printf("ls4 = %s\n", s);
-	pchar as[] = {"Hola","Juan","Antonio","Pepe","Juan","Diaz"};
-	list ls5 = list_of(as,6,&array_char_type);
+	string_fix as[] = {"Hola","Juan","Antonio","Pepe","Juan","Diaz"};
+	list ls5 = list_of(as,6,&string_fix_type);
 	list_quick_sort_naturalorder(&ls5);
 	s = list_tostring(&ls5,  mem);
 	printf("ls5 = %s\n", s);
@@ -694,7 +696,6 @@ void test_list_1() {
 }
 
 void test_list_2(void) {
-	puts("\n\n------------------------------ TEST List2 ------------------------------");
 	int size = 10;
 	int enteros[size];
 	for(int i=0; i<size; i++) {
@@ -732,12 +733,12 @@ void test_list_2(void) {
 	printf("Ahora ls3 es: %s;\n", list_tostring(&ls3, mem1));
 	printf("¿Contiene ls3 el valor %.2lf?: %s\n", valor2, MSG_BOOL(list_contains(&ls3, &valor2)));
 
-	pchar texto1 = "[Estas, son, pruebas, de, nuevas, funciones, para, el, tipo, list]";
-	list ls4 = list_empty(&array_char_type);
+	string_fix texto1 = "[Estas, son, pruebas, de, nuevas, funciones, para, el, tipo, list]";
+	list ls4 = list_empty(&string_fix_type);
 	list_parse(&ls4, texto1);
 	printf("Dada la cadena \"%s\", list_parse ha obtenido la lista:\n%s\n", texto1, list_tostring(&ls4, mem1));
 
-	pchar texto2 = "[Creo, que, todo, funciona, bien]";
+	string_fix texto2 = "[Creo, que, todo, funciona, bien]";
 	list ls5 = list_parse_s(texto2);
 	printf("Dada la cadena \"%s\", list_parse_s ha obtenido la lista:\n%s\n", texto2, list_tostring(&ls5, mem1));
 }
@@ -745,7 +746,7 @@ void test_list_2(void) {
 void test_list_3() {
 	char mem[1000];
 	list ls = list_of_file("ficheros/numeros.txt");
-	list lm = list_map(&ls,&int_type,int_type.tp.parse);
+	list lm = list_map(&ls,&int_type,int_type.parse);
 	list_tostring(&lm, mem);
 	printf("1: %s\n", mem);
 	list ls2 = list_of_int(5, 6, 7, 8, 9, 10);
@@ -768,7 +769,7 @@ void test_list_3() {
 	list_tostring(&ls4, mem);
 	printf("6: %s\n", mem);
 	list ls5 = list_of_string(5, "(2.,3.)", "(2.,3.)", "(2.,3.)", "(2.,3.)", "(2.,3.)");
-	list ls6 = list_map(&ls5,&punto_type,punto_type.tp.parse);
+	list ls6 = list_map(&ls5,&punto_type,punto_type.parse);
 	list_tostring(&ls6, mem);
 	printf("7: %s\n", mem);
 	int a[] = {6, 7, 8, 9, 10};
@@ -805,13 +806,13 @@ void test_list_5() {
 	new_rand();
 	list ls1 = list_empty(&double_type);
 	for (int i = 0; i < 100; i++) {
-		double r = 1. * get_entero_aleatorio(0, 1000);
+		double r = 1. * entero_aleatorio(0, 1000);
 		list_add(&ls1,&r);
 	}
 	int k = 53;
-	double d = *(double*) k_esimo(&ls1,k,double_type.tp.order);
+	double d = *(double*) k_esimo(&ls1,k,double_type.order);
 	printf("k = %d, k_esimo = %.2f\n",k,d);
-	list_merge_sort(&ls1, double_type.tp.order);
+	list_merge_sort(&ls1, double_type.order);
 	iterator it1 = list_iterable(&ls1);
 	iterator it2 = iterable_enumerate(&it1);
 	char * s = iterable_tostring(&it2, mem);
@@ -822,34 +823,28 @@ void test_list_5() {
 
 void test_list_6() {
 	char mem[1000];
-	pchar texto1 =
-			"[Estas, son, pruebas, de, nuevas, funciones, para, el, tipo, list]";
-	list ls = list_empty(&array_char_type);
+	string_fix texto1 = "[Estas, son, pruebas, de, nuevas, funciones, para, el, tipo, list]";
+	list ls = list_empty(&string_fix_type);
 	list_parse(&ls, texto1);
-	printf("%s\n", list_tostring(&ls, mem));
-	pchar_copy(texto1,
-			"{Estas; son; pruebas; de; nuevas; funciones; para; el; tipo; list}");
-	ls = list_empty(&array_char_type);
-	pchar_copy(list_delimiters, "{ ;}");
+	printf("1: %s\n", list_tostring(&ls, mem));
+	string_fix_copy(texto1,"{Estas; son; pruebas; de; nuevas; funciones; para; el; tipo; list}");
+	ls = list_empty(&string_fix_type);
+	string_fix_copy(list_delimiters, "{ ;}");
 	list_parse(&ls, texto1);
-	printf("%s\n", list_tostring(&ls, mem));
-	pchar_copy(texto1,
-			"{(3.,4.); (5.6,-7.8); (5.6,-7.8); (5.6,-7.8); (5.6,-7.8); (5.6,-7.85); (5.6,-17.8); (5.,-7.8); (5.6,7.9); (-5.6,-7.8)}");
-	ls = list_empty(&array_char_type);
-	pchar_copy(list_delimiters, "{ ;}");
+	printf("2: %s\n", list_tostring(&ls, mem));
+	string_fix_copy(texto1,"{(3.,4.); (5.6,-7.8); (5.6,-7.8); (5.6,-7.8); (5.6,-7.8); (5.6,-7.85); (5.6,-17.8); (5.,-7.8); (5.6,7.9); (-5.6,-7.8)}");
+	ls = list_empty(&string_fix_type);
+	string_fix_copy(list_delimiters, "{ ;}");
 	list_parse(&ls, texto1);
-	printf("%s\n", list_tostring(&ls, mem));
-	pchar_copy(texto1,
-			"{[(23.,5.)_(4.,7.)];[(5.6,-7.8)_(5.6,-7.8)]}");
-	ls = list_empty(&array_char_type);
-	pchar_copy(list_delimiters, "{ ;}");
-	pchar_copy(pair_delimiters, "[ _]");
+	printf("3: %s\n", list_tostring(&ls, mem));
+	string_fix_copy(texto1,"{[(23.,5.)_(4.,7.)];[(5.6,-7.8)_(5.6,-7.8)]}");
+	string_fix_copy(list_delimiters, "{ ;}");
+	string_fix_copy(pair_delimiters, "[ _]");
+	type t = generic_type_2(&pair_type,&punto_type,&punto_type);
+	ls = list_empty(type_copy(&t));
 	list_parse(&ls, texto1);
-	tmp_type = generic_type_2(&pair_mem_type,&punto_type,&punto_type);
-	printf("\n%d\n",tmp_type->num_types);
-	list r = list_map(&ls,tmp_type,parse_type);
-	printf("3: %s\n", list_tostring(&r, mem));
-	list_quick_sort_naturalorder(&r);
-	printf("3: %s\n", list_tostring(&r, mem));
+	printf("4: %s\n",list_tostring(&ls, mem));
+	list_quick_sort_naturalorder(&ls);
+	printf("5: %s\n", list_tostring(&ls, mem));
 	memory_heap_free(&pair_memory_heap);
-}
+	}

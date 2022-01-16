@@ -27,7 +27,7 @@ bool set_contains(set * st, void * element);
 
 char * set_tostring(set * st, char * mem);
 iterator set_iterable(set * st);
-set set_map(set * st, type type_out, void * (*f)(void * out, void * in));
+set set_map(set * st, type * type_out, void * (*f)(void * out, void * in));
 set set_filter(set * st, bool (*p)(void * in));
 
 //Los volcamos a listas y ordenamos por o. natural

@@ -75,7 +75,7 @@ binary_tree * binary_tree_parse_private(tokens * tks, memory_heap * hp) {
 	if (strcmp(t.text_token, "_") == 0) {
 		r = binary_tree_empty(hp);
 	} else {
-		r = binary_tree_leaf(t.text_token, &array_char_type, hp);
+		r = binary_tree_leaf(t.text_token, &string_fix_type, hp);
 		token tn = see_next_token(tks);
 		char * ln = tn.text_token;
 		if (has_more_tokens(tks) && strcmp(ln, "(") == 0) {
@@ -87,7 +87,7 @@ binary_tree * binary_tree_parse_private(tokens * tks, memory_heap * hp) {
 			binary_tree * right = binary_tree_parse_private(tks, hp);
 			char tt3[][5] = { ")" };
 			match_token_texts((char*) tt3, 5, 1, tks);
-			r = binary_tree_new(t.text_token, &array_char_type, left, right, hp);
+			r = binary_tree_new(t.text_token, &string_fix_type, left, right, hp);
 		}
 	}
 	return r;
@@ -270,7 +270,7 @@ binary_tree* binary_tree_map_m(binary_tree* t, type * tipo_out, void* fmap(void*
 	return binary_tree_map(t,tipo_out,fmap,&memory_heap_binary_tree);
 }
 
-type binary_tree_type = {binary_tree_equals, binary_tree_tostring, NULL, binary_tree_parse_m_f, sizeof(binary_tree)};
+type binary_tree_type = {binary_tree_equals, binary_tree_tostring, NULL, binary_tree_parse_m_f, sizeof(binary_tree),1,NULL};
 
 
 ///////////////////////////////
@@ -355,7 +355,7 @@ tree * tree_parse_private(tokens * tks, memory_heap * hp) {
 	if (strcmp(t.text_token, "_") == 0) {
 		r = tree_empty(hp);
 	} else {
-		r = tree_leaf(t.text_token, &array_char_type, hp);
+		r = tree_leaf(t.text_token, &string_fix_type, hp);
 		token tn = see_next_token(tks);
 		char * ln = tn.text_token;
 		if (has_more_tokens(tks) && strcmp(ln, "(") == 0) {
@@ -379,7 +379,7 @@ tree * tree_parse_private(tokens * tks, memory_heap * hp) {
 			}
 			char tt3[][5] = { ")" };
 			match_token_texts((char*) tt3, 5, 1, tks);
-			r = tree_new(t.text_token, &array_char_type, nh, children, hp);
+			r = tree_new(t.text_token, &string_fix_type, nh, children, hp);
 		}
 	}
 	return r;
@@ -588,7 +588,7 @@ list tree_level(tree * t, int n) {
 	return r;
 }
 
-type tree_type = {tree_equals,tree_tostring,NULL,tree_parse_m_f,sizeof(tree)};
+type tree_type = {tree_equals,tree_tostring,NULL,tree_parse_m_f,sizeof(tree),1,NULL};
 
 void test_binary_tree_1(){
 	printf("Binary Tree test\n\n");
@@ -721,7 +721,7 @@ void test_parse_binary_tree_1(){
 void test_parse_binary_tree_2(){
 //	memory_heap_clear(&memory_heap_binary_tree);
 	binary_tree * tree = binary_tree_parse_m("-24.7(-34.5,-51(_,57))");
-	binary_tree * tree_m = binary_tree_map_m(tree,&int_type,int_type.tp.parse);
+	binary_tree * tree_m = binary_tree_map_m(tree,&int_type,int_type.parse);
 	binary_tree_toconsole(tree_m);
 	printf("\n");
 	binary_tree * tree2 = binary_tree_parse_m("0(_,-1)");
@@ -743,7 +743,7 @@ void test_parse_tree_1(){
 void test_parse_tree_2(){
 //	memory_heap_clear(&memory_heap_tree);
 	tree * t = tree_parse_m("-24.7(34.5,-51(33,56(57)),-51(33,57),-51(33,57))");
-	tree * t_m = tree_map_m(t,&double_type,double_type.tp.parse);
+	tree * t_m = tree_map_m(t,&double_type,double_type.parse);
 	tree * t_m_2 = tree_map_m(t_m,&double_type,square_double_f);
 	tree_toconsole(t_m_2);
 

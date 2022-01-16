@@ -198,7 +198,7 @@ void * time_pointer_copy(void * out, void * in){
 }
 
 
-type time_type = {time_equals,time_tostring,time_naturalorder,time_parse_out,sizeof(time_t)};
+type time_type = {time_equals,time_tostring,time_naturalorder,time_parse_out,sizeof(time_t),0,NULL};
 
 
 bool pd(void * t){

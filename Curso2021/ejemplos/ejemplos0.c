@@ -5,7 +5,7 @@
  *      Author: migueltoro
  */
 
-#include "ejemplos.h"
+#include "ejemplos0.h"
 
 memory_heap hp;
 
@@ -100,7 +100,7 @@ hash_table n_problema11(list ls){
 
 list n_problema61(char * file){
 	list r = list_empty(&punto_type);
-	iterator f = file_iterable_pchar(file);
+	iterator f = file_iterable_string_fix(file);
 	while(iterable_has_next(&f)){
 		char * s = (char *) iterable_next(&f);
 		punto e = punto_parse_s(s);

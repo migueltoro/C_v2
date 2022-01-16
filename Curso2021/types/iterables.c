@@ -25,12 +25,7 @@ void iterable_copy_state_to_auxiliary(iterator * st){
 }
 
 iterator * iterable_copy(iterator * it) {
-//	if(memory_heap_isnull(&memory_heap_iterable)) memory_heap_iterable = memory_heap_create();
-	iterator * r = malloc(sizeof(iterator));
-	copy(r,it,sizeof(iterator));
-//	memory_heap_get_memory(&memory_heap_iterable,sizeof(iterator));
-	*r = *it;
-	return r;
+	return copy_and_mem(it,sizeof(iterator));
 }
 
 bool iterable_has_next(iterator * st) {
@@ -234,8 +229,8 @@ iterator iterable_consecutive_pairs(iterator * st){
 		r = iterable_empty();
 	}
 	if(iterable_has_next(st)) {
-		type * t = generic_type_2(&pair_type,st->iterator_type,st->iterator_type);
-		r = iterable_map(st,t,_f_consecutive_pair);
+		type t = generic_type_2(&pair_type,st->iterator_type,st->iterator_type);
+		r = iterable_map(st,copy_and_mem(&t,sizeof(type)),_f_consecutive_pair);
 	} else {
 		r = iterable_empty();
 	}
@@ -249,8 +244,8 @@ pair_enumerate * _f_pair_enumerate(pair_enumerate * out, void * in) {
 		n = 0;
 		return out;
 	}
-	out->n = n;
-	out->key = in;
+	out->counter = n;
+	out->value = in;
 	n = n+1;
 	return out;
 }
@@ -259,8 +254,8 @@ iterator iterable_enumerate(iterator * st){
 	pair_enumerate p;
 	pairs_type_size = st->iterator_type->size;
 	_f_pair_enumerate(&p,NULL);
-	type * pt = generic_type_1(&pair_enumerate_type,st->iterator_type);
-	iterator r = iterable_map(st,pt,_f_pair_enumerate);
+	type pt = generic_type_1(&pair_enumerate_type,st->iterator_type);
+	iterator r = iterable_map(st,copy_and_mem(&pt,sizeof(type)),_f_pair_enumerate);
 	r.depending_iterable = iterable_copy(st);
 	return r;
 }
@@ -391,23 +386,22 @@ void dependencies_split_free(dependencies_split * ds){
 }
 
 
-iterator text_to_iterable_pchar(char * text, const char * delimiters) {
+iterator text_to_iterable_string_fix(char * text, const char * delimiters) {
 	dependencies_split ds;
 	int size_ds = sizeof(dependencies_split);
-//	int size_text = strlen(text);
 	ds.text = malloc(strlen(text)+2);
 	ds.text = strcpy(ds.text,text);
 	ds.delimiters = delimiters;
 	ds.token = strtok_r2(ds.text,delimiters,ds.saveptr);
-	iterator r = iterable_create(&pchar_type, iterable_split_has_next,
+	iterator r = iterable_create(&string_fix_type, iterable_split_has_next,
 			iterable_split_next, iterable_split_see_next,dependencies_split_free, &ds,size_ds);
 	return r;
 }
 
-pchar text_to_iterable_delimiters = " ,;.()";
+string_fix text_to_iterable_delimiters = " ,;.()";
 
-iterator * text_to_iterable_pchar_function(iterator * out, char * text) {
-	iterator it = text_to_iterable_pchar(text, text_to_iterable_delimiters);
+iterator * text_to_iterable_string_fix_function(iterator * out, char * text) {
+	iterator it = text_to_iterable_string_fix(text, text_to_iterable_delimiters);
 	*out = it;
 	return out;
 }
@@ -437,22 +431,23 @@ void * iterable_file_next(iterator * current_iterable){
 	char * r = fgets(current_iterable->state, dp->num_chars_per_line, dp->file);
 //	remove_eol_s(r);
 	dp->has_next = r!=NULL;
-	remove_eol_s(current_iterable->auxiliary_state);
+	remove_eol(current_iterable->auxiliary_state);
 	return current_iterable->auxiliary_state;
 }
 
-iterator file_iterable_pchar(char * file) {
-	return file_iterable_pchar_num(file, Tam_String);
+iterator file_iterable_string_fix(char * file) {
+	return file_iterable_string_fix_tam(file, Tam_String);
 }
 
-iterator file_iterable_pchar_num(char * file, int num_chars_per_line) {
+iterator file_iterable_string_fix_tam(char * file, int num_chars_per_line) {
 	FILE * st = fopen(file,"r");
 	char  ms[Tam_String];
 	if(st==NULL) sprintf(ms,"no se encuentra el fichero %s",file);
 	check_not_null(st,__FILE__,__LINE__,ms);
 	dependencies_file df = {st,false,num_chars_per_line};
 	int size_df = sizeof(dependencies_file);
-	iterator s_file = iterable_create(array_char_type_num(num_chars_per_line),iterable_file_has_next,iterable_file_next,
+	type t = string_fix_type_of_tam(num_chars_per_line);
+	iterator s_file = iterable_create(type_copy(&t),iterable_file_has_next,iterable_file_next,
 			iterable_file_see_next,free_dependencies_file,&df,size_df);
 	char * r = fgets(s_file.state,num_chars_per_line,((dependencies_file *)s_file.dependencies)->file);
 //	remove_eol_s(r);
@@ -480,23 +475,23 @@ char * iterable_tostring_sep(iterator * st,char * sep,char * prefix,char * suffi
 	return mem;
 }
 
-string iterable_tostring_sep_big(iterator * st,char * sep,char * prefix,char * suffix){
-	pchar m;
+string_var iterable_tostring_sep_big(iterator * st,char * sep,char * prefix,char * suffix){
+	string_fix m;
 	bool first = true;
-	string s = string_empty();
-	string_add_pchar(&s,prefix);
+	string_var s = string_var_empty();
+	string_var_add_string(&s,prefix);
 	while(iterable_has_next(st)){
 		void *  next = iterable_next(st);
 		char * ns = tostring(next,m,st->iterator_type);
 		if(first) first = false;
-		else string_add_pchar(&s,sep);
-		string_add_pchar(&s,ns);
+		else string_var_add_string(&s,sep);
+		string_var_add_string(&s,ns);
 	}
-	string_add_pchar(&s,suffix);
+	string_var_add_string(&s,suffix);
 	return s;
 }
 
-string iterable_tostring_big(iterator * st){
+string_var iterable_tostring_big(iterator * st){
 	return iterable_tostring_sep_big(st,",","{","}");
 }
 
@@ -552,6 +547,7 @@ void iterables_free(int n, ...) {
 
 
 bool ft(punto * in){
+	char mem[50];
 	Cuadrante c = punto_cuadrante(in);
 	return c == PRIMERO;
 }
@@ -563,32 +559,20 @@ long * cuadrado(long * out,long * in){
 
 
 void test_iterables_1() {
-	char mem[500];
-//	_ref_long = 5;
-//	iterator r = iterable_range_long(0, 500, 2);
-//	iterator f = iterable_filter(&r, multiplo_de_long);
-//	iterator s = iterable_map(&f,&long_type,cuadrado);
-//	printf("\n");
-//	iterable_toconsole(&s);
 	printf("\n_______________\n");
-	char delimiters[] = " ,;.";
-	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
-	iterator sp = text_to_iterable_pchar(text, delimiters);
+	char delimiters[] = " ,;.()";
+	char text1[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
+	iterator sp = text_to_iterable_string_fix(text1, delimiters);
 	iterable_toconsole(&sp);
-	printf("\n_______________\n");
-	printf("%s\n",text);
 	printf("\n_______________\n");
 	char text2[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
 	iterator p3;
-	text_to_iterable_pchar_function(&p3, text);
+	text_to_iterable_string_fix_function(&p3, text2);
 	iterable_toconsole(&p3);
-//	iterator fit = file_iterable_pchar("ficheros/prueba.txt");
-//	iterator fmap = iterable_map(&fit,&punto_type,punto_parse);
-//	iterator ff = iterable_filter(&fmap,ft);
-//	char * rs = iterable_tostring(&ff,mem);
-//	printf("\n%s\n",rs);
-//	printf("\n_______________\n");
-//	memory_heap_clear(&memory_heap_iterable);
+	printf("\n_______________\n");
+	char text3[] = "Quédese eso del barbero a mi cargo, dijo SAncho, y al de vuestra merced se quede el procurar venir a ser rey y el hacerme conde. Así será, respondió Don Quijote. ";
+	text_to_iterable_string_fix_function(&p3, text3);
+	iterable_toconsole(&p3);
 }
 
 void test_iterables_2() {
@@ -599,74 +583,26 @@ void test_iterables_2() {
 	iterator r3 = iterable_filter(&r2,menor_que_long);
 	iterable_tostring(&r3,mem);
 	printf("\n%s\n",mem);
-	iterator fit = file_iterable_pchar("ficheros/prueba.txt");
+	iterator fit = file_iterable_string_fix("ficheros/prueba.txt");
 	iterator fmap = iterable_map(&fit,&punto_type,punto_parse);
 	iterator ff = iterable_filter(&fmap,ft);
-	iterable_tostring(&fit,mem);
+	iterable_tostring(&ff,mem);
 	printf("\n%s\n",mem);
 }
 
-
-
-
-
 void test_iterables_3(){
-	pchar_copy(text_to_iterable_delimiters," ,");
-	iterator fit = file_iterable_pchar("ficheros/datos_entrada.txt");
-	iterator fit3 = iterable_filter(&fit,pchar_not_all_space);
-	iterator fmap = iterable_flatmap(&fit3,&array_char_type,text_to_iterable_pchar_function);
+	type t = string_fix_type_of_tam(10);
+	string_fix_copy(text_to_iterable_delimiters," ,");
+	iterator fit = file_iterable_string_fix("ficheros/datos_entrada.txt");
+	iterator fit3 = iterable_filter(&fit,string_fix_not_all_space);
+	iterator fmap = iterable_flatmap(&fit3,&t,text_to_iterable_string_fix_function);
 	iterable_toconsole_sep(&fmap,"\n","{","}");
 	printf("\n_________________\n");
 	char text[] = "(23....,45.)";
-	iterator it = text_to_iterable_pchar("(23....,45.)"," ,.()");
+	iterator it = text_to_iterable_string_fix("(23....,45.)"," ,.()");
 	iterable_toconsole_sep(&it,",","{","}");
 }
 
-void test_iterables_4() {
-	iterator it1 = file_iterable_pchar("matriz.txt");
-	int matriz[10][10];
-	while (iterable_has_next(&it1)) {
-		int i = 0;
-		char *line = iterable_next(&it1);
-		printf("Line = %s\n",line);
-		iterator it2 = text_to_iterable_pchar(line, ",");
-		while (iterable_has_next(&it2)) {
-			int j = 0;
-			char *filas = iterable_next(&it2);
-			printf("   Fila = %s\n",filas);
-			iterator it3 = text_to_iterable_pchar(filas, " {}");
-			while (iterable_has_next(&it3)) {
-				// aquí viene el problema solo hace dos iteraciones
-				char *elemento = iterable_next(&it3);
-				printf("       Elemento = %s\n",elemento);
-				matriz[i][j] = int_parse_s(elemento);
-				j++;
-			}
-			iterable_free(&it3);
-			i++;
-		}
-		iterable_free(&it2);
-	}
-	iterable_free(&it1);
-	iterator it4 = file_iterable_pchar("fechas_new.txt");
-	while (iterable_has_next(&it4)) {
-		char *line = iterable_next(&it4);
-		printf("Line = %s\n", line);
-		iterator it5 = text_to_iterable_pchar(line, " ");
-		while (iterable_has_next(&it5)) {
-			char *fila = iterable_next(&it5);
-			printf("   Fila = %s\n", fila);
-			iterator it6 = text_to_iterable_pchar(fila, ":");
-			while (iterable_has_next(&it6)) {
-				char *elemento = iterable_next(&it6);
-				printf("       Elemento = %s\n", elemento);
-			}
-			iterable_free(&it6);
-		}
-		iterable_free(&it5);
-	}
-	iterable_free(&it4);
-}
 
 void test_iterables_5() {
 	long e0 =2;
@@ -678,59 +614,38 @@ void test_iterables_5() {
 void test_iterables_6() {
 	char mem[6000];
 	iterator p3;
-	iterator r;
-	iterator r2;
-	r = iterable_range_long(0, 1000, 9);
-	r2 = iterable_consecutive_pairs(&r);
-	r2 = iterable_enumerate(&r);
-	iterable_toconsole(&r2);
-	r = iterable_range_long(0, 1000, 9);
-	r2 = iterable_consecutive_pairs(&r);
-	r2 = iterable_enumerate(&r);
-	printf("\n1 == %s\n", iterable_tostring(&r2, mem));
-//	memory_heap_clear(&memory_heap_iterable);
-	r = iterable_range_long(0, 1000, 9);
-	r2 = iterable_consecutive_pairs(&r);
-	r2 = iterable_enumerate(&r);
-	string s = iterable_tostring_big(&r2);
-	printf("\n2 == %s\n", string_tochar(&s));
-	printf("\n_______________\n");
-//	memory_heap_clear(&memory_heap_iterable);
-	iterator r3 = iterable_range_long(0, 1000, 9);
-	iterator r4 = iterable_consecutive_pairs(&r3);
-	iterable_toconsole(&r4);
-	printf("\n_______________\n");
-//	memory_heap_clear(&memory_heap_iterable);
+	iterator r = iterable_range_long(0, 1000, 9);
+	iterator r2 = iterable_consecutive_pairs(&r);
+	iterator r3 = iterable_enumerate(&r2);
+	iterable_toconsole(&r3);
 }
 
 iterator * new_it() {
-	iterator p3;
-	iterator r, r1, r2;
+	iterator r, r0, r1, r2, r3;
 	r = iterable_range_long(2, 100, 9);
-	r1 = iterable_filter(iterable_copy(&r),es_primo_f);
+	r0 = iterable_filter(iterable_copy(&r),es_primo_f);
+	r1 = iterable_map(iterable_copy(&r0),&long_type,square_long_f);
 	r2 = iterable_consecutive_pairs(iterable_copy(&r1));
-//	r2 = iterable_enumerate(&r);
-	return iterable_copy(&r2);
+	r3 = iterable_enumerate(iterable_copy(&r2));
+	return iterable_copy(&r3);
 }
 
 void test_iterables_7() {
-	char mem[6000];
 	iterator * it = new_it();
 	iterable_toconsole(it);
 }
 
 int num_palabras() {
-	iterator git1 = file_iterable_pchar("ficheros/quijote.txt");
-	iterator git2 = iterable_filter(&git1, pchar_not_all_space);
-	iterator gmap = iterable_flatmap(&git2, &array_char_type,text_to_iterable_pchar_function);
-	iterator r3 = iterable_enumerate(&gmap);
-	iterable_toconsole_sep(&r3, "\n", "", "");
-//	int n = iterable_size(&gmap);
-//	printf("===%d", string_tochar(&s));
-//
-//	memory_heap_clear(&memory_heap_iterable);
+	type t = string_fix_type_of_tam(15);
+	iterator t1 = file_iterable_string_fix_tam("ficheros/quijote.txt",45);
+	iterator t2 = iterable_filter(iterable_copy(&t1), string_fix_not_all_space);
+	iterator t3 = iterable_flatmap(iterable_copy(&t2),type_copy(&t),text_to_iterable_string_fix_function);
+	iterator t4 = iterable_enumerate(iterable_copy(&t3));
+	iterable_toconsole_sep(&t4, "\n", "", "");
 	return 0;
 }
+
+
 
 void test_iterables_8() {
 	int n = num_palabras();

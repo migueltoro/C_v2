@@ -443,10 +443,10 @@ void test_accumulators_1(){
 	st = iterable_range_double(4,500,3);
 	st = iterable_range_long(4,500,3);
 	bool r = iterable_all(&st,esmultiplo17);
-	printf("5:  \n%s\n",bool_tostring(&r,mem));
+	printf("5:  \n%s\n",bool_tostring(&r,mem,NULL));
 	st = iterable_range_long(4,500,3);
 	r = iterable_any(&st,esmultiplo17);
-	printf("6:  \n%s\n",bool_tostring(&r,mem));
+	printf("6:  \n%s\n",bool_tostring(&r,mem,NULL));
 	st = iterable_range_long(7,500,3);
 	long r1 = *(long *) iterable_first(&st,esmultiplo17);
 	printf("7:  \n%ld\n",r1);
@@ -464,14 +464,14 @@ void test_accumulators_1(){
 	reduce_right(&st,&r7,sizeof(double),long_max);
 	printf("9.1:  \n%ld\n", r7);
 	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
-	iterator p3 = text_to_iterable_pchar(text," ;.");
-	string emp = string_empty();
-	void * sr = accumulate_left(&p3,&emp,string_add_pchar);
-	printf("10: %s\n",string_tostring(sr,mem));
-	p3 = text_to_iterable_pchar(text," ;.");
-	emp = string_empty();
-	sr = accumulate_right(&p3,&emp,30,string_add_pchar);
-	printf("11: %s\n",string_tostring(sr,mem));
+	iterator p3 = text_to_iterable_string_fix(text," ;.");
+	string_var emp = string_var_empty();
+	void * sr = accumulate_left(&p3,&emp,string_var_add_string);
+	printf("10: %s\n",string_var_tostring(sr,mem,NULL));
+	p3 = text_to_iterable_string_fix(text," ;.");
+	emp = string_var_empty();
+	sr = accumulate_right(&p3,&emp,30,string_var_add_string);
+	printf("11: %s\n",string_var_tostring(sr,mem,NULL));
 	iterator rr = iterable_range_long(0, 500, 2);
 	iterator rr1 = iterable_map(&rr, &double_type, _random);
 	set ms = iterable_to_set(&rr1);
@@ -487,7 +487,7 @@ void test_accumulators_1(){
 void test_accumulators_2(){
 	iterator st = iterable_range_long(4,100,13);
 	long r;
-	iterable_max(&st,long_type.tp.order,&r);
+	iterable_max(&st,long_type.order,&r);
 	printf("%ld\n",r);
 	st = iterable_range_long(4,100,13);
 	r = *(long*) iterable_first(&st,esmultiplo5);

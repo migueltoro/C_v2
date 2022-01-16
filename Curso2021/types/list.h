@@ -68,7 +68,7 @@ bool list_contains(list * list, const void * e);
 bool list_equals(const list * ls1, const list * ls2);
 list * list_parse(list * out, char * text);
 list list_parse_s(char * text);
-extern pchar list_delimiters;
+extern string_fix list_delimiters;
 
 void * list_to_array(list * ls, void * array);
 void * list_of_list_to_2_array(list * ls, void * array);

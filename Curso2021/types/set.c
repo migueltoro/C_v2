@@ -52,10 +52,10 @@ iterator set_iterable(set * st){
 	return im;
 }
 
-set set_map(set * st, type type_out, void * (*f)(void * out, void * in)){
+set set_map(set * st, type * type_out, void * (*f)(void * out, void * in)){
 	iterator it = set_iterable(st);
-	set r = set_empty(&type_out);
-	char mem[type_out.size];
+	set r = set_empty(type_out);
+	char mem[type_out->size];
 	while(iterable_has_next(&it)){
 		void * e = iterable_next(&it);
 		f(mem,e);
@@ -104,17 +104,21 @@ bool set_equals(const set * s1, const set * s2) {
 }
 
 set * set_parse(set * out, char * text) {
-	iterator it = text_to_iterable_pchar(text, "{ ,}");
+	iterator it = text_to_iterable_string_fix(text, "{ ,}");
+	char tmp[out->hash_table.key_type->size];
+	tmp_type = *out->hash_table.key_type;
 	while(iterable_has_next(&it)) {
-		set_add(out, iterable_next(&it));
+		void * txt = iterable_next(&it);
+		parse_st(tmp,txt);
+		set_add(out, tmp);
 	}
 	iterable_free(&it);
 	return out;
 }
 
 set set_parse_s(char * text) {
-	set res = set_empty(&array_char_type);
-	iterator it = text_to_iterable_pchar(text, "{ ,}");
+	set res = set_empty(&string_fix_type);
+	iterator it = text_to_iterable_string_fix(text, "{ ,}");
 	while(iterable_has_next(&it)) {
 		set_add(&res, iterable_next(&it));
 	}
@@ -122,7 +126,7 @@ set set_parse_s(char * text) {
 	return res;
 }
 
-type set_type = {set_equals, set_tostring, NULL, set_parse, sizeof(set)};
+type set_type = {set_equals, set_tostring, NULL, set_parse, sizeof(set),1,NULL};
 
 
 void set_free(set * st){
@@ -133,7 +137,7 @@ set complete_set() {
 	int tam = 50;
 	set st = set_empty(&double_type);
 	for (int i = 0; i < tam; i++) {
-		double a2 = get_double_aleatorio(0, 1000) / 2;
+		double a2 = double_aleatorio(0, 1000) / 2;
 		set_add(&st, &a2);
 	}
 	return st;
@@ -175,7 +179,7 @@ void test_set_2() {
 			set_tostring(&s2, mem2));
 
 	char * texto1 = "{Estas, son, pruebas, de, nuevas, funciones, para, el, tipo, set}";
-	set s4 = set_empty(&array_char_type);
+	set s4 = set_empty(&string_fix_type);
 	set_parse(&s4, texto1);
 	printf("Dada la cadena \"%s\", set_parse ha obtenido el conjunto:\n%s\n",
 			texto1, set_tostring(&s4, mem1));
@@ -189,11 +193,12 @@ void test_set_2() {
 void test_set_3() {
 	char mem1[512];
 	iterator it = iterable_range_long(3, 100, 5);
+	iterator it2 = *iterable_copy(&it);
 	set s = set_empty(&long_type);
 	set_add_all(&s,&it);
-	set_add_all(&s,&it);
+	set_add_all(&s,&it2);
 	printf("%s\n",set_tostring(&s, mem1));
-	set s2 = set_map(&s,long_type,square_long_f);
+	set s2 = set_map(&s,&long_type,square_long_f);
 	printf("%s\n",set_tostring(&s2, mem1));
 	set s3 = set_filter(&s,es_primo_f);
 	printf("%s\n",set_tostring(&s3, mem1));

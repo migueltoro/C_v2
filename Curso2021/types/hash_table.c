@@ -253,8 +253,8 @@ void * iterable_hash_table_next(iterator * current_iterable){
 iterator hash_table_items_iterable(hash_table * ht){
 	dependencies_hash_table dh = {ht,ht->capacity_blocks,0,-1};
 	int size_dh = sizeof(dependencies_hash_table);
-	type * t = generic_type_2(&pair_type,ht->key_type,ht->value_type);
-	iterator s_hash_table = iterable_create(t,iterable_hash_table_has_next,iterable_hash_table_next,iterable_hash_table_see_next,NULL,&dh,size_dh);
+	type t = generic_type_2(&pair_type,ht->key_type,ht->value_type);
+	iterator s_hash_table = iterable_create(type_copy(&t),iterable_hash_table_has_next,iterable_hash_table_next,iterable_hash_table_see_next,NULL,&dh,size_dh);
 	next_state(s_hash_table.dependencies);
 	return s_hash_table;
 }
@@ -344,12 +344,12 @@ hash_table complete_table1() {
 	new_rand();
 	for (int i = 0; i < tam; i++) {
 		long a1 = i;
-		double a2 = get_double_aleatorio(0, 1000);
+		double a2 = double_aleatorio(0, 1000);
 		hash_table_put(&ht,&a1,&a2);
 	}
 	for (int i = 3; i < tam; i++) {
 		long a1 = i;
-		double a2 = get_double_aleatorio(0, 1000);
+		double a2 = double_aleatorio(0, 1000);
 		hash_table_put(&ht,&a1,&a2);
 	}
 	long a1 = 5;
@@ -363,12 +363,12 @@ hash_table complete_table2() {
 	new_rand();
 	for (int i = 0; i < tam; i++) {
 		long a1 = i;
-		double a2 = get_double_aleatorio(1000, 2000);
+		double a2 = double_aleatorio(1000, 2000);
 		hash_table_put(&ht,&a1,&a2);
 	}
 	for (int i = 3; i < tam; i++) {
 		long a1 = i;
-		double a2 = get_double_aleatorio(1000, 2000);
+		double a2 = double_aleatorio(1000, 2000);
 		hash_table_put(&ht,&a1,&a2);
 	}
 	long a1 = 5;

@@ -5,7 +5,7 @@
  *      Author: migueltoro
  */
 
-#include "ejemplos_tree_1.h"
+#include "../trees/ejemplos_tree_1.h"
 
 //Diseñe un algoritmo que dado un árbol n-ario Tree<E> y un predicado sobre E
 //devuelva una lista List<Boolean> de forma que el elemento i-ésimo de la lista
@@ -82,7 +82,7 @@ void test_ejemplos_trees_1() {
 	printf("\n~~~~~~~~~~~~~~~~~~~~ Test Tree 1 ~~~~~~~~~~~~~~~~~~~~\n");
 	char mem[300];
 	char mem2[300];
-	iterator it = file_iterable_pchar("ficheros/trees_1.txt");
+	iterator it = file_iterable_string_fix("ficheros/trees_1.txt");
 	while (iterable_file_has_next(&it)) {
 		char* line = (char*) iterable_file_next(&it);
 		tree * t = tree_parse_m(line);

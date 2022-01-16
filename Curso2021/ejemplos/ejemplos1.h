@@ -5,8 +5,8 @@
  *      Author: migueltoro
  */
 
-#ifndef EJERCICIO1_H_
-#define EJERCICIO1_H_
+#ifndef EJEMPLOS1_H_
+#define EJEMPLOS1_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,4 +22,4 @@ void lecturaFichero1Iter(char * fichero);
 void test_ejercicio1();
 
 
-#endif /* EJERCICIO1_H_ */
+#endif /* EJEMPLOS1_H_ */

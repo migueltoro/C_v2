@@ -28,40 +28,28 @@ unsigned long int hash_code(void * in, type * t){
 	return hash_index;
 }
 
-//bool type_equals(const type* e1, const type* e2) {
-//	return e1->equals==e2->equals;
-//}
 
-//type global_type;
-
-type * type_copy(type * t){
-	type * r = NULL;
-	if(t->num_types == 0) r = t;
-	else if(t->num_types == 1) r = generic_type_1(t,t->types[0]);
-	else if(t->num_types == 2) r = generic_type_2(t,t->types[0],t->types[1]);
-	return r;
+type * type_copy(type * t) {
+	return copy_and_mem(t,sizeof(type));
 }
 
-type * generic_type_1(type * base, type * key_type) {
-	type * r = malloc(sizeof(type));
-	copy(r,base,sizeof(type));
-	r->num_types = 1;
-	r->types[0] = type_copy(key_type);
-	return r;
+type generic_type_1(type *base, type * key_type) {
+	type rb = *base;
+	rb.types[0] = key_type;
+	return rb;
 }
 
-type * generic_type_2(type *base, type * key_type, type * value_type) {
-	type * r = malloc(sizeof(type));
-	copy(r,base,sizeof(type));
-	base->num_types = 2;
-	r->types[0] = type_copy(key_type);
-	r->types[1] = type_copy(value_type);
-	return r;
+type generic_type_2(type *base, type * key_type, type * value_type) {
+	type rb = *base;
+	rb.types[0] = key_type;
+	rb.types[1] = value_type;
+	return rb;
 }
 
 
-void type_free(type * t) {
-	if (t->num_types == 1) free(t->types[0]);
+void type_free(type *t) {
+	if (t->num_types == 1)
+		free(t->types[0]);
 	else if (t->num_types == 2) {
 		free(t->types[0]);
 		free(t->types[1]);
@@ -77,50 +65,42 @@ type * types(type * base, int i){
 }
 
 
-bool equals(const void * e1, const void * e2, type * type){
-	bool r;
-	if(type->num_types==0) r = type->tp.equals(e1,e2);
-	else r = type->gt.equals_g(e1,e2,type);
-	return r;
+bool equals(const void *e1, const void *e2, type *type) {
+	return type->equals(e1,e2,type);
 }
 
-char * tostring(const void * e, char * mem, type * type) {
-	char * r;
-	if (type->num_types == 0) r = type->tp.tostring(e, mem);
-	else r = type->gt.tostring_g(e, mem, type);
-	return r;
+char* tostring(const void *e, char *mem, type *type) {
+	return type->tostring(e,mem,type);
 }
 
-int order(const void * e1, const void * e2, type * type) {
-	int r;
-	if (type->num_types == 0) r = type->tp.order(e1, e2);
-	else r = type->gt.order_g(e1, e2, type);
-	return r;
+int order(const void *e1, const void *e2, type *type) {
+	return type->order(e1,e2,type);
 }
 
-void * parse(void * out, char * text, type * type) {
-	int r;
-	if (type->num_types == 0) r = type->tp.parse(out, text);
-	else r = type->gt.parse_g(out, text, type);
-	return r;
+void* parse(void *out, char *text, type *type) {
+	return type->parse(out,text,type);
 }
 
-type * tmp_type = NULL;
+type tmp_type;
 
-bool equals_type(const void * e1, const void * e2){
-	return equals(e1,e2,tmp_type);
+void set_tmp_type(type t){
+	tmp_type = t;
 }
 
-char * tostring_type(const void * e, char * mem){
-	return tostring(e,mem,tmp_type);
+bool equals_st(const void * e1, const void * e2) {
+	return tmp_type.equals(e1,e2,&tmp_type);
 }
 
-int order_type(const void * e1, const void * e2){
-	return order(e1,e2,tmp_type);
+char * tostring_st(const void * e, char * mem) {
+	return tmp_type.tostring(e,mem,&tmp_type);
 }
 
-void * parse_type(void * out, char * text){
-	return parse(out,text,tmp_type);
+int order_st(const void * e1, const void * e2){
+	return tmp_type.order(e1,e2,&tmp_type);
+}
+
+void * parse_st(void * out, char * text){
+	return tmp_type.parse(out,text,&tmp_type);
 }
 
 
@@ -133,21 +113,21 @@ int int_parse_s(char * text){
 	return p;
 }
 
-int * int_parse(int * out, char * text){
+int * int_parse(int * out, char * text, type * type){
 	sscanf(text,"%d",out);
 	return out;
 }
 
-char * int_tostring(const int * e, char * mem){
+char * int_tostring(const int * e, char * mem, type * type){
     sprintf(mem,"%d",*e);
     return mem;
 }
 
-bool int_equals(const int * e1, const int * e2){
+bool int_equals(const int * e1, const int * e2, type * type){
     return *e1 == *e2;
 }
 
-int int_naturalorder(const int * e1,const int * e2){
+int int_naturalorder(const int * e1,const int * e2, type * type){
     int a = *e1;
     int b = *e2;
     int r;
@@ -157,28 +137,27 @@ int int_naturalorder(const int * e1,const int * e2){
     return r;
 }
 
-
 type int_type = {int_equals,int_tostring,int_naturalorder,int_parse,sizeof(int),0,NULL};
 
 // char type
 
-char * char_parse(char * out, char * text){
+char * char_parse(char * out, char * text, type * type){
 	sscanf(text,"%c",out);
 	return out;
 }
 
-char * char_tostring(const char * e, char * mem){
+char * char_tostring(const char * e, char * mem, type * type){
     sprintf(mem,"%c",*e);
     return mem;
 }
 
-bool char_equals(const char * e1, const char * e2){
+bool char_equals(const char * e1, const char * e2, type * type){
 	char r1 = *e1;
 	char r2 = *e2;
 	return r1 == r2;
 }
 
-int char_naturalorder(const char * e1,const char * e2){
+int char_naturalorder(const char * e1,const char * e2, type * type){
     int a = *e1;
     int b = *e2;
     int r;
@@ -192,24 +171,24 @@ type char_type = {char_equals, char_tostring, char_naturalorder, char_parse, siz
 
 // bool type
 
-bool * bool_parse(bool * out, char * in) {
+bool * bool_parse(bool * out, char * in, type * type) {
 	sscanf(in,"%d",out);
 	return out;
 }
 
-char * bool_tostring(const bool * e, char * out) {
+char * bool_tostring(const bool * e, char * out, type * type) {
 	bool r = *e;
 	sprintf(out,"%s",r?"true":"false");
     return out;
 }
 
-bool bool_equals(const bool * e1, const bool * e2) {
+bool bool_equals(const bool * e1, const bool * e2, type * type) {
 	bool r1 = *e1;
 	bool r2 = *e2;
 	return r1 == r2;
 }
 
-int bool_naturalorder(const bool * e1,const bool * e2) {
+int bool_naturalorder(const bool * e1,const bool * e2, type * type) {
     int a = *e1;
     int b = *e2;
     int r;
@@ -218,6 +197,7 @@ int bool_naturalorder(const bool * e1,const bool * e2) {
     else r = +1;
     return r;
 }
+
 
 type bool_type = {bool_equals, bool_tostring, bool_naturalorder, bool_parse, sizeof(bool),0,NULL};
 
@@ -229,21 +209,21 @@ long long_parse_s(char * text){
 	return p;
 }
 
-long * long_parse(long * out, char * text){
+long * long_parse(long * out, char * text, type * type){
 	sscanf(text,"%ld",out);
 	return out;
 }
 
-char * long_tostring(const long * e, char * mem){
+char * long_tostring(const long * e, char * mem, type * type){
     sprintf(mem,"%ld",*e);
     return mem;
 }
 
-bool long_equals(const long * e1,const long * e2){
+bool long_equals(const long * e1,const long * e2, type * type){
     return *e1 == *e2;
 }
 
-int long_naturalorder(const long * e1,const long * e2){
+int long_naturalorder(const long * e1,const long * e2, type * type){
     long a = *e1;
     long b = *e2;
     long r;
@@ -264,21 +244,21 @@ long long long_long_parse_s(char * text){
 	return p;
 }
 
-long long * long_long_parse(long long * out, char * text){
+long long * long_long_parse(long long * out, char * text, type * type){
 	sscanf(text,"%lld",out);
 	return out;
 }
 
-char * long_long_tostring(const long long * e, char * mem){
+char * long_long_tostring(const long long * e, char * mem, type * type){
     sprintf(mem,"%lld",*e);
     return mem;
 }
 
-bool long_long_equals(const long long * e1,const long long * e2){
+bool long_long_equals(const long long * e1,const long long * e2, type * type){
     return *e1 == *e2;
 }
 
-int long_long_naturalorder(const long long * e1,const long long * e2){
+int long_long_naturalorder(const long long * e1,const long long * e2, type * type){
     long a = *e1;
     long b = *e2;
     long r;
@@ -287,7 +267,6 @@ int long_long_naturalorder(const long long * e1,const long long * e2){
     else r = +1;
     return r;
 }
-
 
 type long_long_type = {long_long_equals,long_long_tostring,long_long_naturalorder,long_long_parse,sizeof(long long),0,NULL};
 
@@ -299,21 +278,21 @@ float float_parse_s(char * text){
 	return p;
 }
 
-float * float_parse(float * out, char * text){
+float * float_parse(float * out, char * text, type * type){
 	sscanf(text,"%f",out);
 	return out;
 }
 
-char * float_tostring(const float * e, char * mem){
+char * float_tostring(const float * e, char * mem, type * type){
     sprintf(mem,"%.2f",*e);
     return mem;
 }
 
-bool float_equals(const float * e1, const float * e2){
+bool float_equals(const float * e1, const float * e2, type * type){
     return *e1 == *e2;
 }
 
-int float_naturalorder(const float * e1, const float * e2){
+int float_naturalorder(const float * e1, const float * e2, type * type){
     float a = *e1;
     float b = *e2;
     int r;
@@ -333,21 +312,21 @@ double double_parse_s(char * text){
 	return p;
 }
 
-double * double_parse(double * out, char * text){
+double * double_parse(double * out, char * text, type * type){
 	sscanf(text,"%lf",out);
 	return out;
 }
 
-char * double_tostring(const double * e, char * mem){
+char * double_tostring(const double * e, char * mem, type * type){
     sprintf(mem,"%0.2lf",*e);
     return mem;
 }
 
-bool double_equals(const double * e1, const double * e2){
+bool double_equals(const double * e1, const double * e2, type * type){
     return *e1 == *e2;
 }
 
-int double_naturalorder(const double * e1, const double * e2){
+int double_naturalorder(const double * e1, const double * e2, type * type){
     double a = *e1;
     double b = *e2;
     int r;
@@ -356,7 +335,6 @@ int double_naturalorder(const double * e1, const double * e2){
     else r = +1;
     return r;
 }
-
 
 type double_type = {double_equals,double_tostring,double_naturalorder,double_parse,sizeof(double),0,NULL};
 
@@ -368,27 +346,28 @@ int_pair int_pair_parse_s(char * text){
 	return p;
 }
 
-int_pair * int_pair_parse(int_pair * out, char * text){
+int_pair * int_pair_parse(int_pair * out, char * text, type * type){
 	sscanf(text,"(%d,%d)",&out->a,&out->b);
 	return out;
 }
 
-char * int_pair_tostring(const int_pair * p, char * mem){
+char * int_pair_tostring(const int_pair * p, char * mem, type * type){
 	sprintf(mem,"(%d,%d)",p->a,p->b);
 	return mem;
 }
 
-bool int_pair_equals(const int_pair * p1, const int_pair * p2){
+bool int_pair_equals(const int_pair * p1, const int_pair * p2, type * type){
 	return p1->a == p2->a && p1->b == p2->b;
 }
 
-int int_pair_naturalorder(const int_pair * p1, const int_pair * p2){
+int int_pair_naturalorder(const int_pair * p1, const int_pair * p2, type * type){
 	int_pair np1 = *p1;
 	int_pair np2 = *p2;
-	int r  = int_naturalorder(&np1.a,&np2.a);
-	if(r==0) r  = int_naturalorder(&np1.b,&np2.b);
+	int r  = int_naturalorder(&np1.a,&np2.a,NULL);
+	if(r==0) r  = int_naturalorder(&np1.b,&np2.b,NULL);
 	return r;
 }
+
 
 
 type int_pair_type = {int_pair_equals,int_pair_tostring,int_pair_naturalorder,int_pair_parse,sizeof(int_pair),0,NULL};
@@ -402,25 +381,25 @@ long_pair long_pair_parse_s(char * text){
 	return p;
 }
 
-long_pair * long_pair_parse(long_pair * out, char * text){
+long_pair * long_pair_parse(long_pair * out, char * text, type * type){
 	sscanf(text,"(%ld,%ld)",&out->a,&out->b);
 	return out;
 }
 
-char * long_pair_tostring(const long_pair * p, char * mem){
+char * long_pair_tostring(const long_pair * p, char * mem, type * type){
 	sprintf(mem,"(%ld,%ld)",p->a,p->b);
 	return mem;
 }
 
-bool long_pair_equals(const long_pair * p1, const long_pair * p2){
+bool long_pair_equals(const long_pair * p1, const long_pair * p2, type * type){
 	return p1->a == p2->a && p1->b == p2->b;
 }
 
-int long_pair_naturalorder(const long_pair * p1, const long_pair * p2){
+int long_pair_naturalorder(const long_pair * p1, const long_pair * p2, type * type){
 	long_pair np1 = *p1;
 	long_pair np2 = *p2;
-	int r  = long_naturalorder(&np1.a,&np2.a);
-	if(r==0) r  = long_naturalorder(&np1.b,&np2.b);
+	int r  = long_naturalorder(&np1.a,&np2.a,NULL);
+	if(r==0) r  = long_naturalorder(&np1.b,&np2.b,NULL);
 	return r;
 }
 
@@ -448,7 +427,7 @@ punto punto_parse_s(char * text){
 	return pt;
 }
 
-punto * punto_parse(punto * out, char * text){
+punto * punto_parse(punto * out, char * text, type * type){
 	sscanf(text,"(%lf,%lf)",&out->x,&out->y);
 	return out;
 }
@@ -459,19 +438,19 @@ double punto_distancia_al_origen(const punto * p){
 	return sqrt(x2+y2);
 }
 
-char * punto_tostring(const punto * p, char * mem){
+char * punto_tostring(const punto * p, char * mem, type * type){
 	sprintf(mem,"(%.2lf,%.2lf)",p->x,p->y);
 	return mem;
 }
 
-bool punto_equals(const punto * p1, const punto * p2){
+bool punto_equals(const punto * p1, const punto * p2, type * type){
 	return p1->x == p2->x && p1->y == p2->y;
 }
 
-int punto_naturalorder(const punto * p1, const punto * p2){
+int punto_naturalorder(const punto * p1, const punto * p2, type * type){
 	double d1 = punto_distancia_al_origen(p1);
 	double d2 = punto_distancia_al_origen(p2);
-	return double_naturalorder(&d1,&d2);
+	return double_naturalorder(&d1,&d2,NULL);
 }
 
 type punto_type = {punto_equals,punto_tostring,punto_naturalorder,punto_parse,sizeof(punto),0,NULL};
@@ -487,25 +466,26 @@ void * pair_to_value(void * value, pair * in){
 	return in->value;
 }
 
+pair pair_of(void * key, void * value){
+	pair r = {key,value};
+	return r;
+}
+
+pair * pair_of_value(pair * p, void * value){
+	p->key = value;
+	p->value = value;
+	return p;
+}
+
 char pair_delimiters[20] = " ,()";
 memory_heap pair_memory_heap = {0,0,NULL};
 
+
 pair * pair_parse(pair * out, char * text, type * t){
 	char * tokens[20];
-	pchar tt;
-	pchar_copy(tt,text);
-	int n = pchar_split_text(tt,pair_delimiters, tokens);
-	check_argument(n==2,__FILE__,__LINE__,"el numero de tokens no es 2");
-	parse(out->key,tokens[0],t->types[0]);
-	parse(out->value,tokens[1],t->types[1]);
-	return out;
-}
-
-pair * pair_mem_parse(pair * out, char * text, type * t){
-	char * tokens[20];
-	pchar tt;
-	pchar_copy(tt,text);
-	int n = pchar_split_text(tt,pair_delimiters, tokens);
+	string_fix tt;
+	string_fix_copy(tt,text);
+	int n = split_text(tt,pair_delimiters, tokens);
 	check_argument(n==2,__FILE__,__LINE__,"el numero de tokens no es 2");
 	if(memory_heap_isnull(&pair_memory_heap)) pair_memory_heap = memory_heap_create();
 	out->key = memory_heap_get_memory(&pair_memory_heap,t->types[0]->size);
@@ -536,68 +516,52 @@ int pair_naturalorder(const pair * e1, const pair * e2, type * t){
 }
 
 
-pair pair_of(void * key, void * value){
-	pair r = {key,value};
-	return r;
-}
-
-pair pair_empty(type * key_type, type * value_type){
-	pair r = {malloc(key_type->size),malloc(value_type->size)};
-	return r;
-}
-
 void pair_free(pair * p){
 	if(p->key != NULL) free(p->key);
 	if(p->value != NULL) free(p->value);
 }
 
-pair * pair_of_value(pair * p, void * value){
-	p->key = value;
-	p->value = value;
-	return p;
-}
 
 type pair_type = {pair_equals,pair_tostring,pair_naturalorder,pair_parse,sizeof(pair),2,NULL};
-type pair_mem_type = {pair_equals,pair_tostring,pair_naturalorder,pair_mem_parse,sizeof(pair),2,NULL};
 
 // pair_enumerate
 
+pair_enumerate pair_enumerate_of(int counter, void * value){
+	pair_enumerate p = {counter,value};
+	return p;
+}
+
 pair_enumerate * pair_enumerate_parse(pair_enumerate * out, char * text, type * t) {
 	char * tokens[20];
-	pchar tt;
-	pchar_copy(tt, text);
-	int n = pchar_split_text(tt, pair_delimiters, tokens);
+	string_fix tt;
+	string_fix_copy(tt, text);
+	int n = split_text(tt, pair_delimiters, tokens);
 	check_argument(n == 2, __FILE__, __LINE__, "el numero de tokens no es 2");
-	sscanf(tokens[0],"%d",&out->n);
-	parse(out->key, tokens[1], t->types[0]);
+	out->value = memory_heap_get_memory(&pair_memory_heap,t->types[0]->size);
+	sscanf(tokens[0],"%d",&out->counter);
+	parse(out->value, tokens[1], t->types[0]);
 	return out;
 }
 
 char * pair_enumerate_tostring(const pair_enumerate * e, char * mem, type * t){
 	char a[Tam_String];
-	tostring(e->key,a,t->types[0]);
-	sprintf(mem,"(%d,%s)",e->n,a);
+	tostring(e->value,a,t->types[0]);
+	sprintf(mem,"(%d,%s)",e->counter,a);
 	return mem;
 }
 bool pair_enumerate_equals(const pair_enumerate * e1, const pair_enumerate * e2, type * t){
-	bool k = equals(e1->key,e2->key,t->types[0]);
-	return k && e1->n == e2->n;
+	bool k = equals(e1->value,e2->value,t->types[0]);
+	return k && e1->counter == e2->counter;
 }
 
 int pair_enumerate_naturalorder(const pair_enumerate * e1, const pair_enumerate * e2, type * t){
-	int k = order(e1->key,e2->key,t->types[0]);
-	if(k == 0) k = order(&e1->n,&e2->n,&int_type);
+	int k = order(e1->value,e2->value,t->types[0]);
+	if(k == 0) k = order(&e1->counter,&e2->counter,&int_type);
     return k;
 }
 
 
-pair_enumerate pair_enumerate_empty(type *t){
-	pair_enumerate r = {0,malloc(types(t,0)->size)};
-	return r;
-}
-
 type pair_enumerate_type = {pair_enumerate_equals,pair_enumerate_tostring,pair_enumerate_naturalorder,pair_enumerate_parse,sizeof(pair_enumerate),1,NULL};
-
 
 // string type
 
@@ -605,36 +569,36 @@ type pair_enumerate_type = {pair_enumerate_equals,pair_enumerate_tostring,pair_e
 #define INC_TAM 500
 
 
-string string_empty(){
+string_var string_var_empty(){
 	void * data = malloc(INITIAL_TAM);
-	string st = {INITIAL_TAM,0,data};
+	string_var st = {INITIAL_TAM,0,data};
 	strcpy(st.data,"");
 	return st;
 }
 
-char * string_tochar(string * in){
+char * string_var_data(string_var * in){
 	return in->data;
 }
 
-bool string_is_empty(string * in){
+bool string_var_is_empty(string_var * in){
 	return strlen(in->data) == 0;
 }
 
-bool string_not_is_empty(string * in){
+bool string_var_not_is_empty(string_var * in){
 	return strlen(in->data) > 0;
 }
 
-int string_size(string * in){
+int string_var_size(string_var * in){
 	return strlen(in->data);
 }
 
-string string_of_pchar(const char * initial){
-	string bf = string_empty();
-	string_add_pchar(&bf,initial);
+string_var string_var_of_fix(const char * initial){
+	string_var bf = string_var_empty();
+	string_var_add_string(&bf,initial);
 	return bf;
 }
 
-void * string_add_pchar(string * out, const char * s) {
+void * string_var_add_string(string_var * out, const char * s) {
 	check_not_null(s,__FILE__,__LINE__,"Cadena null");
 	int n = strlen(s);
 	if(out->size+n>out->tam){
@@ -649,11 +613,11 @@ void * string_add_pchar(string * out, const char * s) {
 	return out->data;
 }
 
-void * string_add_string(string * out, const string * in) {
-	return string_add_pchar(out,in->data);
+void * string_var_add_string_var(string_var * out, const string_var * in) {
+	return string_var_add_string(out,in->data);
 }
 
-void string_clear(string * in){
+void string_var_clear(string_var * in){
 	free(in->data);
 	void * data = malloc(INITIAL_TAM);
 	in->tam = INITIAL_TAM;
@@ -662,37 +626,38 @@ void string_clear(string * in){
 	strcpy(in->data,"");
 }
 
-void string_free(string * in){
-	string * st = (string * ) in;
+void string_var_free(string_var * in){
+	string_var * st = (string_var * ) in;
 	free(st->data);
 }
 
-string * string_parse(string * out, char * text){
-	string_add_pchar(out,text);
+string_var * string_var_parse(string_var * out, char * text, type * type){
+	string_var_add_string(out,text);
 	return out;
 }
 
-char * string_tostring(const string * e, char * mem) {
+char * string_var_tostring(const string_var * e, char * mem, type * type) {
 	strcpy(mem,e->data);
 	return mem;
 }
 
-bool string_equals(const string * e1, const string * e2) {
+bool string_var_equals(const string_var * e1, const string_var * e2, type * type) {
 	return strcmp(e1->data, e2->data) == 0;
 }
 
-int string_naturalorder(const string * e1, const string * e2) {
+int string_var_naturalorder(const string_var * e1, const string_var * e2, type * type) {
 	return strcmp(e1->data, e2->data);
 }
 
-type string_type = {string_equals,string_tostring,string_naturalorder,string_parse,sizeof(string),0,NULL};
+
+type string_var_type = {string_var_equals,string_var_tostring,string_var_naturalorder,string_var_parse,sizeof(string_var),0,NULL};
 
 
 // pchar type
 // Las variables de este tipo se declaran char v[Tam_String]
 // y se referencian como char *
 
-char * remove_eol_s(char * in){
+char * remove_eol(char * in){
 	int len = strlen(in);
 	if (len>0 && in[len-1] == 10) {
 		in[len-1] = '\0';
@@ -707,7 +672,7 @@ char * remove_eol_s(char * in){
 //}
 
 
-int pchar_split_text(const char * in, const char * delimiters, char ** tokens){
+int split_text(const char * in, const char * delimiters, char ** tokens){
 	int i = 0;
 	char * token = strtok(in,delimiters);
 	while(token != NULL) {
@@ -718,7 +683,7 @@ int pchar_split_text(const char * in, const char * delimiters, char ** tokens){
 	return i;
 }
 
-char * pchar_substring(char * out, char * in, int from, int to){
+char * string_fix_substring(char * out, char * in, int from, int to){
 	to = MIN(strlen(in),to);
 	int n = to - from;
 	strncpy(out,in+from,n);
@@ -726,17 +691,17 @@ char * pchar_substring(char * out, char * in, int from, int to){
 	return out;
 }
 
-int pchar_size(const char * in){
+int string_fix_size(const char * in){
 	return strlen(in);
 }
 
-char pchar_get(const char * in, int i){
+char char_get(const char * in, int i){
 	int n = strlen(in);
 	check_element_index(i,n,__FILE__,__LINE__);
 	return in[i];
 }
 
-char pchar_set(char * in_out, int i, char c){
+char char_set(char * in_out, int i, char c){
 	int n = strlen(in_out);
 	check_element_index(i,n,__FILE__,__LINE__);
 	char r = in_out[i];
@@ -770,53 +735,45 @@ char * pchar_concat(char * out, const char * in){
 	return out;
 }
 
-char * pchar_copy(char * out, const char * in){
+char * string_fix_copy(char * out, const char * in){
 	strcpy(out,in);
 	return out;
 }
 
 
-char * pchar_parse(char * out, char * text){
+char * string_fix_parse(char * out, char * text, type * type){
 	strcpy(out,text);
 	return out;
 }
 
-char * pchar_tostring(const char * e, char * mem){
+char * string_fix_tostring(const char * e, char * mem, type * type){
 	strcpy(mem,e);
 	return mem;
 }
 
-bool pchar_equals(const char * e1, const char * e2){
+bool string_fix_equals(const char * e1, const char * e2, type * type){
 	return strcmp(e1,e2) == 0;
 }
 
-int pchar_naturalorder(const char * e1,const char * e2){
+int string_fix_naturalorder(const char * e1,const char * e2, type * type){
 	return strcmp(e1,e2);
 }
 
-type pchar_type = {pchar_equals,pchar_tostring,pchar_naturalorder,pchar_parse,sizeof(char *),0,NULL};
+type string_fix_type = {string_fix_equals,string_fix_tostring,string_fix_naturalorder,string_fix_parse,Tam_String,0,NULL};
 
-type array_char_type = {pchar_equals,pchar_tostring,pchar_naturalorder,pchar_parse,Tam_String,0,NULL};
-
-type * array_char_type_num(int numchars) {
-	type * r = malloc(numchars);
-	*r = array_char_type;
-	r->size = numchars;
+type string_fix_type_of_tam(int numchars) {
+	type r = string_fix_type;
+	r.size = numchars;
 	return r;
 }
 
-type array_char_type_of(int num_chars){
-	type r = {pchar_equals,pchar_tostring,pchar_naturalorder,pchar_parse,num_chars,0,NULL};
-	return r;
-}
-
-bool pchar_is_empty(char * in){
+bool string_fix_is_empty(char * in){
 	return strlen(in) == 0;
 }
-bool pchar_not_is_empty(char * in){
+bool string_fix_not_is_empty(char * in){
 	return strlen(in) > 0;
 }
-bool pchar_all_space(char * in){
+bool string_fix_all_space(char * in){
 	bool r = true;
 	int i =0;
 	while(in[i] != '\0') {
@@ -826,8 +783,8 @@ bool pchar_all_space(char * in){
 	}
 	return r;
 }
-bool pchar_not_all_space(char * in){
-	return !pchar_all_space(in);
+bool string_fix_not_all_space(char * in){
+	return !string_fix_all_space(in);
 }
 
 // optional type
@@ -912,7 +869,7 @@ void test_string(){
 	char delimiters[] = " ,;.";
 	char text[600] = "El Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las    negociaciones de la ministra María Jesús Montero. ";
 	char * tokens[100];
-	int n = pchar_split_text(text, delimiters,tokens);
+	int n = split_text(text, delimiters,tokens);
 	printf("1: %d\n",n);
 	for(int i =0;i<n;i++){
 		printf("2: %d,%s\n",i,tokens[i]);
@@ -925,14 +882,14 @@ void test_string(){
 	printf("3: %d,%.2lf,%d\n",a,b,c);
 	char pt[] = "(3.4,-7.9)";
 	punto p = punto_parse_s(pt);
-	printf("4: %s\n",punto_tostring(&p,mem));
+	printf("4: %s\n",punto_tostring(&p,mem,NULL));
 	char pa[] = "(4,-9)";
 	int_pair pp = int_pair_parse_s(pa);
 	printf("5: %s\n",tostring(&pp,mem,&int_pair_type));
 	char tt2[200] = "34 389   23.5 -37.90 (3,-5) (34.1,-67.8)";
 	char delimiters2[] = " ";
 	char * tt[10];
-	n = pchar_split_text(tt2,delimiters2,tt);
+	n = split_text(tt2,delimiters2,tt);
 	printf("6: %d\n",n);
 	for(int i =0;i<n;i++){
 		printf("%d,%s\n",i,tt[i]);
@@ -947,12 +904,12 @@ void test_string(){
 	printf("9: %s\n",tostring(&e1,mem,&int_pair_type));
 	printf("10: %s\n",tostring(&f1,mem,&punto_type));
 	char aa[] = "En un lugar de la mancha de cuyo nombre no quiero acordarme";
-	char * s = pchar_substring(mem,aa,10,13);
+	char * s = string_fix_substring(mem,aa,10,13);
 	printf("%s\n",aa);
 	printf("%s\n",s);
-	pchar d[] = {"Juan","Antonio","Jesus"};
+	string_fix d[] = {"Juan","Antonio","Jesus"};
 	printf("%s\n",d[1]);
-	printf("%d,%d,%d",pchar_size(d[0]),pchar_size(d[1]),pchar_size(d[2]));
+	printf("%d,%d,%d",string_fix_size(d[0]),string_fix_size(d[1]),string_fix_size(d[2]));
 }
 
 void test_types() {
@@ -964,19 +921,19 @@ void test_types() {
 	copy(&a,&d,sizeof(double));
 	printf("a = %lf,d = %lf\n",a,d);
 	copy_in_pointer(&c,&d,sizeof(double));
-	printf("d = %lf = b = %lf\n",d,b);
+	printf("d = %lf,b = %lf\n",d,b);
 	int n = 0;
 	char tt2[] = "34 389   23.5 -37.90 (3,-5) (34.1,-67.8)";
 	char delimiters2[] = " ";
 	char * tt[10];
-	n = pchar_split_text(tt2, delimiters2,tt);
+	n = split_text(tt2, delimiters2,tt);
 	printf("6: %d\n", n);
 	for (int i = 0; i < n; i++) {
 		printf("7: %s\n", tt[i]);
 	}
-	pchar e;
-	pchar_copy(e,"Juego de tronos");
-	printf("7: %s\n", tostring(e,mem,&array_char_type));
+	string_fix e;
+	string_fix_copy(e,"Juego de tronos");
+	printf("7: %s\n", tostring(e,mem,&string_fix_type));
 	long long g;
 	parse(&g,"456",&long_long_type);
 	long long g2;
@@ -994,20 +951,20 @@ void test_types_1() {
 	long b;
 	pair p = { &a, &b };
 	char * tokens[10];
-	int n = pchar_split_text(text, " ,()", tokens);
+	int n = split_text(text, " ,()", tokens);
 	printf("1: %d,%s,%s\n", n, tokens[0], tokens[1]);
-	type * t = generic_type_2(&pair_type, &double_type, &long_type);
-	parse(&p, "(34,56)", t);
-	printf("2: %s\n", tostring(&p, mem, t));
-	printf("3: %d,%d\n", types(t, 0)->size, types(t, 1)->size);
-	type * t2 = generic_type_1(&pair_enumerate_type, &double_type);
+	type t = generic_type_2(&pair_type, &double_type, &long_type);
+	parse(&p, "(34,56)", &t);
+	printf("2: %s\n", tostring(&p, mem, &t));
+	printf("3: %d,%d\n", types(&t, 0)->size, types(&t, 1)->size);
+	type t2 = generic_type_1(&pair_enumerate_type, &double_type);
 	pair_enumerate p2 = { 7, &a };
-	parse(&p2, "(5667,-55.12)", t2);
-	printf("4: %s\n", tostring(&p2, mem, t2));
-	type * t3 = generic_type_1(&optional_type, &double_type);
+	parse(&p2, "(5667,-55.12)", &t2);
+	printf("4: %s\n", tostring(&p2, mem, &t2));
+	type t3 = generic_type_1(&optional_type, &double_type);
 	optional p3 = { &a };
-	parse(&p3, "34.56", t3);
-	printf("5: %s\n", tostring(&p3, mem, t3));
+	parse(&p3, "34.56", &t3);
+	printf("5: %s\n", tostring(&p3, mem, &t3));
 }
 
 

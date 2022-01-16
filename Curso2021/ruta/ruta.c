@@ -9,7 +9,7 @@
 
 
 ruta * ruta_of_file(ruta * r, char * file){
-	iterator i1 = file_iterable_pchar(file);
+	iterator i1 = file_iterable_string_fix(file);
 	iterator i2 = iterable_map(&i1,&marca_type,marca_parse);
 	list ls = iterable_to_list(&i2);
 	r->marcas = ls;

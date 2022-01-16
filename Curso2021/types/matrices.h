@@ -22,7 +22,7 @@
 #include "list.h"
 
 typedef struct {
-	type * type_element;
+	type * type;
 	char * datos;
 	int __nc;
 	int iv;
@@ -39,28 +39,31 @@ typedef struct {
 }matrix_views;
 
 matrix matrix_of_array(void * a, int nf, int nc, type * type_element);
-matrix matrix_of_file(char * file, void * array, type * type);
+matrix matrix_of(int nf, int nc, type * type_element);
+matrix matrix_of_file(char * file, type * type);
 
-void * matrix_get(matrix s, int i, int j);
-void matrix_set(matrix s, int i, int j, void * value);
-int matrix_nf(matrix s);
-int matrix_nc(matrix s);
-void * matrix_center(matrix s);
-list matrix_corners(matrix s);
+void * matrix_get(matrix * s, int i, int j);
+void matrix_set(matrix * s, int i, int j, void * value);
+int matrix_nf(matrix * s);
+int matrix_nc(matrix * s);
+void * matrix_center(matrix * s);
+list matrix_corners(matrix * s);
 
-int matrix_get_int(matrix s, int i, int j);
+int matrix_get_int(matrix * s, int i, int j);
 
-void matrix_free(matrix m);
+void matrix_free(matrix * m);
 
-matrix matrix_view(matrix s, int ns);
-void matrix_print(matrix s, char * text);
-void matrix_copy(matrix in, matrix out);
-matrix_views views_of_matrix(matrix s);
+matrix matrix_view(matrix * s, int ns);
+void matrix_print(matrix * s, char * text);
+matrix matrix_copy(matrix * in);
+void  matrix_copy_2(matrix * out, matrix * in);
+matrix_views views_of_matrix(matrix * s);
+matrix matrix_compose(matrix * m0, matrix * m1, matrix * m2, matrix * m3);
 
-void multiply_iterativa(matrix out, matrix in1, matrix in2);
-void multiply_recursiva(matrix out, matrix in1, matrix in2);
-void sum_iterativa(matrix out, matrix in1, matrix in2);
-void sum_recursiva(matrix out, matrix in1, matrix in2);
+matrix multiply_iterativa(matrix * in1, matrix * in2);
+matrix multiply_recursiva(matrix * in1, matrix * in2);
+matrix sum_iterativa(matrix * in1, matrix * in2);
+matrix sum_recursiva(matrix * in1, matrix * in2);
 
 void test_matrices_1();
 void test_matrices_2();

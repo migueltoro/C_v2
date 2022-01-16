@@ -7,8 +7,8 @@
  *      Author: Miguel Toro
  */
 
-#ifndef EJERCICIO2_H_
-#define EJERCICIO2_H_
+#ifndef EJEMPLOS2_H_
+#define EJEMPLOS2_H_
 
 #include <stdio.h>
 #include <string.h>
@@ -26,4 +26,4 @@ void test_ejercicio2();
 void to_file_while(char * file,time_t a,time_t b);
 void to_file_rec(char * file,time_t a,time_t b);
 
-#endif /* EJERCICIO2_H_ */
+#endif /* EJEMPLOS2_H_ */

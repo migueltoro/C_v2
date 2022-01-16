@@ -5,8 +5,8 @@
  *      Author: migueltoro
  */
 
-#ifndef EJEMPLOS_TREE_4_H_
-#define EJEMPLOS_TREE_4_H_
+#ifndef TREES_EJEMPLOS_TREE_4_H_
+#define TREES_EJEMPLOS_TREE_4_H_
 
 #include <limits.h>
 #include <stdio.h>
@@ -30,4 +30,4 @@
 
 void test_ejemplos_trees_4();
 
-#endif /* EJEMPLOS_TREE_4_H_ */
+#endif /* TREES_EJEMPLOS_TREE_4_H_ */

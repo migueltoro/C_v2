@@ -33,4 +33,6 @@ int smax_naturalorder(const smax * e1,const smax * e2, type * t);
 
 extern type smax_type;
 
+void test_tupla();
+
 #endif /* TUPLA_H_ */

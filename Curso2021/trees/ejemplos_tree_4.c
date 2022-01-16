@@ -6,7 +6,7 @@
  */
 
 
-#include "ejemplos_tree_4.h"
+#include "../trees/ejemplos_tree_4.h"
 
 //Implemente una función booleana que, dados un árbol binario de caracteres y una lista de caracteres,
 //determine si existe un camino en el árbol de la raíz a una hoja que sea igual a la lista.
@@ -34,11 +34,11 @@ bool existe_camino(binary_tree* t, list * ls){
 }
 
 list list_parse_2(char * text) {
-	iterator it = text_to_iterable_pchar(text," ,[]");
+	iterator it = text_to_iterable_string_fix(text," ,[]");
 	list r = list_empty(&char_type);
 	while (iterable_has_next(&it)) {
 		char * e1 = (char*) iterable_next(&it);
-		if(pchar_all_space(e1)) continue;
+		if(string_fix_all_space(e1)) continue;
 		char e = e1[0];
 		list_add(&r,&e);
 	}
@@ -49,10 +49,10 @@ void test_ejemplos_trees_4() {
 	printf("\n~~~~~~~~~~~~~~~~~~~~ Test Tree 4 ~~~~~~~~~~~~~~~~~~~~\n");
 	char mem[300];
 	char mem1[300];
-	iterator it = file_iterable_pchar("ficheros/trees_4.txt");
+	iterator it = file_iterable_string_fix("ficheros/trees_4.txt");
 	while (iterable_file_has_next(&it)) {
 		char* line = (char*) iterable_file_next(&it);
-		iterator it2 = text_to_iterable_pchar(line,"#");
+		iterator it2 = text_to_iterable_string_fix(line,"#");
 		char * tree_line = iterable_next(&it2);
 		char * list_line = iterable_next(&it2);
 		binary_tree * t = binary_tree_parse_m(tree_line);

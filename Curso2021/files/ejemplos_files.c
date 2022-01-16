@@ -6,12 +6,12 @@
  */
 
 
-#include "ejemplos_files.h"
+#include "../files/ejemplos_files.h"
 
 //suma los primos del fichero
 
 long sum_primos_file(char * file){
-	iterator it = file_iterable_pchar(file);
+	iterator it = file_iterable_string_fix(file);
 	long sum = 0;
 	while(iterable_has_next(&it)){
 		char * line = (char *) iterable_next(&it);
@@ -28,7 +28,7 @@ long sum_primos_file(char * file){
 //cuenta los primos del fichero
 
 int count_primos_file(char * file){
-	iterator it = file_iterable_pchar(file);
+	iterator it = file_iterable_string_fix(file);
 	int sum = 0;
 	while(iterable_has_next(&it)){
 		char * line = (char *) iterable_next(&it);
@@ -44,11 +44,11 @@ int count_primos_file(char * file){
 //cuenta los primos del fichero con otra estructura
 
 int count_primos_file_2(char * file){
-	iterator it = file_iterable_pchar(file);
+	iterator it = file_iterable_string_fix(file);
 	int sum = 0;
 	while(iterable_has_next(&it)){
 		char * line = (char *) iterable_next(&it);
-		iterator it2 = text_to_iterable_pchar(line," ,");
+		iterator it2 = text_to_iterable_string_fix(line," ,");
 		while(iterable_has_next(&it2)) {
 			char * num = (char *) iterable_next(&it2);
 			long e;
@@ -64,12 +64,12 @@ int count_primos_file_2(char * file){
 //obtiene una lista del fichero
 
 list file_to_list(char * file){
-       iterator it = file_iterable_pchar(file);
+       iterator it = file_iterable_string_fix(file);
        list ls = list_empty(&long_type);
        long e;
        while(iterable_has_next(&it)){
              char * line = (char *) iterable_next(&it);
-             iterator it2 = text_to_iterable_pchar(line," ,");
+             iterator it2 = text_to_iterable_string_fix(line," ,");
              while(iterable_has_next(&it2)) {
                     char * num = (char *) iterable_next(&it2);
                     parse(&e,num,&long_type);
@@ -85,13 +85,13 @@ list file_to_list(char * file){
 //obtiene una lista del fichero
 
 list file_to_list_2(char * file) {
-	iterator f = file_iterable_pchar(file);
+	iterator f = file_iterable_string_fix(file);
 	list ls = list_empty(&long_type);
 	long e;
 	while (iterable_has_next(&f)) {
 		char * linea = iterable_next(&f);
 		char * tt[20];
-		int n = pchar_split_text(linea, " ,", tt);
+		int n = split_text(linea, " ,", tt);
 		for (int i = 0; i < n; i++) {
 			parse(&e,tt[i],&long_type);
 			if (e%2 == 0) {
@@ -107,12 +107,12 @@ list file_to_list_2(char * file) {
 
 list file_to_list_of_list(char * file){
 	list res = list_empty(&list_type);
-	iterator it1 = file_iterable_pchar(file);
+	iterator it1 = file_iterable_string_fix(file);
 	int x;
 	while(iterable_has_next(&it1)) {
 	      char* linea = (char*)iterable_next(&it1);
 	      list ls = list_empty(&long_type);
-	      iterator it2 = text_to_iterable_pchar(linea, " ,");
+	      iterator it2 = text_to_iterable_string_fix(linea, " ,");
 	      while(iterable_has_next(&it2)) {
 	    	  	char * tx = iterable_next(&it2);
 	            parse(&x,tx,&long_type);

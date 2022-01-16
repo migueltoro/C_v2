@@ -5,7 +5,7 @@
  *      Author: migueltoro
  */
 
-#include "ejemplos_tree_3.h"
+#include "../trees/ejemplos_tree_3.h"
 
 //Diseñe un algoritmo que dado un árbol binario de enteros devuelva cierto en caso de que para
 //cada nodo que tenga 2 hijos no vacíos se cumpla que su etiqueta es igual a la suma de las etiquetas
@@ -33,7 +33,7 @@ bool suma_igual(binary_tree * t){
 void test_ejemplos_trees_3() {
 	printf("\n~~~~~~~~~~~~~~~~~~~~ Test Tree 3 ~~~~~~~~~~~~~~~~~~~~\n");
 	char mem[300];
-	iterator it = file_iterable_pchar("ficheros/trees_3.txt");
+	iterator it = file_iterable_string_fix("ficheros/trees_3.txt");
 	while (iterable_file_has_next(&it)) {
 		char* line = (char*) iterable_file_next(&it);
 		binary_tree * t = binary_tree_parse_m(line);

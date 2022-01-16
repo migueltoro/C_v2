@@ -5,7 +5,7 @@
  *      Author: migueltoro
  */
 
-#include "ejemplos_tree_2.h"
+#include "../trees/ejemplos_tree_2.h"
 
 //Diseñe un algoritmo recursivo que dado un árbol n-ario de tipo genérico devuelva
 //un Map<Integer, List<Tree<E>>>. Dicho map en cada entrada tiene como clave el número de hijos de un árbol
@@ -57,7 +57,7 @@ void test_ejemplos_trees_2() {
 	printf("\n~~~~~~~~~~~~~~~~~~~~ Test Tree 2 ~~~~~~~~~~~~~~~~~~~~\n");
 	char mem[300];
 	char mem2[300];
-	iterator it = file_iterable_pchar("ficheros/trees_2.txt");
+	iterator it = file_iterable_string_fix("ficheros/trees_2.txt");
 	while (iterable_file_has_next(&it)) {
 		char* line = (char*) iterable_file_next(&it);
 		tree * t = tree_parse_m(line);

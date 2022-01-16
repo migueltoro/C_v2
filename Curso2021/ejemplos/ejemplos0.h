@@ -5,8 +5,8 @@
  *      Author: migueltoro
  */
 
-#ifndef EJEMPLOS_H_
-#define EJEMPLOS_H_
+#ifndef EJEMPLOS0_H_
+#define EJEMPLOS0_H_
 
 #include <limits.h>
 #include <stdio.h>
@@ -49,4 +49,4 @@ void n_problema59(char * file,long n);
 void test_ejemplos_1();
 void test_ejemplos1();
 
-#endif /* EJEMPLOS_H_ */
+#endif /* EJEMPLOS0_H_ */

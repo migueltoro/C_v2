@@ -75,16 +75,16 @@ void new_rand();
  * @param b Límite Superior
  * @return Un entero aleatorio r tal que a &le; = r &lt; b
  */
-int get_entero_aleatorio(int a, int b);
-int * get_entero_aleatorio_f(int * out, int_pair * in);
+int entero_aleatorio(int a, int b);
+int * entero_aleatorio_f(int * out, int_pair * in);
 /**
  * @pre b &gt; a
  * @param a Límite inferior
  * @param b Límte Superior
  * @return Un double aleatorio que  está en el intervalo  a &le; = r &lt; b
  */
-double get_double_aleatorio(double a, double b);
-double * get_double_aleatorio_f(double * out, punto * in);
+double double_aleatorio(double a, double b);
+double * double_aleatorio_f(double * out, punto * in);
 /**
  * @param a Un entero
  * @param b Un segundo entero
