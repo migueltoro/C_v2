@@ -26,13 +26,20 @@
 //   int tm_isdst;       /* daylight saving time             */
 //};
 
+time_t * date_parse(time_t * out, char * text, type * t);
+time_t * time_parse(time_t * out, char * text, type * t);
+char * time_tostring(const void * p, char * mem, type * t);
+char * date_tostring(const void * p, char * mem, type * t);
+bool time_equals(const void * p1, const void * p2, type * t);
+int time_naturalorder(const void * t1,const  void * t2, type * t);
+
 time_t time_now();
-time_t time_parse_date(char * text);
-time_t time_parse_hour(char * text);
-time_t time_parse_day_hour(char * text);
-time_t * time_parse_out(time_t * out, char * text, type * t);
-time_t time_create_date(int day, int month, int year);
-time_t time_create_date_hour(int day, int month, int year, int hour, int minute, int second);
+time_t time_parse_date_s(char * text);
+time_t hour_parse(char * text);
+time_t time_parse_s(char * text);
+
+time_t time_of_date(int day, int month, int year);
+time_t time_of(int day, int month, int year, int hour, int minute, int second);
 struct tm * time_calendar(time_t time);
 time_t time_add_days(time_t date, int days);
 time_t time_add_months(time_t date, int months);
@@ -45,13 +52,12 @@ double time_diff_seconds(time_t end, time_t start);
 double time_diff_minutes(time_t end, time_t start);
 double time_diff_hours(time_t end, time_t star);
 
-char * time_tostring(const void * p, char * mem, type * t);
-char * time_all_tostring(const void * p, char * mem);
-char * time_date_tostring(const void * p, char * mem);
-char * time_hours_tostring(const void * p, char * mem);
-bool time_equals(const void * p1, const void * p2, type * t);
-int time_naturalorder(const void * t1,const  void * t2, type * t);
+char * time_day_month_tostring(const void * p, char * mem);
+char * date_tostring_s(const void * p, char * mem);
+char * hours_tostring(const void * p, char * mem);
 
+
+extern type date_type;
 extern type time_type;
 
 void test_dates();

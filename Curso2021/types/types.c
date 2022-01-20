@@ -23,7 +23,7 @@ unsigned long int hash(const char *key) {
 
 unsigned long int hash_code(void * in, type * t){
 	char mem[256];
-	char * r = tostring(in, mem,t);
+	char * r = tostring(in,mem,t);
 	unsigned long int hash_index = hash(r);
 	return hash_index;
 }

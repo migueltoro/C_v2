@@ -82,5 +82,6 @@ set_multimap iterable_grouping_set(iterator * st, void * (*f_key)(void * out, vo
 
 
 void test_accumulators_1();
-void test_accumulators2();
+void test_accumulators_2();
+
 #endif /* ACCUMULATORS_H_ */

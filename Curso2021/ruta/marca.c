@@ -29,7 +29,7 @@ marca * marca_parse(marca * out, const char * in,type * t) {
 	sprintf(mens,"numero de campos %d",nc);
 	check_argument(nc==4,__FILE__,__LINE__,mens);
 	marca m;
-	m.time = time_parse_hour(campos[0]);
+	m.time = hour_parse(campos[0]);
 	coordenadas_3d coordenadas = coordenadas_3d_of(
 			double_parse_s(campos[1]),
 			double_parse_s(campos[2]),
@@ -42,7 +42,7 @@ marca * marca_parse(marca * out, const char * in,type * t) {
 char * marca_tostring(marca * m, char * mem, type * t){
 	char mr1[Tam_String];
 	char mr2[Tam_String];
-	sprintf(mem,"(%s,%s)",time_hours_tostring(&m->time,mr1),coordenadas_3d_tostring(&m->coordenadas,mr2));
+	sprintf(mem,"(%s,%s)",hours_tostring(&m->time,mr1),coordenadas_3d_tostring(&m->coordenadas,mr2));
 	return mem;
 }
 

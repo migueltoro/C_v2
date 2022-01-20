@@ -12,7 +12,7 @@ time_t time_now(){
 	return time(NULL);
 }
 
-time_t time_create_date(int day, int month, int year) {
+time_t time_of_date(int day, int month, int year) {
 	struct tm str;
 	time_t r;
 	str.tm_year = year - 1900;
@@ -26,7 +26,7 @@ time_t time_create_date(int day, int month, int year) {
 	return r;
 }
 
-time_t time_create_date_hour(int day, int month, int year, int hour, int minute, int second) {
+time_t time_of(int day, int month, int year, int hour, int minute, int second) {
 	struct tm str;
 	time_t r;
 	str.tm_year = year - 1900;
@@ -40,25 +40,37 @@ time_t time_create_date_hour(int day, int month, int year, int hour, int minute,
 	return r;
 }
 
-time_t time_parse_date(char * text){
+time_t * date_parse(time_t * out, char * text, type * typ){
 	int day;
 	int month;
 	int year;
 	sscanf(text,"%d-%d-%d",&day,&month,&year);
-	return time_create_date(day,month,year);
-}
-
-time_t * time_parse_out(time_t * out, char * text, type * typ){
-	int day;
-	int month;
-	int year;
-	sscanf(text,"%d-%d-%d",&day,&month,&year);
-	time_t t = time_create_date(day,month,year);
+	time_t t = time_of_date(day,month,year);
 	* out = t;
 	return out;
 }
 
-time_t time_parse_day_hour(char * text){
+time_t* time_parse(time_t *out, char *text, type *typ) {
+	int day;
+	int month;
+	int year;
+	int hour;
+	int minute;
+	int second;
+	sscanf(text, "%d-%d-%d %d:%d:%d", &day, &month, &year, &hour, &minute,&second);
+	*out = time_of(day, month, year, hour, minute, second);
+	return out;
+}
+
+time_t time_parse_date_s(char * text){
+	int day;
+	int month;
+	int year;
+	sscanf(text,"%d-%d-%d",&day,&month,&year);
+	return time_of_date(day,month,year);
+}
+
+time_t time_parse_s(char * text){
 	int day;
 	int month;
 	int year;
@@ -66,17 +78,17 @@ time_t time_parse_day_hour(char * text){
 	int minute;
 	int second;
 	sscanf(text,"%d-%d-%d %d:%d:%d",&day,&month,&year,&hour,&minute,&second);
-	return time_create_date_hour(day,month,year,hour,minute,second);
+	return time_of(day,month,year,hour,minute,second);
 }
 
-time_t time_parse_hour(char * text){
+time_t hour_parse(char * text){
 	int hour;
 	int minute;
 	int second;
 	time_t t = time_now();
 	struct tm * r = localtime(&t);
 	sscanf(text,"%d:%d:%d",&hour,&minute,&second);
-	return time_create_date_hour(r->tm_mday,r->tm_mon+1,r->tm_year+1900,hour,minute,second);
+	return time_of(r->tm_mday,r->tm_mon+1,r->tm_year+1900,hour,minute,second);
 }
 
 struct tm * time_calendar(time_t time){
@@ -142,7 +154,14 @@ char * time_tostring(const void * p, char * mem, type * typ){
 	return mem;
 }
 
-char * time_all_tostring(const void * p, char * mem){
+char * date_tostring(const void * p, char * mem, type * typ){
+	time_t * t = (time_t *) p;
+	struct tm * r = localtime(t);
+	sprintf(mem,"%02d-%02d-%4d",r->tm_mday,r->tm_mon+1,r->tm_year+1900);
+	return mem;
+}
+
+char * time_day_month_tostring(const void * p, char * mem){
 	time_t * t = (time_t *) p;
 	struct tm * r = localtime(t);
 	sprintf(mem,"%3s %2d de %3s de %4d == %02d:%02d:%02d",
@@ -156,14 +175,14 @@ char * time_all_tostring(const void * p, char * mem){
 	return mem;
 }
 
-char * time_date_tostring(const void * p, char * mem){
+char * date_tostring_s(const void * p, char * mem){
 	time_t * t = (time_t *) p;
 	struct tm * r = localtime(t);
 	sprintf(mem,"%02d-%02d-%4d",r->tm_mday,r->tm_mon+1,r->tm_year+1900);
 	return mem;
 }
 
-char * time_hours_tostring(const void * p, char * mem){
+char * hours_tostring(const void * p, char * mem){
 	time_t * t = (time_t *) p;
 	struct tm * r = localtime(t);
 	sprintf(mem,"%02d:%02d:%02d",r->tm_hour,r->tm_min,r->tm_sec);
@@ -179,7 +198,7 @@ bool time_equals(const void * p1, const void * p2, type * t){
 int time_naturalorder(const void * p1,const  void * p2, type * t){
 	time_t t1 = *(time_t *) p1;
 	time_t t2 = *(time_t *) p2;
-	int d = difftime(t2,t1);
+	double d = difftime(t2,t1);
 	int r;
 	if(d>0) r = -1;
 	else if(d<0) r= +1;
@@ -198,11 +217,11 @@ void * time_pointer_copy(void * out, void * in){
 }
 
 
-type time_type = {time_equals,time_tostring,time_naturalorder,time_parse_out,sizeof(time_t),0,NULL};
-
+type date_type = {time_equals,date_tostring,time_naturalorder,date_parse,sizeof(time_t),0,NULL};
+type time_type = {time_equals,time_tostring,time_naturalorder,time_parse,sizeof(time_t),0,NULL};
 
 bool pd(void * t){
-	time_t e = time_create_date(1,1,1992);
+	time_t e = time_of_date(1,1,1992);
 	return time_naturalorder(t,&e,NULL) >0;
 }
 
@@ -217,26 +236,26 @@ void test_dates() {
 	char mem[1000];
 	time_t now = time_now();
 	time_t t0 = time_minus_days(now,3);
-	time_t t1 = time_create_date(2, 3, 1990);
-	printf("%s\n", time_all_tostring(&now, mem));
-	printf("%s\n", time_all_tostring(&t0, mem));
-	printf("%s\n", time_all_tostring(&t1, mem));
+	time_t t1 = time_of_date(2, 3, 1990);
+	printf("%s\n", time_day_month_tostring(&now, mem));
+	printf("%s\n", time_day_month_tostring(&t0, mem));
+	printf("%s\n", time_day_month_tostring(&t1, mem));
 	time_t a[] = {
-			time_create_date(2, 3, 1991),
-			time_create_date(1, 5, 1995),
-			time_create_date(2, 9, 1989),
-			time_create_date(2, 7, 2001),
-			time_create_date(1, 1, 2019),
-			time_create_date(3, 4, 2010),
-			time_create_date(1, 5, 2013),
-			time_create_date(2, 4, 1992),
-			time_create_date(1, 5, 1996),
-			time_create_date(5, 10, 1991),
-			time_create_date(2, 4, 2002),
-			time_create_date(1, 1, 2016),
-			time_create_date(3, 1, 2011),
-			time_create_date(1, 3, 2012)};
-	list ls = list_of(a, 14, &time_type);
+			time_of_date(2, 3, 1991),
+			time_of_date(1, 5, 1995),
+			time_of_date(2, 9, 1989),
+			time_of_date(2, 7, 2001),
+			time_of_date(1, 1, 2019),
+			time_of_date(3, 4, 2010),
+			time_of_date(1, 5, 2013),
+			time_of_date(2, 4, 1992),
+			time_of_date(1, 5, 1996),
+			time_of_date(5, 10, 1991),
+			time_of_date(2, 4, 2002),
+			time_of_date(1, 1, 2016),
+			time_of_date(3, 1, 2011),
+			time_of_date(1, 3, 2012)};
+	list ls = list_of(a, 14, &date_type);
 	char * s = list_tostring(&ls, mem);
 	printf("1: %s\n", s);
 	list_quick_sort_naturalorder(&ls);
@@ -245,12 +264,12 @@ void test_dates() {
 	list f = list_filter(&ls, pd);
 	s = list_tostring(&f, mem);
 	printf("3: %s\n", s);
-	list f2 = list_map(&ls,&time_type,add);
+	list f2 = list_map(&ls,&date_type,add);
 	s = list_tostring(&f2, mem);
 	printf("4: %s\n", s);
 	char tt[] = "17-11-2018";
-	time_t t = time_parse_date(tt);
-	printf("%s\n",time_all_tostring(&t,mem));
-	time_t t2 = time_parse_day_hour("17-11-2018  8:15:21");
-	printf("%s\n",tostring(&t2,mem,&time_type));
+	time_t t = time_parse_date_s(tt);
+	printf("%s\n",time_day_month_tostring(&t,mem));
+	time_t t2 = time_parse_s("17-11-2018  8:15:21");
+	printf("%s\n",tostring(&t2,mem,&date_type));
 }
