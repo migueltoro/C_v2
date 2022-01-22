@@ -19,9 +19,9 @@
 
 
 #include "../types/types.h"
-#include "../types/memory_heap.h"
 #include "../types/iterables.h"
 #include "../types/hash_table.h"
+#include "../types/heap.h"
 #include "../types/list.h"
 #include "../types/math2.h"
 

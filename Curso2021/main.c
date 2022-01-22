@@ -18,7 +18,6 @@
 #include "types/hash_table.h"
 #include "types/iterables.h"
 #include "types/list.h"
-#include "types/memory_heap.h"
 #include "types/set.h"
 #include "ruta/marca.h"
 #include "ruta/ruta.h"
@@ -35,6 +34,7 @@
 #include "trees/ejemplos_tree_3.h"
 #include "trees/ejemplos_tree_4.h"
 #include "tupla/tupla.h"
+#include "types/heap.h"
 #include "types/tree.h"
 #include "types/tokenizer.h"
 #include "types/matrices.h"
@@ -44,7 +44,7 @@
 int main() {
 //char mem[256];
 //test_types();
-//test_types_1();
+test_types_1();
 //test_string();
 //test_math2();
 //test_ejemplos1();
@@ -53,9 +53,9 @@ int main() {
 //test_token();
 //test_tokenizer();
 //test_tupla();
-// test_list_6();
+//test_list_6();
 //test_hash_table();
-test_dates();
+//test_dates_1();
 //test_set_3();
 //test_multiset();
 //test_list_multimap();

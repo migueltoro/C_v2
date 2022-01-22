@@ -13,19 +13,19 @@
 #include <string.h>
 #include <stdlib.h>
 
-memory_heap hp;
+heap hp;
 
 void * to_data_time(time_t * t){
-	return memory_heap_copy_and_mem(&hp,t,sizeof(time_t));
+	return heap_copy_and_mem(&hp,t,sizeof(time_t));
 }
 
 void test_ejercicio2() {
-	hp = memory_heap_create();
+	hp = heap_empty();
 	time_t a = time_of_date(28, 8, 2017);
 	time_t b = time_of_date(2, 11, 2018);
 	to_file_while("fechas.txt", a, b);
 	to_file_rec("fechas.txt", a, b);
-	memory_heap_free(&hp);
+	heap_free(&hp);
 }
 
 list lee_iterativo(char * file, time_t a, time_t b) {

@@ -61,7 +61,7 @@ void test_ejemplos_trees_4() {
 		bool r = existe_camino(t2,&ls);
 		printf("Tree = %s, Lista %s, Cumple = %s\n",binary_tree_tostring(t2,mem),
 				list_tostring(&ls,mem1), MSG_BOOL(r));
-        memory_heap_clear(&memory_heap_binary_tree);
+        heap_clear(&memory_heap_binary_tree);
 	}
 	iterable_free(&it);
 }

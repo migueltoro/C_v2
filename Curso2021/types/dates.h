@@ -11,8 +11,8 @@
 #include <time.h>
 
 #include "../types/list.h"
-#include "../types/memory_heap.h"
 #include "../types/types.h"
+#include "heap.h"
 
 //struct tm {
 //   int tm_sec;         /* seconds,  range 0 to 59          */
@@ -38,8 +38,10 @@ time_t time_parse_date_s(char * text);
 time_t hour_parse(char * text);
 time_t time_parse_s(char * text);
 
+// day 1..31, month 1..12
 time_t time_of_date(int day, int month, int year);
 time_t time_of(int day, int month, int year, int hour, int minute, int second);
+
 struct tm * time_calendar(time_t time);
 time_t time_add_days(time_t date, int days);
 time_t time_add_months(time_t date, int months);
@@ -48,9 +50,12 @@ time_t time_minus_days(time_t date, int days);
 time_t time_minus_months(time_t date, int months);
 time_t time_minus_years(time_t date, int years);
 
-double time_diff_seconds(time_t end, time_t start);
-double time_diff_minutes(time_t end, time_t start);
-double time_diff_hours(time_t end, time_t star);
+int time_diff_seconds(time_t start,time_t end);
+int time_diff_minutes(time_t start,time_t end);
+int time_diff_hours(time_t start,time_t end);
+int time_diff_years(time_t start,time_t end);
+int time_diff_months(time_t start,time_t end);
+int time_diff_days(time_t start,time_t end);
 
 char * time_day_month_tostring(const void * p, char * mem);
 char * date_tostring_s(const void * p, char * mem);
@@ -61,5 +66,6 @@ extern type date_type;
 extern type time_type;
 
 void test_dates();
+void test_dates_1();
 
 #endif /* DATES_H_ */

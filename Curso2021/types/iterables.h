@@ -20,10 +20,10 @@
 
 
 #include "../types/math2.h"
-#include "../types/memory_heap.h"
 #include "../types/types.h"
 #include "../types/preconditions.h"
 #include "../types/math2.h"
+#include "heap.h"
 
 
 typedef struct st {
@@ -54,7 +54,7 @@ iterator iterable_range_long(long a, long b, long c);
 iterator iterable_range_double(double a, double b, double c);
 iterator iterable_iterate(type * type,void * initial_value, bool (*hash_next)(void * element), void * (*next)(void * out, void * in));
 iterator file_iterable_string_fix(char * file);
-iterator file_iterable_string_fix_tam(char * file, int num_chars_per_line);
+iterator file_iterable_string_fix_tam(char * file, int num_chars_per_line_max);
 iterator text_to_iterable_string_fix(char * text, const char * delimiters);
 iterator * text_to_iterable_string_fix_function(iterator * out, char * text);
 

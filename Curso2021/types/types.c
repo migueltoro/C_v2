@@ -478,18 +478,18 @@ pair * pair_of_value(pair * p, void * value){
 }
 
 char pair_delimiters[20] = " ,()";
-memory_heap pair_memory_heap = {0,0,NULL};
+heap pair_heap = {0,0,NULL};
 
 
 pair * pair_parse(pair * out, char * text, type * t){
 	char * tokens[20];
 	string_fix tt;
-	string_fix_copy(tt,text);
+	string_fix_copy(tt,text,&string_fix_type);
 	int n = split_text(tt,pair_delimiters, tokens);
 	check_argument(n==2,__FILE__,__LINE__,"el numero de tokens no es 2");
-	if(memory_heap_isnull(&pair_memory_heap)) pair_memory_heap = memory_heap_create();
-	out->key = memory_heap_get_memory(&pair_memory_heap,t->types[0]->size);
-	out->value = memory_heap_get_memory(&pair_memory_heap,t->types[1]->size);
+	if(heap_isnull(&pair_heap)) pair_heap = heap_empty();
+	out->key = heap_get_memory(&pair_heap,t->types[0]->size);
+	out->value = heap_get_memory(&pair_heap,t->types[1]->size);
 	parse(out->key,tokens[0],t->types[0]);
 	parse(out->value,tokens[1],t->types[1]);
 	return out;
@@ -534,10 +534,10 @@ pair_enumerate pair_enumerate_of(int counter, void * value){
 pair_enumerate * pair_enumerate_parse(pair_enumerate * out, char * text, type * t) {
 	char * tokens[20];
 	string_fix tt;
-	string_fix_copy(tt, text);
+	string_fix_copy(tt, text,&string_fix_type);
 	int n = split_text(tt, pair_delimiters, tokens);
 	check_argument(n == 2, __FILE__, __LINE__, "el numero de tokens no es 2");
-	out->value = memory_heap_get_memory(&pair_memory_heap,t->types[0]->size);
+	out->value = heap_get_memory(&pair_heap,t->types[0]->size);
 	sscanf(tokens[0],"%d",&out->counter);
 	parse(out->value, tokens[1], t->types[0]);
 	return out;
@@ -594,11 +594,11 @@ int string_var_size(string_var * in){
 
 string_var string_var_of_fix(const char * initial){
 	string_var bf = string_var_empty();
-	string_var_add_string(&bf,initial);
+	string_var_add_string_fix(&bf,initial);
 	return bf;
 }
 
-void * string_var_add_string(string_var * out, const char * s) {
+void * string_var_add_string_fix(string_var * out, const char * s) {
 	check_not_null(s,__FILE__,__LINE__,"Cadena null");
 	int n = strlen(s);
 	if(out->size+n>out->tam){
@@ -614,7 +614,7 @@ void * string_var_add_string(string_var * out, const char * s) {
 }
 
 void * string_var_add_string_var(string_var * out, const string_var * in) {
-	return string_var_add_string(out,in->data);
+	return string_var_add_string_fix(out,in->data);
 }
 
 void string_var_clear(string_var * in){
@@ -632,7 +632,7 @@ void string_var_free(string_var * in){
 }
 
 string_var * string_var_parse(string_var * out, char * text, type * type){
-	string_var_add_string(out,text);
+	string_var_add_string_fix(out,text);
 	return out;
 }
 
@@ -653,7 +653,7 @@ int string_var_naturalorder(const string_var * e1, const string_var * e2, type *
 type string_var_type = {string_var_equals,string_var_tostring,string_var_naturalorder,string_var_parse,sizeof(string_var),0,NULL};
 
 
-// pchar type
+// string_fix_type
 // Las variables de este tipo se declaran char v[Tam_String]
 // y se referencian como char *
 
@@ -664,12 +664,6 @@ char * remove_eol(char * in){
 	}
 	return in;
 }
-
-//char *  array_char_remove_eol(char * out, char * in){
-//	strcpy(out,in);
-//	remove_eol_s(out);
-//	return out;
-//}
 
 
 int split_text(const char * in, const char * delimiters, char ** tokens){
@@ -730,16 +724,20 @@ char* strtok_r2(char *str, const char *delim, char **save_pointer) {
 }
 
 
-char * pchar_concat(char * out, const char * in){
+char * string_fix_concat(char * out, const char * in, type * t){
+	int n1 = strlen(in);
+	int n2 = strlen(out);
+	check_argument(n1+n2<t->size,__FILE__,__LINE__,"La cadena no cabe en la memoria reservada");
 	strcat(out,in);
 	return out;
 }
 
-char * string_fix_copy(char * out, const char * in){
+char * string_fix_copy(char * out, const char * in, type * t){
+	int n1 = strlen(in);
+	check_argument(n1<t->size,__FILE__,__LINE__,"La cadena no cabe en la memoria reservada");
 	strcpy(out,in);
 	return out;
 }
-
 
 char * string_fix_parse(char * out, char * text, type * type){
 	strcpy(out,text);
@@ -849,7 +847,7 @@ void * swap(void * out, void * in, int size){
 	check_not_null(in,__FILE__,__LINE__,"puntero null");
 	check_not_null(out,__FILE__,__LINE__,"puntero null");
 	check_argument(size>0,__FILE__,__LINE__,"size debe ser mayor que cero");
-	void * tmp = malloc(size);
+	char tmp[size];
 	memcpy(tmp,in,size);
 	memcpy(in,out,size);
 	memcpy(out,tmp,size);
@@ -932,7 +930,7 @@ void test_types() {
 		printf("7: %s\n", tt[i]);
 	}
 	string_fix e;
-	string_fix_copy(e,"Juego de tronos");
+	string_fix_copy(e,"Juego de tronos",&string_fix_type);
 	printf("7: %s\n", tostring(e,mem,&string_fix_type));
 	long long g;
 	parse(&g,"456",&long_long_type);
@@ -946,7 +944,7 @@ void test_types() {
 void test_types_1() {
 	char mem[256];
 	char mem2[256];
-	char text[256] = "(0,1)";
+	string_fix text = "(0,1)";
 	double a;
 	long b;
 	pair p = { &a, &b };
@@ -954,7 +952,7 @@ void test_types_1() {
 	int n = split_text(text, " ,()", tokens);
 	printf("1: %d,%s,%s\n", n, tokens[0], tokens[1]);
 	type t = generic_type_2(&pair_type, &double_type, &long_type);
-	parse(&p, "(34,56)", &t);
+	parse(&p, "(34.56,56)", &t);
 	printf("2: %s\n", tostring(&p, mem, &t));
 	printf("3: %d,%d\n", types(&t, 0)->size, types(&t, 1)->size);
 	type t2 = generic_type_1(&pair_enumerate_type, &double_type);

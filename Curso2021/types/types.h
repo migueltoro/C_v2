@@ -20,7 +20,7 @@
 #include <ctype.h>
 
 #include "../types/preconditions.h"
-#include "../types/memory_heap.h"
+#include "heap.h"
 
 #ifndef MAX
 #define MAX(a,b) ((a)>(b)?(a):(b))
@@ -240,10 +240,10 @@ typedef struct {
 
 pair pair_of(void * key, void * value);
 
-extern memory_heap pair_memory_heap;
+extern heap pair_heap;
 extern char pair_delimiters[20];
+
 pair * pair_parse(pair * out, char * text, type * t);
-pair * pair_mem_parse(pair * out, char * text, type * t);
 char * pair_tostring(const pair * e, char * mem, type * t);
 bool pair_equals(const pair * e1, const pair * e2, type * t);
 int pair_naturalorder(const pair * e1, const pair * e2, type * t);
@@ -267,7 +267,7 @@ typedef struct {
 	int tam;
 	int size;
 	char * data;
-} string_var;
+}string_var;
 
 string_var * string_var_parse(string_var * out, char * text, type * type);
 char * string_var_tostring(const string_var * e, char * mem, type * type);
@@ -284,7 +284,7 @@ string_var string_var_of_fix(const char * initial);
 int string_var_size(string_var * in);
 char * string_var_data(string_var * in);
 
-void * string_var_add_string(string_var * out, const char * in_char);
+void * string_var_add_string_fix(string_var * out, const char * in_char);
 void * string_var_add_string_var(string_var * out, const string_var * in);
 
 void string_var_clear(string_var * in);
@@ -307,9 +307,9 @@ char * string_fix_substring(char * out, char * in, int from, int to);
 
 char* strtok_r2(char *str, const char *delim, char **nextp);
 
-char * string_fix_concat(char * out, const char * in);
-char * string_fix_copy(char * out, const char * in);
-char *  string_fix_remove_eol(char * out, char * in);
+char * string_fix_concat(char * out, const char * in, type * t);
+char * string_fix_copy(char * out, const char * in, type * t);
+char * string_fix_remove_eol(char * out, char * in);
 
 char * string_fix_parse(char * out, char * text, type * type);
 char * string_fix_tostring(const char * e, char * mem, type * type);

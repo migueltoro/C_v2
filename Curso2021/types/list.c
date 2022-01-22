@@ -28,17 +28,17 @@ void list_grow(list * list) {
 
 list list_empty(type * type_element){
 //	type * t = type_copy(type_element);
-	list r = {false,type_element,0,tam_default,malloc(tam_default*sizeof(void *)),memory_heap_create()};
+	list r = {false,type_element,0,tam_default,malloc(tam_default*sizeof(void *)),heap_empty()};
 	return r;
 }
 
 list list_empty_tam(type * type_element,int tam){
-	list r = {false,type_element,0,tam,malloc(tam*sizeof(void *)),memory_heap_create()};
+	list r = {false,type_element,0,tam,malloc(tam*sizeof(void *)),heap_empty()};
 	return r;
 }
 
 list list_of(void * data, int size, type * type_element){
-	list r = {false,type_element,0,size,malloc(size*sizeof(void *)),memory_heap_create()};
+	list r = {false,type_element,0,size,malloc(size*sizeof(void *)),heap_empty()};
 	char * d = (char *) data;
 	for(int i=0; i<size;i++){
 		r.elements[i] = d+i*r.type_element->size;
@@ -208,7 +208,7 @@ void list_add_pointer(list * list, void * element) {
 
 void list_add(list * ls, void * element){
 	check_argument(!ls->is_view,__FILE__,__LINE__,"no se puede modificar una vista");
-	void * e = memory_heap_copy_and_mem(&ls->hp,element,ls->type_element->size);
+	void * e = heap_copy_and_mem(&ls->hp,element,ls->type_element->size);
 	list_add_pointer(ls,e);
 }
 
@@ -235,7 +235,7 @@ void list_set_pointer(list * list, int index, void * e) {
 void * list_set(list * list, const int index, const void * e) {
 	check_argument(!list->is_view,__FILE__,__LINE__,"no se puede modificar una vista");
 	void * res = list->elements[index];
-	void * cp = memory_heap_copy_and_mem(&list->hp,e,list->type_element->size);
+	void * cp = heap_copy_and_mem(&list->hp,e,list->type_element->size);
 	list_set_pointer(list,index, cp);
 	return res;
 }
@@ -243,7 +243,7 @@ void * list_set(list * list, const int index, const void * e) {
 
 void list_add_left(list * ls, void * element){
 	check_argument(!ls->is_view,__FILE__,__LINE__,"no se puede modificar una vista");
-	void * e = memory_heap_copy_and_mem(&ls->hp,element,ls->type_element->size);
+	void * e = heap_copy_and_mem(&ls->hp,element,ls->type_element->size);
 	list_add_pointer(ls,e);
 	void * last_element = list_get(ls,list_size(ls)-1);
 	for(int i = list_size(ls)-1; i>0;i--){
@@ -387,7 +387,7 @@ void list_free(list * list) {
 	if (list != NULL) {
 		type_free(list->type_element);
 		free(list->elements);
-		memory_heap_free(&list->hp);
+		heap_free(&list->hp);
 	}
 }
 
@@ -827,24 +827,24 @@ void test_list_6() {
 	list ls = list_empty(&string_fix_type);
 	list_parse(&ls, texto1);
 	printf("1: %s\n", list_tostring(&ls, mem));
-	string_fix_copy(texto1,"{Estas; son; pruebas; de; nuevas; funciones; para; el; tipo; list}");
+	string_fix_copy(texto1,"{Estas; son; pruebas; de; nuevas; funciones; para; el; tipo; list}",&string_fix_type);
 	ls = list_empty(&string_fix_type);
-	string_fix_copy(list_delimiters, "{ ;}");
+	string_fix_copy(list_delimiters, "{ ;}",&string_fix_type);
 	list_parse(&ls, texto1);
 	printf("2: %s\n", list_tostring(&ls, mem));
-	string_fix_copy(texto1,"{(3.,4.); (5.6,-7.8); (5.6,-7.8); (5.6,-7.8); (5.6,-7.8); (5.6,-7.85); (5.6,-17.8); (5.,-7.8); (5.6,7.9); (-5.6,-7.8)}");
+	string_fix_copy(texto1,"{(3.,4.); (5.6,-7.8); (5.6,-7.8); (5.6,-7.8); (5.6,-7.8); (5.6,-7.85); (5.6,-17.8); (5.,-7.8); (5.6,7.9); (-5.6,-7.8)}",&string_fix_type);
 	ls = list_empty(&string_fix_type);
-	string_fix_copy(list_delimiters, "{ ;}");
+	string_fix_copy(list_delimiters, "{ ;}",&string_fix_type);
 	list_parse(&ls, texto1);
 	printf("3: %s\n", list_tostring(&ls, mem));
-	string_fix_copy(texto1,"{[(23.,5.)_(4.,7.)];[(5.6,-7.8)_(5.6,-7.8)]}");
-	string_fix_copy(list_delimiters, "{ ;}");
-	string_fix_copy(pair_delimiters, "[ _]");
+	string_fix_copy(texto1,"{[(23.,5.)_(4.,7.)];[(5.6,-7.8)_(5.6,-7.8)]}",&string_fix_type);
+	string_fix_copy(list_delimiters, "{ ;}",&string_fix_type);
+	string_fix_copy(pair_delimiters, "[ _]",&string_fix_type);
 	type t = generic_type_2(&pair_type,&punto_type,&punto_type);
 	ls = list_empty(type_copy(&t));
 	list_parse(&ls, texto1);
 	printf("4: %s\n",list_tostring(&ls, mem));
 	list_quick_sort_naturalorder(&ls);
 	printf("5: %s\n", list_tostring(&ls, mem));
-	memory_heap_free(&pair_memory_heap);
+	heap_free(&pair_heap);
 	}

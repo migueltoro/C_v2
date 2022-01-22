@@ -40,7 +40,7 @@ void test_ejemplos_trees_3() {
 		binary_tree * t2 = binary_tree_map_m(t, &int_type, int_parse);
 		bool r = suma_igual(t2);
 		printf("Tree = %s, Cumple = %s\n",binary_tree_tostring(t2,mem),MSG_BOOL(r));
-		memory_heap_clear(&memory_heap_binary_tree);
+		heap_clear(&memory_heap_binary_tree);
 	}
 	iterable_free(&it);
 }

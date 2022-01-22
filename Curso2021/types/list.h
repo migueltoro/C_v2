@@ -20,8 +20,8 @@
 
 #include "../types/iterables.h"
 #include "../types/math2.h"
-#include "../types/memory_heap.h"
 #include "../types/types.h"
+#include "heap.h"
 
 typedef struct {
 	bool is_view;
@@ -29,7 +29,7 @@ typedef struct {
 	int size;
 	int tam;
 	void ** elements;
-	memory_heap hp;
+	heap hp;
 } list;
 
 void swap_in_list(list * ls, int a, int b);

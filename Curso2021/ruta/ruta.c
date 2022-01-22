@@ -70,8 +70,8 @@ double ruta_velocidad_intervalo(ruta * r, int i) {
 }
 
 coordenadas_2d * marca_to_c2(coordenadas_2d * out, marca * in){
-	out->latitude = in->coordenadas.latitude;
-	out->longitude = in->coordenadas.longitude;
+	out->latitud = in->coordenadas.latitud;
+	out->longitud = in->coordenadas.longitud;
 	return out;
 }
 

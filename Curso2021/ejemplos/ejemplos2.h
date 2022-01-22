@@ -15,9 +15,8 @@
 #include <stdlib.h>
 
 #include "../types/dates.h"
+#include "../types/heap.h"
 #include "../types/types.h"
-#include "../types/memory_heap.h"
-
 #include "../types/iterables.h"
 #include "../types/list.h"
 

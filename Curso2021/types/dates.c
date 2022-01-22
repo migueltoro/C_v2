@@ -21,7 +21,7 @@ time_t time_of_date(int day, int month, int year) {
 	str.tm_hour = 0;
 	str.tm_min = 0;
 	str.tm_sec = 0;
-	str.tm_isdst = 0;
+	str.tm_isdst = -1;
 	r = mktime(&str);
 	return r;
 }
@@ -35,7 +35,7 @@ time_t time_of(int day, int month, int year, int hour, int minute, int second) {
 	str.tm_hour = hour;
 	str.tm_min = minute;
 	str.tm_sec = second;
-	str.tm_isdst = 0;
+	str.tm_isdst = -1;
 	r = mktime(&str);
 	return r;
 }
@@ -131,16 +131,38 @@ time_t time_minus_years(time_t date, int years) {
 	return mktime(r);
 }
 
-double time_diff_seconds(time_t end, time_t start){
-	return difftime(end,start);
+int time_diff_seconds(time_t start,time_t end){
+	return (int) difftime(end,start);
 }
 
-double time_diff_minutes(time_t end, time_t start){
-	return difftime(end,start)/60;
+int time_diff_minutes(time_t start,time_t end){
+	return (int) difftime(end,start)/60;
 }
 
-double time_diff_hours(time_t end, time_t start){
-	return difftime(end,start)/3600;
+int time_diff_hours(time_t start,time_t end){
+	return (int) difftime(end,start)/3600;
+}
+
+int time_diff_years(time_t start,time_t end){
+	struct tm * r_end = localtime(&end);
+	int y_end = r_end->tm_year;
+	struct tm * r_start = localtime(&start);
+	int y_start = r_start->tm_year;
+	return y_end - y_start;
+}
+
+int time_diff_months(time_t start,time_t end){
+	struct tm * r_end = localtime(&end);
+	int y_end = r_end->tm_year;
+	int m_end = r_end->tm_mon;
+	struct tm * r_start = localtime(&start);
+	int y_start = r_start->tm_year;
+	int m_start = r_start->tm_mon;
+	return (y_end-y_start)*12+(m_end-m_start);
+}
+
+int time_diff_days(time_t start,time_t end){
+	return (int) difftime(end,start)/(3600*24);
 }
 
 char * dia_semana[] = {"Dom","Lun","Mar","Mie","Jue","Vie","Sab"};
@@ -271,5 +293,26 @@ void test_dates() {
 	time_t t = time_parse_date_s(tt);
 	printf("%s\n",time_day_month_tostring(&t,mem));
 	time_t t2 = time_parse_s("17-11-2018  8:15:21");
-	printf("%s\n",tostring(&t2,mem,&date_type));
+	printf("%s\n",tostring(&t2,mem,&time_type));
+	printf("%s\n",tostring(&now,mem,&time_type));
+	printf("%d\n",time_diff_hours(now,t2));
+}
+
+void test_dates_1() {
+	char mem[1000];
+	time_t now = time_now();
+	time_t t0 = time_minus_days(now, 3);
+	time_t t1 = time_of_date(2, 3, 1990);
+
+	printf("%s\n", time_day_month_tostring(&now, mem));
+	printf("%s\n", time_day_month_tostring(&t0, mem));
+	printf("%s\n", time_day_month_tostring(&t1, mem));
+	int d = time_diff_months(t1,t0);
+	printf("%d\n",d);
+	time_t t2 = time_of(1,2,2022,1,1,1);
+	time_t t3 = time_of(1,3,2022,1,1,1);
+	printf("%s\n", time_day_month_tostring(&t2, mem));
+	printf("%s\n", time_day_month_tostring(&t3, mem));
+	d = time_diff_days(t2,t3);
+	printf("%d\n",d);
 }

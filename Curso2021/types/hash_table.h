@@ -28,7 +28,7 @@ typedef struct {
 	int capacity_data;
 	int first_free_data;
 	float load_factor_limit;
-	memory_heap hp;
+	heap hp;
 } hash_table;
 
 hash_table hash_table_empty(type * key_type, type * value_type);

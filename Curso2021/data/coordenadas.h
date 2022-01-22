@@ -14,11 +14,11 @@
 
 
 typedef struct {
-	double latitude;
-	double longitude;
+	double latitud;
+	double longitud;
 }coordenadas_2d;
 
-coordenadas_2d coordenadas_2d_of(double latitude, double longitude);
+coordenadas_2d coordenadas_2d_of(double latitud, double longitud);
 coordenadas_2d coordenadas_2d_to_radians(coordenadas_2d c);
 double coordenadas_2d_distance(coordenadas_2d c1, coordenadas_2d c2);
 bool coordenadas_2d_cercanas(coordenadas_2d c1, coordenadas_2d c2, double d);
@@ -27,9 +27,9 @@ coordenadas_2d  coordenadas_2d_center(list lc);
 
 
 typedef struct {
-	double latitude;
-	double longitude;
-	double altitude;
+	double latitud;
+	double longitud;
+	double altitud;
 }coordenadas_3d;
 
 coordenadas_3d coordenadas_3d_of(double latitude, double longitude, double altitude);

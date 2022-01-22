@@ -65,7 +65,7 @@ void test_ejemplos_trees_2() {
 		list_multimap r = arboles(t2);
 		printf("Tree = %s, Arboles = %s\n",tree_tostring(t2,mem),list_multimap_tostring(&r,mem2));
 		list_multimap_free(&r);
-		memory_heap_clear(&memory_heap_tree);
+		heap_clear(&memory_heap_tree);
 	}
 	iterable_free(&it);
 }

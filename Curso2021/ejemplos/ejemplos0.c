@@ -7,7 +7,7 @@
 
 #include "ejemplos0.h"
 
-memory_heap hp;
+heap hp;
 
 double n_problema1(list ls){
 	double sum = 0.;

@@ -50,16 +50,11 @@ iterator iterable_create(
 		void (*free_dependencies)(void * in),
 		void * dependencies,
 		int size_dependencies){
-//	if(memory_heap_isnull(&memory_heap_iterable)) memory_heap_iterable = memory_heap_create();
-	type * t1 = t;
-//	void * state = memory_heap_get_memory(&memory_heap_iterable,t1->size);
-	void * state = malloc(t1->size);
-//	void * auxiliary_state = memory_heap_get_memory(&memory_heap_iterable,t1->size);
-	void * auxiliary_state = malloc(t1->size);
-//	void * dp = copy_and_mem(dependencies,size_dependencies);
+	void * state = malloc(t->size);
+	void * auxiliary_state = malloc(t->size);
 	void * dp = malloc(size_dependencies);
 	copy(dp,dependencies,size_dependencies);
-	iterator r = {t1,NULL,t1->size,size_dependencies,state,auxiliary_state,has_next,next,see_next,free_dependencies,dp};
+	iterator r = {t,NULL,t->size,size_dependencies,state,auxiliary_state,has_next,next,see_next,free_dependencies,dp};
 	return r;
 }
 
@@ -479,15 +474,15 @@ string_var iterable_tostring_sep_big(iterator * st,char * sep,char * prefix,char
 	string_fix m;
 	bool first = true;
 	string_var s = string_var_empty();
-	string_var_add_string(&s,prefix);
+	string_var_add_string_fix(&s,prefix);
 	while(iterable_has_next(st)){
 		void *  next = iterable_next(st);
 		char * ns = tostring(next,m,st->iterator_type);
 		if(first) first = false;
-		else string_var_add_string(&s,sep);
-		string_var_add_string(&s,ns);
+		else string_var_add_string_fix(&s,sep);
+		string_var_add_string_fix(&s,ns);
 	}
-	string_var_add_string(&s,suffix);
+	string_var_add_string_fix(&s,suffix);
 	return s;
 }
 
@@ -592,7 +587,7 @@ void test_iterables_2() {
 
 void test_iterables_3(){
 	type t = string_fix_type_of_tam(10);
-	string_fix_copy(text_to_iterable_delimiters," ,");
+	string_fix_copy(text_to_iterable_delimiters," ,",&string_fix_type);
 	iterator fit = file_iterable_string_fix("ficheros/datos_entrada.txt");
 	iterator fit3 = iterable_filter(&fit,string_fix_not_all_space);
 	iterator fmap = iterable_flatmap(&fit3,&t,text_to_iterable_string_fix_function);

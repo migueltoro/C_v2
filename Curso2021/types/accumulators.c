@@ -466,11 +466,11 @@ void test_accumulators_1(){
 	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
 	iterator p3 = text_to_iterable_string_fix(text," ;.");
 	string_var emp = string_var_empty();
-	void * sr = accumulate_left(&p3,&emp,string_var_add_string);
+	void * sr = accumulate_left(&p3,&emp,string_var_add_string_fix);
 	printf("10: %s\n",string_var_tostring(sr,mem,NULL));
 	p3 = text_to_iterable_string_fix(text," ;.");
 	emp = string_var_empty();
-	sr = accumulate_right(&p3,&emp,30,string_var_add_string);
+	sr = accumulate_right(&p3,&emp,30,string_var_add_string_fix);
 	printf("11: %s\n",string_var_tostring(sr,mem,NULL));
 	iterator rr = iterable_range_long(0, 500, 2);
 	iterator rr1 = iterable_map(&rr, &double_type, _random);
