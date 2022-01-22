@@ -138,7 +138,6 @@ iterator iterable_flatmap(iterator * depending_iterable, type * type,
 	int size_dp = sizeof(dependencies_flatmap);
 	do {
 		if(iterable_has_next(depending_iterable)){
-//			iterable_free(&dp.actual_iterable);
 			map_function(&dp.actual_iterable, iterable_next(depending_iterable));
 		} else break;
 	} while (!iterable_has_next(&dp.actual_iterable) && iterable_has_next(depending_iterable));
@@ -355,7 +354,6 @@ typedef struct{
 	char * token;
 	char * delimiters;
 	char * saveptr[1];
-//	bool first;
 }dependencies_split;
 
 bool iterable_split_has_next(iterator * current_iterable) {
@@ -404,7 +402,7 @@ iterator * text_to_iterable_string_fix_function(iterator * out, char * text) {
 typedef struct{
 	FILE * file;
 	bool has_next;
-	int num_chars_per_line;
+	int num_chars_per_line_max;
 }dependencies_file;
 
 void free_dependencies_file(dependencies_file * df){
@@ -423,8 +421,7 @@ void * iterable_file_see_next(iterator * current_iterable){
 void * iterable_file_next(iterator * current_iterable){
 	dependencies_file * dp = (dependencies_file *) current_iterable->dependencies;
 	iterable_copy_state_to_auxiliary(current_iterable);
-	char * r = fgets(current_iterable->state, dp->num_chars_per_line, dp->file);
-//	remove_eol_s(r);
+	char * r = fgets(current_iterable->state, dp->num_chars_per_line_max, dp->file);
 	dp->has_next = r!=NULL;
 	remove_eol(current_iterable->auxiliary_state);
 	return current_iterable->auxiliary_state;
@@ -445,7 +442,6 @@ iterator file_iterable_string_fix_tam(char * file, int num_chars_per_line) {
 	iterator s_file = iterable_create(type_copy(&t),iterable_file_has_next,iterable_file_next,
 			iterable_file_see_next,free_dependencies_file,&df,size_df);
 	char * r = fgets(s_file.state,num_chars_per_line,((dependencies_file *)s_file.dependencies)->file);
-//	remove_eol_s(r);
 	((dependencies_file *)s_file.dependencies)->has_next = r!=NULL;
 	return s_file;
 }
