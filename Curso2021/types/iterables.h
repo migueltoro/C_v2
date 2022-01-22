@@ -27,7 +27,7 @@
 
 
 typedef struct st {
-	type * iterator_type;
+	type * type;
 	struct st * depending_iterable;
 	int size_state;
 	int size_dependencies;

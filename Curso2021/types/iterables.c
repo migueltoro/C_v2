@@ -186,7 +186,7 @@ void * iterable_filter_next(iterator * current_iterable) {
 iterator iterable_filter(iterator * depending_iterable, bool (*filter_predicate)(void *)) {
 	dependencies_filter df = {filter_predicate,true};
 	int size_df = sizeof(dependencies_filter);
-	iterator new_st = iterable_create(depending_iterable->iterator_type,iterable_filter_has_next,iterable_filter_next,iterable_filter_see_next,NULL,&df,size_df);
+	iterator new_st = iterable_create(depending_iterable->type,iterable_filter_has_next,iterable_filter_next,iterable_filter_see_next,NULL,&df,size_df);
 	new_st.depending_iterable = iterable_copy(depending_iterable);
 	next_depending_state(&new_st);
 	return new_st;
@@ -213,9 +213,9 @@ pair * _f_consecutive_pair(pair * out, void * in) {
 
 iterator iterable_consecutive_pairs(iterator * st){
 	iterator r;
-	check_argument(st->iterator_type->size<=Tam_String,__FILE__,__LINE__,"No hay suficiente memoria");
+	check_argument(st->type->size<=Tam_String,__FILE__,__LINE__,"No hay suficiente memoria");
 	pair p;
-	pairs_type_size = st->iterator_type->size;
+	pairs_type_size = st->type->size;
 	if(iterable_has_next(st)) {
 		void * e = iterable_next(st);
 		_f_consecutive_pair(&p,e);
@@ -223,7 +223,7 @@ iterator iterable_consecutive_pairs(iterator * st){
 		r = iterable_empty();
 	}
 	if(iterable_has_next(st)) {
-		type t = generic_type_2(&pair_type,st->iterator_type,st->iterator_type);
+		type t = generic_type_2(&pair_type,st->type,st->type);
 		r = iterable_map(st,copy_and_mem(&t,sizeof(type)),_f_consecutive_pair);
 	} else {
 		r = iterable_empty();
@@ -246,9 +246,9 @@ pair_enumerate * _f_pair_enumerate(pair_enumerate * out, void * in) {
 
 iterator iterable_enumerate(iterator * st){
 	pair_enumerate p;
-	pairs_type_size = st->iterator_type->size;
+	pairs_type_size = st->type->size;
 	_f_pair_enumerate(&p,NULL);
-	type pt = generic_type_1(&pair_enumerate_type,st->iterator_type);
+	type pt = generic_type_1(&pair_enumerate_type,st->type);
 	iterator r = iterable_map(st,copy_and_mem(&pt,sizeof(type)),_f_pair_enumerate);
 	r.depending_iterable = iterable_copy(st);
 	return r;
@@ -402,29 +402,29 @@ iterator * text_to_iterable_string_fix_function(iterator * out, char * text) {
 typedef struct{
 	FILE * file;
 	bool has_next;
-	int num_chars_per_line_max;
-}dependencies_file;
+}d_file;
 
-void free_dependencies_file(dependencies_file * df){
+void free_dependencies_file(d_file * df){
 	fclose(df->file);
 }
 
-bool iterable_file_has_next(iterator * current_iterable) {
-	dependencies_file * dp = (dependencies_file *) current_iterable->dependencies;
+bool iterable_file_has_next(iterator * c_iterable) {
+	d_file * dp = (d_file *) c_iterable->dependencies;
 	return dp->has_next;
 }
 
-void * iterable_file_see_next(iterator * current_iterable){
-    return current_iterable->state;
+void * iterable_file_see_next(iterator * c_iterable){
+    return c_iterable->state;
 }
 
-void * iterable_file_next(iterator * current_iterable){
-	dependencies_file * dp = (dependencies_file *) current_iterable->dependencies;
-	iterable_copy_state_to_auxiliary(current_iterable);
-	char * r = fgets(current_iterable->state, dp->num_chars_per_line_max, dp->file);
+void * iterable_file_next(iterator * c_iterable){
+	d_file * dp = (d_file *) c_iterable->dependencies;
+	type * t = c_iterable->type;
+	iterable_copy_state_to_auxiliary(c_iterable);
+	char * r = fgets(c_iterable->state, t->size, dp->file);
 	dp->has_next = r!=NULL;
-	remove_eol(current_iterable->auxiliary_state);
-	return current_iterable->auxiliary_state;
+	remove_eol(c_iterable->auxiliary_state);
+	return c_iterable->auxiliary_state;
 }
 
 iterator file_iterable_string_fix(char * file) {
@@ -436,13 +436,13 @@ iterator file_iterable_string_fix_tam(char * file, int num_chars_per_line) {
 	char  ms[Tam_String];
 	if(st==NULL) sprintf(ms,"no se encuentra el fichero %s",file);
 	check_not_null(st,__FILE__,__LINE__,ms);
-	dependencies_file df = {st,false,num_chars_per_line};
-	int size_df = sizeof(dependencies_file);
+	d_file df = {st,false};
+	int size_df = sizeof(d_file);
 	type t = string_fix_type_of_tam(num_chars_per_line);
 	iterator s_file = iterable_create(type_copy(&t),iterable_file_has_next,iterable_file_next,
 			iterable_file_see_next,free_dependencies_file,&df,size_df);
-	char * r = fgets(s_file.state,num_chars_per_line,((dependencies_file *)s_file.dependencies)->file);
-	((dependencies_file *)s_file.dependencies)->has_next = r!=NULL;
+	char * r = fgets(s_file.state,num_chars_per_line,((d_file *)s_file.dependencies)->file);
+	((d_file *)s_file.dependencies)->has_next = r!=NULL;
 	return s_file;
 }
 
@@ -457,7 +457,7 @@ char * iterable_tostring_sep(iterator * st,char * sep,char * prefix,char * suffi
 	strcpy(mem,prefix);
 	while(iterable_has_next(st)){
 		void *  next = iterable_next(st);
-		char * ns = tostring(next,m,st->iterator_type);
+		char * ns = tostring(next,m,st->type);
 		if(first) first = false;
 		else strcat(mem,sep);
 		strcat(mem,ns);
@@ -473,7 +473,7 @@ string_var iterable_tostring_sep_big(iterator * st,char * sep,char * prefix,char
 	string_var_add_string_fix(&s,prefix);
 	while(iterable_has_next(st)){
 		void *  next = iterable_next(st);
-		char * ns = tostring(next,m,st->iterator_type);
+		char * ns = tostring(next,m,st->type);
 		if(first) first = false;
 		else string_var_add_string_fix(&s,sep);
 		string_var_add_string_fix(&s,ns);
@@ -496,7 +496,7 @@ void iterable_toconsole_sep(iterator * st, char * sep, char * prefix, char * suf
 	printf("%s",prefix);
 	while (iterable_has_next(st)) {
 		void * next = iterable_next(st);
-		char * ns = tostring(next, m, st->iterator_type);
+		char * ns = tostring(next, m, st->type);
 		if (first) first = false;
 		else printf("%s",sep);
 		printf("%s",ns);
@@ -508,7 +508,7 @@ void write_iterable_to_file(char * file, iterator * st){
 	char mem[256];
 	FILE * f = fopen(file, "wt");
 	while (iterable_has_next(st)) {
-			fprintf(f, "%s\n", tostring(iterable_next(st),mem,st->iterator_type));
+			fprintf(f, "%s\n", tostring(iterable_next(st),mem,st->type));
 	}
 	fclose(f);
 }
@@ -516,7 +516,7 @@ void write_iterable_to_file(char * file, iterator * st){
 void iterable_free(iterator * st) {
 	if (st != NULL) {
 		if(st->depending_iterable != NULL) free(st->depending_iterable);
-		if(st->iterator_type !=NULL) type_free(st->iterator_type);
+		if(st->type !=NULL) type_free(st->type);
 		free(st->state);
 		free(st->auxiliary_state);
 		if (st->free_dependencies != NULL)

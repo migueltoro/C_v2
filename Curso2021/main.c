@@ -44,12 +44,12 @@
 int main() {
 //char mem[256];
 //test_types();
-test_types_1();
+//test_types_1();
 //test_string();
 //test_math2();
 //test_ejemplos1();
 //test_ejemplos_files();
-//test_iterables_8();
+test_iterables_8();
 //test_token();
 //test_tokenizer();
 //test_tupla();

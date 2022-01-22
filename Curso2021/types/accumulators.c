@@ -160,7 +160,7 @@ void * reduce_right_e(iterator * st, void * base, int size_base,
 
 
 list iterable_to_list(iterator * st){
-	list r = list_empty(st->iterator_type);
+	list r = list_empty(st->type);
 	while(iterable_has_next(st)){
 		char * s = iterable_next(st);
 		list_add(&r,s);
@@ -169,7 +169,7 @@ list iterable_to_list(iterator * st){
 }
 
 set iterable_to_set(iterator * st) {
-	set r = set_empty(st->iterator_type);
+	set r = set_empty(st->type);
 	while (iterable_has_next(st)) {
 		void * e = iterable_next(st);
 		set_add(&r, e);
@@ -178,7 +178,7 @@ set iterable_to_set(iterator * st) {
 }
 
 multiset iterable_to_multiset(iterator * st) {
-	multiset r = multiset_empty(&st->iterator_type);
+	multiset r = multiset_empty(&st->type);
 	while (iterable_has_next(st)) {
 		void * e = iterable_next(st);
 		multiset_add_n(&r, e, 1);
@@ -200,7 +200,7 @@ multiset iterable_counting(iterator * st, void * (*f_key)(void * out, void * in)
 }
 
 list_multimap iterable_to_list_multimap(iterator * items) {
-	type * t =  items->iterator_type;
+	type * t =  items->type;
 	list_multimap lm = list_multimap_empty(types(t,0),types(t,1));
 	while (iterable_has_next(items)) {
 		pair * p = (pair *) iterable_next(items);
@@ -210,7 +210,7 @@ list_multimap iterable_to_list_multimap(iterator * items) {
 }
 
 set_multimap iterable_to_set_multimap(iterator * items) {
-	type * t = items->iterator_type;
+	type * t = items->type;
 	set_multimap lm = set_multimap_empty(types(t,0),types(t,1));
 	while (iterable_has_next(items)) {
 		pair * p = (pair *) iterable_next(items);
@@ -221,7 +221,7 @@ set_multimap iterable_to_set_multimap(iterator * items) {
 
 list_multimap iterable_grouping_list(iterator * st, void * (*f_key)(void * out, void * in), type * key_type){
 	char mem[20];
-	type * value_type = st->iterator_type;
+	type * value_type = st->type;
 	list_multimap lm = list_multimap_empty(key_type,value_type);
 	while(iterable_has_next(st)){
 		void * next = iterable_next(st);
@@ -233,7 +233,7 @@ list_multimap iterable_grouping_list(iterator * st, void * (*f_key)(void * out, 
 
 set_multimap iterable_grouping_set(iterator * st, void * (*f_key)(void * out, void * in), type * key_type){
 	char mem[20];
-	type * value_type = st->iterator_type;
+	type * value_type = st->type;
 	set_multimap sm = set_multimap_empty(key_type,value_type);
 	while(iterable_has_next(st)){
 		void * next = iterable_next(st);
@@ -380,7 +380,7 @@ int iterable_num_differents(iterator * st){
 
 bool iterable_all_differents(iterator * st) {
 	int n = 0;
-	set r = set_empty(st->iterator_type);
+	set r = set_empty(st->type);
 	while (iterable_has_next(st)) {
 		void * e = iterable_next(st);
 		set_add(&r, e);
