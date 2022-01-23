@@ -20,9 +20,11 @@ int numero_de_palabras_distintas(char * file) {
 	iterator git1 = file_iterable_string_fix(file);
 	iterator git2 = iterable_filter(&git1, string_fix_not_all_space);
 	iterator gmap = iterable_flatmap(&git2,&string_fix_type,text_to_iterable_string_fix_function);
-	int n = iterable_size(&gmap);
+	set st = iterable_to_set(&gmap);
+	int n = set_size(&st);
 	printf("%d\n", n);
 	iterables_free(3,&git1,&git2,&gmap);
+	set_free(&st);
 	return n;
 }
 

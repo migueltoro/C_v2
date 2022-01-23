@@ -295,6 +295,8 @@ void string_var_free(string_var * in);
 
 #define Tam_String 256
 
+extern int string_fix_tam;
+
 typedef char string_fix[Tam_String];
 
 char * remove_eol(char * string);

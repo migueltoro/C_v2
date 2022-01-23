@@ -28,16 +28,14 @@
 
 typedef struct st {
 	type * type;
-	struct st * depending_iterable;
-	int size_state;
-	int size_dependencies;
+	struct st * dp_iterable;
 	void * state;
-	void * auxiliary_state;
+	void * a_state;
 	bool (*has_next)(struct st * iterator);
 	void * (*next)(struct st * iterator);
 	void * (*see_next)(struct st * iterator);
-	void (*free_dependencies)(void * in);
-	void * dependencies;
+	void (*free_dp)(void * in);
+	void * dps;
 } iterator;
 
 
@@ -56,6 +54,7 @@ iterator iterable_iterate(type * type,void * initial_value, bool (*hash_next)(vo
 iterator file_iterable_string_fix(char * file);
 iterator file_iterable_string_fix_tam(char * file, int num_chars_per_line_max);
 iterator text_to_iterable_string_fix(char * text, const char * delimiters);
+iterator text_to_iterable_string_fix_tam(char * text, const char * delimiters, int tam);
 iterator * text_to_iterable_string_fix_function(iterator * out, char * text);
 
 extern string_fix text_to_iterable_delimiters;
@@ -65,6 +64,7 @@ iterator iterable_filter(iterator * st, bool (*map_filter)(void * in));
 iterator iterable_flatmap(iterator * st, type * type, iterator * (*map_function)(iterator * out, void * in));
 iterator iterable_consecutive_pairs(iterator * st);
 iterator iterable_enumerate(iterator * st);
+
 
 char * iterable_tostring(iterator * st, char * mem);
 char * iterable_tostring_sep(iterator * st, char * sep, char * prefix, char * suffix, char * mem);

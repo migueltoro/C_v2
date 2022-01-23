@@ -757,6 +757,8 @@ int string_fix_naturalorder(const char * e1,const char * e2, type * type){
 	return strcmp(e1,e2);
 }
 
+int string_fix_tam = Tam_String;
+
 type string_fix_type = {string_fix_equals,string_fix_tostring,string_fix_naturalorder,string_fix_parse,Tam_String,0,NULL};
 
 type string_fix_type_of_tam(int numchars) {
@@ -772,15 +774,12 @@ bool string_fix_not_is_empty(char * in){
 	return strlen(in) > 0;
 }
 bool string_fix_all_space(char * in){
-	bool r = true;
-	int i =0;
-	while(in[i] != '\0') {
+	bool r = true; int i =-1;
+	while(in[++i] != '\0' && r)
 		r = isspace(in[i]);
-		if(!r) break;
-		i=i+1;
-	}
 	return r;
 }
+
 bool string_fix_not_all_space(char * in){
 	return !string_fix_all_space(in);
 }

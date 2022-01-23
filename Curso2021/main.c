@@ -49,13 +49,13 @@ int main() {
 //test_math2();
 //test_ejemplos1();
 //test_ejemplos_files();
-test_iterables_8();
+//test_iterables_8();
 //test_token();
 //test_tokenizer();
 //test_tupla();
 //test_list_6();
 //test_hash_table();
-//test_dates_1();
+//test_dates_2("ficheros/fechas_2.txt");
 //test_set_3();
 //test_multiset();
 //test_list_multimap();
@@ -70,6 +70,6 @@ test_iterables_8();
 //test_ejemplos_trees_4();
 //test_matrices_1();
 //test_histograma();
-//test_accumulators_2();
+test_accumulators_4("ficheros/quijote.txt");
 }
 

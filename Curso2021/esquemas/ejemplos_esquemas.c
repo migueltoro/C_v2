@@ -15,7 +15,7 @@ multiset frecuencias_en_fichero_1(char * file, type * t) {
 	char e[t->size];
 	while (iterable_has_next(&it)) {
 		char * line = (char *) iterable_next(&it);
-		iterator it2 = text_to_iterable_string_fix(line, " ,");
+		iterator it2 = text_to_iterable_string_fix_tam(line, " ,",string_fix_tam);
 		while (iterable_has_next(&it2)) {
 			char * num = (char *) iterable_next(&it2);
 			parse(e, num, t);
@@ -35,7 +35,7 @@ list_multimap grupos_list_en_fichero_1(char * file, type *element_type, type *ke
 	char key[key_type->size];
 	while (iterable_has_next(&it)) {
 		char * line = (char *) iterable_next(&it);
-		iterator it2 = text_to_iterable_string_fix(line, " ,");
+		iterator it2 = text_to_iterable_string_fix_tam(line, " ,",string_fix_tam);
 		while (iterable_has_next(&it2)) {
 			char * num = (char *) iterable_next(&it2);
 			parse(e, num, element_type);
@@ -54,7 +54,7 @@ set_multimap grupos_set_en_fichero_1(char * file, type * element_type, type * ke
 	char key[key_type->size];
 	while (iterable_has_next(&it)) {
 		char * line = (char *) iterable_next(&it);
-		iterator it2 = text_to_iterable_string_fix(line, " ,");
+		iterator it2 = text_to_iterable_string_fix_tam(line, " ,",string_fix_tam);
 		while (iterable_has_next(&it2)) {
 			char * num = (char *) iterable_next(&it2);
 			parse(e, num, element_type);

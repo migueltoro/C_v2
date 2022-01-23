@@ -275,34 +275,82 @@ char * estadisticos_tostring(void * in, char * mem){
 	return mem;
 }
 
-void * iterable_min(iterator * st, int (*comparator)(const void * out, const void * in),
-		void * minvalue){
+void * iterable_min(iterator * st, int (*comparator)(const void * out, const void * in)){
+	type * t = st->type;
+	void * minvalue = malloc(t->size);
 	bool first = true;
-	int size = st->size_state;
 	while(iterable_has_next(st)){
 		void * next = iterable_next(st);
 		if(first) {
-			copy(minvalue, next, size);
+			copy(minvalue, next, t->size);
 			first = false;
 		} else if(comparator(next,minvalue) < 0) {
-			copy(minvalue, next, size);
+			copy(minvalue, next, t->size);
 		}
+	}
+	if(first) {
+		free(minvalue);
+		minvalue = NULL;
 	}
 	return minvalue;
 }
 
-void * iterable_max(iterator * st,
-		int (*comparator)(const void * out, const void * in), void * maxvalue) {
+void* iterable_min_naturalorder(iterator *st) {
+	type * t = st->type;
+	void * minvalue = malloc(t->size);
 	bool first = true;
-	int size = st->size_state;
+	while (iterable_has_next(st)) {
+		void *next = iterable_next(st);
+		if (first) {
+			copy(minvalue, next, t->size);
+			first = false;
+		} else if (order(next, minvalue,t) < 0) {
+			copy(minvalue, next, t->size);
+		}
+	}
+	if(first) {
+			free(minvalue);
+			minvalue = NULL;
+	}
+	return minvalue;
+}
+
+void * iterable_max(iterator * st,int (*comparator)(const void * out, const void * in)) {
+	type * t = st->type;
+	void * maxvalue = malloc(t->size);
+	bool first = true;
 	while (iterable_has_next(st)) {
 		void * next = iterable_next(st);
 		if (first) {
-			copy(maxvalue, next, size);
+			copy(maxvalue, next, t->size);
 			first = false;
 		} else if (comparator(next, maxvalue) > 0) {
-			copy(maxvalue, next, size);
+			copy(maxvalue, next, t->size);
 		}
+	}
+	if(first) {
+			free(maxvalue);
+			maxvalue = NULL;
+	}
+	return maxvalue;
+}
+
+void * iterable_max_naturalorder(iterator * st) {
+	type * t = st->type;
+	void * maxvalue = malloc(t->size);
+	bool first = true;
+	while (iterable_has_next(st)) {
+		void * next = iterable_next(st);
+		if (first) {
+			copy(maxvalue, next, t->size);
+			first = false;
+		} else if (order(next, maxvalue,t) > 0) {
+			copy(maxvalue, next, t->size);
+		}
+	}
+	if(first) {
+			free(maxvalue);
+			maxvalue = NULL;
 	}
 	return maxvalue;
 }
@@ -464,11 +512,11 @@ void test_accumulators_1(){
 	reduce_right(&st,&r7,sizeof(double),long_max);
 	printf("9.1:  \n%ld\n", r7);
 	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
-	iterator p3 = text_to_iterable_string_fix(text," ;.");
+	iterator p3 = text_to_iterable_string_fix_tam(text," ;.",20);
 	string_var emp = string_var_empty();
 	void * sr = accumulate_left(&p3,&emp,string_var_add_string_fix);
 	printf("10: %s\n",string_var_tostring(sr,mem,NULL));
-	p3 = text_to_iterable_string_fix(text," ;.");
+	p3 = text_to_iterable_string_fix_tam(text," ;.",20);
 	emp = string_var_empty();
 	sr = accumulate_right(&p3,&emp,30,string_var_add_string_fix);
 	printf("11: %s\n",string_var_tostring(sr,mem,NULL));
@@ -487,7 +535,7 @@ void test_accumulators_1(){
 void test_accumulators_2(){
 	iterator st = iterable_range_long(4,100,13);
 	long r;
-	iterable_max(&st,long_type.order,&r);
+	iterable_max(&st,long_type.order);
 	printf("%ld\n",r);
 	st = iterable_range_long(4,100,13);
 	r = *(long*) iterable_first(&st,esmultiplo5);
@@ -502,4 +550,55 @@ void test_accumulators_2(){
     bool b = iterable_all_differents(&st);
     printf("%s\n",MSG_BOOL(b));
 }
+
+void test_accumulators_3(char * file) {
+	string_fix_tam = 100;
+	iterator git1 = file_iterable_string_fix(file);
+	iterator git2 = iterable_filter(&git1, string_fix_not_all_space);
+	string_fix_tam = 20;
+	type t = string_fix_type_of_tam(string_fix_tam);
+	iterator gmap = iterable_flatmap(&git2,type_copy(&t),text_to_iterable_string_fix_function);
+	set st = iterable_to_set(&gmap);
+	int n = set_size(&st);
+	printf("%d\n", n);
+	set_free(&st);
+	iterables_free(3, &git1, &git2, &gmap);
+}
+
+int * flen(int * len, char * line){
+	*len = strlen(line);
+	return len;
+}
+
+int cmp(char * lin1, char * lin2){
+	int r1 = strlen(lin1);
+	int r2 = strlen(lin2);
+	return order(&r1,&r2,&int_type);
+}
+
+void test_accumulators_4(char * file) {
+	string_fix_tam = 100;
+	iterator g1 = file_iterable_string_fix(file);
+	iterator g2 = iterable_filter(&g1, string_fix_not_all_space);
+	string_fix_tam = 20;
+	char max[string_fix_tam];
+	type t = string_fix_type_of_tam(string_fix_tam);
+	iterator g3 = iterable_flatmap(&g2,type_copy(&t),text_to_iterable_string_fix_function);
+	char * r = (char *) iterable_max(&g3,cmp);
+	printf("%s,%d\n",r,strlen(r));
+}
+
+void test_accumulators_5(char * file) {
+	string_fix_tam = 100;
+	iterator g1 = file_iterable_string_fix(file);
+	iterator g2 = iterable_filter(&g1, string_fix_all_space);
+	int n = 0;
+	for(;iterable_has_next(&g2);iterable_next(&g2)){
+		n++;
+	}
+	printf("%d\n",n);
+}
+
+
+
 

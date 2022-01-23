@@ -12,16 +12,16 @@ iterator iterable_create(
 		bool (*has_next)(struct st * iterator),
 		void * (*next)(struct st * iterator),
 		void * (*see_next)(struct st * iterator),
-		void (*free_dependencies)(void * in),
-		void * dependencies,
-		int size_dependencies);
+		void (*free_dp)(void * in),
+		void * dps,
+		int size_dp);
 
 
 // memory_heap memory_heap_iterable = {0,0,NULL,0};
 
 void iterable_copy_state_to_auxiliary(iterator * st){
-	check_not_null(st->auxiliary_state,__FILE__,__LINE__,"el estado auxiliar del iterator es null");
-	memcpy(st->auxiliary_state,st->state,st->size_state);
+	check_not_null(st->a_state,__FILE__,__LINE__,"el estado auxiliar del iterator es null");
+	memcpy(st->a_state,st->state,st->type->size);
 }
 
 iterator * iterable_copy(iterator * it) {
@@ -47,21 +47,18 @@ iterator iterable_create(
 		bool (*has_next)(struct st * iterator),
 		void * (*next)(struct st * iterator),
 		void * (*see_next)(struct st * iterator),
-		void (*free_dependencies)(void * in),
-		void * dependencies,
-		int size_dependencies){
+		void (*free_dp)(void * in),
+		void * dps,
+		int size_dp){
 	void * state = malloc(t->size);
-	void * auxiliary_state = malloc(t->size);
-	void * dp = malloc(size_dependencies);
-	copy(dp,dependencies,size_dependencies);
-	iterator r = {t,NULL,t->size,size_dependencies,state,auxiliary_state,has_next,next,see_next,free_dependencies,dp};
+	void * a_state = malloc(t->size);
+	iterator r = {t,NULL,state,a_state,has_next,next,see_next,free_dp,copy_and_mem(dps,size_dp)};
 	return r;
 }
 
 bool has_next_false(iterator * st){
 	return false;
 }
-
 
 iterator iterable_empty(){
 	iterator r = {0,NULL,0,NULL,NULL,has_next_false,NULL,NULL,NULL,NULL};
@@ -70,31 +67,31 @@ iterator iterable_empty(){
 
 typedef struct{
 	void * (*map_function)(void * target, const void * source);
-}dependencies_map;
+}dp_map;
 
 bool iterable_map_has_next(iterator * current_iterable){
-	return iterable_has_next(current_iterable->depending_iterable);
+	return iterable_has_next(current_iterable->dp_iterable);
 }
 
 void * iterable_map_see_next(iterator * current_iterable){
-	dependencies_map * d = (dependencies_map *) current_iterable->dependencies;
-	iterator * depending_iterable = current_iterable->depending_iterable;
+	dp_map * d = (dp_map *) current_iterable->dps;
+	iterator * depending_iterable = current_iterable->dp_iterable;
 	return d->map_function(depending_iterable->state,iterable_see_next(depending_iterable));
 }
 
 void * iterable_map_next(iterator * current_iterable) {
-	dependencies_map * d = (dependencies_map *) current_iterable->dependencies;
-	iterator * depending_iterable = current_iterable->depending_iterable;
+	dp_map * d = (dp_map *) current_iterable->dps;
+	iterator * depending_iterable = current_iterable->dp_iterable;
 	void * r = iterable_next(depending_iterable);
 	return d->map_function(current_iterable->state, r);
 }
 
 
 iterator iterable_map(iterator * depending_iterable, type * type, void * (*map_function)(void * out, const void * in)) {
-	dependencies_map dp = {map_function};
-	int size_dp = sizeof(dependencies_map);
+	dp_map dp = {map_function};
+	int size_dp = sizeof(dp_map);
 	iterator r = iterable_create(type,iterable_map_has_next,iterable_map_next,iterable_map_see_next,NULL,&dp,size_dp);
-	r.depending_iterable = iterable_copy(depending_iterable);
+	r.dp_iterable = iterable_copy(depending_iterable);
 	return r;
 }
 
@@ -102,24 +99,24 @@ iterator iterable_map(iterator * depending_iterable, type * type, void * (*map_f
 typedef struct{
 	iterator actual_iterable;
 	iterator * (*map_function)(iterator * target, void * source);
-}dependencies_flatmap;
+}dp_flatmap;
 
 bool iterable_flatmap_has_next(iterator * current_iterable){
-	dependencies_flatmap * d = (dependencies_flatmap *) current_iterable->dependencies;
+	dp_flatmap * d = (dp_flatmap *) current_iterable->dps;
 	iterator act = d->actual_iterable;
 	return iterable_has_next(&act);
 }
 
 void * iterable_flatmap_see_next(iterator * current_iterable){
-	dependencies_flatmap * d = (dependencies_flatmap *) current_iterable->dependencies;
+	dp_flatmap * d = (dp_flatmap *) current_iterable->dps;
 	iterator st = d->actual_iterable;
 	return iterable_see_next(&st);
 }
 
-void * iterable_flatmap_next(iterator * current_iterable) {
-	dependencies_flatmap * d = (dependencies_flatmap *) current_iterable->dependencies;
-	iterator * depending_iterable = current_iterable->depending_iterable;
-	copy(current_iterable->auxiliary_state,iterable_next(&d->actual_iterable),current_iterable->size_state);
+void * iterable_flatmap_next(iterator * c_iterable) {
+	dp_flatmap * d = (dp_flatmap *) c_iterable->dps;
+	iterator * depending_iterable = c_iterable->dp_iterable;
+	copy(c_iterable->a_state,iterable_next(&d->actual_iterable),c_iterable->type->size);
 	while(!iterable_has_next(&d->actual_iterable)){
 		if(iterable_has_next(depending_iterable)){
 			iterable_free(&d->actual_iterable);
@@ -127,15 +124,15 @@ void * iterable_flatmap_next(iterator * current_iterable) {
 		}
 		else break;
 	}
-	return current_iterable->auxiliary_state;
+	return c_iterable->a_state;
 }
 
 
 iterator iterable_flatmap(iterator * depending_iterable, type * type,
 		iterator * (*map_function)(iterator * out, void * in)) {
 	iterator actual_iterable;
-	dependencies_flatmap dp = {actual_iterable, map_function};
-	int size_dp = sizeof(dependencies_flatmap);
+	dp_flatmap dp = {actual_iterable, map_function};
+	int size_dp = sizeof(dp_flatmap);
 	do {
 		if(iterable_has_next(depending_iterable)){
 			map_function(&dp.actual_iterable, iterable_next(depending_iterable));
@@ -143,7 +140,7 @@ iterator iterable_flatmap(iterator * depending_iterable, type * type,
 	} while (!iterable_has_next(&dp.actual_iterable) && iterable_has_next(depending_iterable));
 	iterator r = iterable_create(type, iterable_flatmap_has_next,
 			iterable_flatmap_next, iterable_flatmap_see_next, NULL, &dp, size_dp);
-	r.depending_iterable = iterable_copy(depending_iterable);
+	r.dp_iterable = iterable_copy(depending_iterable);
 	return r;
 }
 
@@ -151,24 +148,24 @@ iterator iterable_flatmap(iterator * depending_iterable, type * type,
 typedef struct {
 	bool (*filter_predicate)(void * source);
 	bool has_next;
-} dependencies_filter;
+} dp_filter;
 
-void next_depending_state(iterator * current_iterable) {
-	dependencies_filter * dependencies = (dependencies_filter *) current_iterable->dependencies;
-	iterator * depending_iterable = current_iterable->depending_iterable;
-	dependencies->has_next = false;
+void next_depending_state(iterator * c_iterable) {
+	dp_filter * dp = (dp_filter *) c_iterable->dps;
+	iterator * depending_iterable = c_iterable->dp_iterable;
+	dp->has_next = false;
 	while (iterable_has_next(depending_iterable)) {
 		void * r = iterable_next(depending_iterable);
-		if (dependencies->filter_predicate(r)) {
-			dependencies->has_next = true;
-			copy(current_iterable->state,r,current_iterable->size_state);
+		if (dp->filter_predicate(r)) {
+			dp->has_next = true;
+			copy(c_iterable->state,r,c_iterable->type->size);
 			break;
 		}
 	}
 }
 
 bool iterable_filter_has_next(iterator * current_iterable) {
-	dependencies_filter * d = (dependencies_filter *) current_iterable->dependencies;
+	dp_filter * d = (dp_filter *) current_iterable->dps;
 	return d->has_next;
 }
 
@@ -179,15 +176,15 @@ void * iterable_filter_see_next(iterator * current_iterable){
 void * iterable_filter_next(iterator * current_iterable) {
 	iterable_copy_state_to_auxiliary(current_iterable);
 	next_depending_state(current_iterable);
-	return current_iterable->auxiliary_state;
+	return current_iterable->a_state;
 }
 
 
 iterator iterable_filter(iterator * depending_iterable, bool (*filter_predicate)(void *)) {
-	dependencies_filter df = {filter_predicate,true};
-	int size_df = sizeof(dependencies_filter);
+	dp_filter df = {filter_predicate,true};
+	int size_df = sizeof(dp_filter);
 	iterator new_st = iterable_create(depending_iterable->type,iterable_filter_has_next,iterable_filter_next,iterable_filter_see_next,NULL,&df,size_df);
-	new_st.depending_iterable = iterable_copy(depending_iterable);
+	new_st.dp_iterable = iterable_copy(depending_iterable);
 	next_depending_state(&new_st);
 	return new_st;
 }
@@ -228,7 +225,7 @@ iterator iterable_consecutive_pairs(iterator * st){
 	} else {
 		r = iterable_empty();
 	}
-	r.depending_iterable = iterable_copy(st);
+	r.dp_iterable = iterable_copy(st);
 	return r;
 }
 
@@ -250,7 +247,7 @@ iterator iterable_enumerate(iterator * st){
 	_f_pair_enumerate(&p,NULL);
 	type pt = generic_type_1(&pair_enumerate_type,st->type);
 	iterator r = iterable_map(st,copy_and_mem(&pt,sizeof(type)),_f_pair_enumerate);
-	r.depending_iterable = iterable_copy(st);
+	r.dp_iterable = iterable_copy(st);
 	return r;
 }
 
@@ -258,11 +255,11 @@ typedef struct {
 	long a;
 	long b;
 	long c;
-}dependencies_range_long;
+}dp_range_long;
 
-bool iterable_range_long_has_next(iterator * current_iterable){
-	dependencies_range_long * d = (dependencies_range_long *) current_iterable->dependencies;
-	return *(long *)current_iterable->state < d->b;
+bool iterable_range_long_has_next(iterator * c_iterable){
+	dp_range_long * d = (dp_range_long *) c_iterable->dps;
+	return *(long *)c_iterable->state < d->b;
 }
 
 void * iterable_range_long_see_next(iterator * current_iterable){
@@ -270,15 +267,15 @@ void * iterable_range_long_see_next(iterator * current_iterable){
 }
 
 void * iterable_range_long_next(iterator * current_iterable){
-	dependencies_range_long * d = (dependencies_range_long *) current_iterable->dependencies;
+	dp_range_long * d = (dp_range_long *) current_iterable->dps;
 	iterable_copy_state_to_auxiliary(current_iterable);
 	*((long*) current_iterable->state) = *((long*) current_iterable->state) +d->c;
-	return current_iterable->auxiliary_state;
+	return current_iterable->a_state;
 }
 
 iterator iterable_range_long(long a, long b, long c){
-	dependencies_range_long dr = {a,b,c};
-	int size_dr = sizeof(dependencies_range_long);
+	dp_range_long dr = {a,b,c};
+	int size_dr = sizeof(dp_range_long);
 	iterator new_st = iterable_create(&long_type,iterable_range_long_has_next,iterable_range_long_next,iterable_range_long_see_next,NULL,&dr,size_dr);
 	*((long*) new_st.state) = a;
 	return new_st;
@@ -288,10 +285,10 @@ typedef struct {
 	double a;
 	double b;
 	double c;
-}dependencies_range_double;
+}dp_range_double;
 
 bool iterable_range_double_has_next(iterator * current_iterable){
-	dependencies_range_double * d = (dependencies_range_double *) current_iterable->dependencies;
+	dp_range_double * d = (dp_range_double *) current_iterable->dps;
 	return *(double *)current_iterable->state < d->b;
 }
 
@@ -300,15 +297,15 @@ void * iterable_range_double_see_next(iterator * current_iterable){
 }
 
 void * iterable_range_double_next(iterator * current_iterable){
-	dependencies_range_double * d = (dependencies_range_double *) current_iterable->dependencies;
+	dp_range_double * d = (dp_range_double *) current_iterable->dps;
 	iterable_copy_state_to_auxiliary(current_iterable);
 	*((double*) current_iterable->state) = *((double*) current_iterable->state) +d->c;
-	return current_iterable->auxiliary_state;
+	return current_iterable->a_state;
 }
 
 iterator iterable_range_double(double a, double b, double c){
-	dependencies_range_double dr = {a,b,c};
-	int size_dr = sizeof(dependencies_range_double);
+	dp_range_double dr = {a,b,c};
+	int size_dr = sizeof(dp_range_double);
 	iterator new_st = iterable_create(&double_type,iterable_range_double_has_next,iterable_range_double_next,iterable_range_double_see_next,NULL,&dr,size_dr);
 	*((double*) new_st.state) = a;
 	return new_st;
@@ -319,10 +316,10 @@ typedef struct {
 	void * initial_value;
 	bool (*hash_next)(void * element);
 	void * (*has_next)(void * out, void * in);
-}dependencies_iterate;
+}dp_iterate;
 
 bool iterable_iterate_has_next(iterator * current_iterable){
-	dependencies_iterate * d = (dependencies_iterate *) current_iterable->dependencies;
+	dp_iterate * d = (dp_iterate *) current_iterable->dps;
 	return d->hash_next(current_iterable->state);
 }
 
@@ -331,18 +328,18 @@ void * iterable_iterate_see_next(iterator * current_iterable){
 }
 
 void * iterable_iterate_next(iterator * current_iterable){
-	dependencies_iterate * d = (dependencies_iterate *) current_iterable->dependencies;
+	dp_iterate * d = (dp_iterate *) current_iterable->dps;
 	iterable_copy_state_to_auxiliary(current_iterable);
 	d->has_next(current_iterable->state, current_iterable->state);
-	return current_iterable->auxiliary_state;
+	return current_iterable->a_state;
 }
 
 iterator iterable_iterate(type * type,
 		void * initial_value,
 		bool (*has_next)(void * element),
 		void * (*next)(void * out, void * in)) {
-	dependencies_iterate di = {initial_value, has_next, next};
-	int size_di = sizeof(dependencies_iterate);
+	dp_iterate di = {initial_value, has_next, next};
+	int size_di = sizeof(dp_iterate);
 	iterator new_st = iterable_create(type,iterable_iterate_has_next,
 			iterable_iterate_next,iterable_iterate_see_next,NULL,&di,size_di);
 	copy(new_st.state,initial_value,type->size);
@@ -354,39 +351,43 @@ typedef struct{
 	char * token;
 	char * delimiters;
 	char * saveptr[1];
-}dependencies_split;
+}dp_split;
 
 bool iterable_split_has_next(iterator * current_iterable) {
-	dependencies_split * dp = (dependencies_split *) current_iterable->dependencies;
+	dp_split * dp = (dp_split *) current_iterable->dps;
 	return dp->token != NULL;
 }
 
 void * iterable_split_see_next(iterator * current_iterable){
-	dependencies_split * dp = (dependencies_split *) current_iterable->dependencies;
+	dp_split * dp = (dp_split *) current_iterable->dps;
     return dp->token;
 }
 
 void * iterable_split_next(iterator * current_iterable){
-	dependencies_split * dp = (dependencies_split *) current_iterable->dependencies;
+	dp_split * dp = (dp_split *) current_iterable->dps;
 	char * old = dp->token;
 	dp->token = strtok_r2(NULL,dp->delimiters,dp->saveptr);
 	return old;
 }
 
-void dependencies_split_free(dependencies_split * ds){
+void dependencies_split_free(dp_split * ds){
 	free(ds->text);
 	free(ds);
 }
 
+iterator text_to_iterable_string_fix(char * text, const char * delimiters){
+	return text_to_iterable_string_fix_tam(text,delimiters,string_fix_tam);
+}
 
-iterator text_to_iterable_string_fix(char * text, const char * delimiters) {
-	dependencies_split ds;
-	int size_ds = sizeof(dependencies_split);
+iterator text_to_iterable_string_fix_tam(char * text, const char * delimiters, int tam) {
+	dp_split ds;
+	int size_ds = sizeof(dp_split);
 	ds.text = malloc(strlen(text)+2);
 	ds.text = strcpy(ds.text,text);
 	ds.delimiters = delimiters;
 	ds.token = strtok_r2(ds.text,delimiters,ds.saveptr);
-	iterator r = iterable_create(&string_fix_type, iterable_split_has_next,
+	type t = string_fix_type_of_tam(tam);
+	iterator r = iterable_create(type_copy(&t), iterable_split_has_next,
 			iterable_split_next, iterable_split_see_next,dependencies_split_free, &ds,size_ds);
 	return r;
 }
@@ -394,7 +395,7 @@ iterator text_to_iterable_string_fix(char * text, const char * delimiters) {
 string_fix text_to_iterable_delimiters = " ,;.()";
 
 iterator * text_to_iterable_string_fix_function(iterator * out, char * text) {
-	iterator it = text_to_iterable_string_fix(text, text_to_iterable_delimiters);
+	iterator it = text_to_iterable_string_fix_tam(text, text_to_iterable_delimiters,string_fix_tam);
 	*out = it;
 	return out;
 }
@@ -402,14 +403,14 @@ iterator * text_to_iterable_string_fix_function(iterator * out, char * text) {
 typedef struct{
 	FILE * file;
 	bool has_next;
-}d_file;
+}dp_file;
 
-void free_dependencies_file(d_file * df){
+void free_dependencies_file(dp_file * df){
 	fclose(df->file);
 }
 
 bool iterable_file_has_next(iterator * c_iterable) {
-	d_file * dp = (d_file *) c_iterable->dependencies;
+	dp_file * dp = (dp_file *) c_iterable->dps;
 	return dp->has_next;
 }
 
@@ -418,32 +419,33 @@ void * iterable_file_see_next(iterator * c_iterable){
 }
 
 void * iterable_file_next(iterator * c_iterable){
-	d_file * dp = (d_file *) c_iterable->dependencies;
+	dp_file * dp = (dp_file *) c_iterable->dps;
 	type * t = c_iterable->type;
 	iterable_copy_state_to_auxiliary(c_iterable);
 	char * r = fgets(c_iterable->state, t->size, dp->file);
 	dp->has_next = r!=NULL;
-	remove_eol(c_iterable->auxiliary_state);
-	return c_iterable->auxiliary_state;
+	remove_eol(c_iterable->a_state);
+	return c_iterable->a_state;
 }
 
 iterator file_iterable_string_fix(char * file) {
-	return file_iterable_string_fix_tam(file, Tam_String);
+	return file_iterable_string_fix_tam(file,string_fix_tam);
 }
 
-iterator file_iterable_string_fix_tam(char * file, int num_chars_per_line) {
+iterator file_iterable_string_fix_tam(char * file, int n) {
 	FILE * st = fopen(file,"r");
 	char  ms[Tam_String];
 	if(st==NULL) sprintf(ms,"no se encuentra el fichero %s",file);
 	check_not_null(st,__FILE__,__LINE__,ms);
-	d_file df = {st,false};
-	int size_df = sizeof(d_file);
-	type t = string_fix_type_of_tam(num_chars_per_line);
-	iterator s_file = iterable_create(type_copy(&t),iterable_file_has_next,iterable_file_next,
+	dp_file df = {st,false};
+	int size_df = sizeof(dp_file);
+	type t = string_fix_type_of_tam(n);
+	iterator it_file = iterable_create(type_copy(&t),iterable_file_has_next,iterable_file_next,
 			iterable_file_see_next,free_dependencies_file,&df,size_df);
-	char * r = fgets(s_file.state,num_chars_per_line,((d_file *)s_file.dependencies)->file);
-	((d_file *)s_file.dependencies)->has_next = r!=NULL;
-	return s_file;
+	dp_file * dp = (dp_file *)it_file.dps;
+	char * r = fgets(it_file.state,n,dp->file);
+	dp->has_next = r!=NULL;
+	return it_file;
 }
 
 char * iterable_tostring(iterator * st,
@@ -515,14 +517,14 @@ void write_iterable_to_file(char * file, iterator * st){
 
 void iterable_free(iterator * st) {
 	if (st != NULL) {
-		if(st->depending_iterable != NULL) free(st->depending_iterable);
+		if(st->dp_iterable != NULL) free(st->dp_iterable);
 		if(st->type !=NULL) type_free(st->type);
 		free(st->state);
-		free(st->auxiliary_state);
-		if (st->free_dependencies != NULL)
-			st->free_dependencies(st->dependencies);
+		free(st->a_state);
+		if (st->free_dp != NULL)
+			st->free_dp(st->dps);
 		else
-			free(st->dependencies);
+			free(st->dps);
 	}
 }
 
@@ -553,7 +555,7 @@ void test_iterables_1() {
 	printf("\n_______________\n");
 	char delimiters[] = " ,;.()";
 	char text1[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
-	iterator sp = text_to_iterable_string_fix(text1, delimiters);
+	iterator sp = text_to_iterable_string_fix_tam(text1, delimiters,20);
 	iterable_toconsole(&sp);
 	printf("\n_______________\n");
 	char text2[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
@@ -590,7 +592,7 @@ void test_iterables_3(){
 	iterable_toconsole_sep(&fmap,"\n","{","}");
 	printf("\n_________________\n");
 	char text[] = "(23....,45.)";
-	iterator it = text_to_iterable_string_fix("(23....,45.)"," ,.()");
+	iterator it = text_to_iterable_string_fix_tam("(23....,45.)"," ,.()",20);
 	iterable_toconsole_sep(&it,",","{","}");
 }
 

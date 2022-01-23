@@ -316,3 +316,27 @@ void test_dates_1() {
 	d = time_diff_days(t2,t3);
 	printf("%d\n",d);
 }
+
+time_t ref;
+
+bool posterior(time_t * f){
+	return date_type.order(f,&ref,&date_type) > 0;
+}
+
+time_t * p_date(time_t * out, char * in){
+	return date_type.parse(out,in,&date_type);
+}
+
+void test_dates_2(char *file) {
+	string_fix_tam = 100;
+	ref = time_of_date(1,1,2000);
+	iterator g1 = file_iterable_string_fix(file);
+	iterator g2 = iterable_map(&g1,&date_type,p_date);
+	iterator g3 = iterable_filter(&g2,posterior);
+	int n = 0;
+	for (; iterable_has_next(&g3); iterable_next(&g3)) {
+		n++;
+	}
+	printf("%d\n", n);
+//	iterable_toconsole_sep(&g2,"; ","{","}");
+}

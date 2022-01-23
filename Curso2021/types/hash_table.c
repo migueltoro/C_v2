@@ -210,23 +210,23 @@ typedef struct{
 	int nb;
 	int i;
 	int j;
-}dependencies_hash_table;
+}dp_hash_table;
 
-bool iterable_hash_table_has_next(iterator * current_iterable) {
-	dependencies_hash_table * dp = (dependencies_hash_table *) current_iterable->dependencies;
+bool iterable_hash_table_has_next(iterator * c_iterable) {
+	dp_hash_table * dp = (dp_hash_table *) c_iterable->dps;
 	return dp->i < dp->nb;
 }
 
-void * iterable_hash_table_see_next(iterator * current_iterable){
-	dependencies_hash_table * dp = (dependencies_hash_table *) current_iterable->dependencies;
+void * iterable_hash_table_see_next(iterator * c_iterable){
+	dp_hash_table * dp = (dp_hash_table *) c_iterable->dps;
 	hash_table * table = dp->ht;
-	pair * state = (pair *)current_iterable->state;
+	pair * state = (pair *)c_iterable->state;
 	state->key = table->data[dp->j].key;
 	state->value = table->data[dp->j].value;
-    return current_iterable->state;
+    return c_iterable->state;
 }
 
-void next_state(dependencies_hash_table * dp){
+void next_state(dp_hash_table * dp){
 	hash_table * table = dp->ht;
 	int i = dp->i;
 	int j = dp->j;
@@ -240,22 +240,22 @@ void next_state(dependencies_hash_table * dp){
 	dp->j = j;
 }
 
-void * iterable_hash_table_next(iterator * current_iterable){
-	dependencies_hash_table * dp = (dependencies_hash_table *) current_iterable->dependencies;
+void * iterable_hash_table_next(iterator * c_iterable){
+	dp_hash_table * dp = (dp_hash_table *) c_iterable->dps;
 	hash_table * table = dp->ht;
-	pair * state = (pair *)current_iterable->state;
+	pair * state = (pair *)c_iterable->state;
 	state->key = table->data[dp->j].key;
 	state->value = table->data[dp->j].value;
 	next_state(dp);
-	return current_iterable->state;
+	return c_iterable->state;
 }
 
 iterator hash_table_items_iterable(hash_table * ht){
-	dependencies_hash_table dh = {ht,ht->capacity_blocks,0,-1};
-	int size_dh = sizeof(dependencies_hash_table);
+	dp_hash_table dh = {ht,ht->capacity_blocks,0,-1};
+	int size_dh = sizeof(dp_hash_table);
 	type t = generic_type_2(&pair_type,ht->key_type,ht->value_type);
 	iterator s_hash_table = iterable_create(type_copy(&t),iterable_hash_table_has_next,iterable_hash_table_next,iterable_hash_table_see_next,NULL,&dh,size_dh);
-	next_state(s_hash_table.dependencies);
+	next_state(s_hash_table.dps);
 	return s_hash_table;
 }
 

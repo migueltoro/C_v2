@@ -139,7 +139,7 @@ list list_of_list_of_file_type(char * file, type * type){
 	while(iterable_has_next(&it1)) {
 	      char* linea = (char*)iterable_next(&it1);
 	      list ls = list_empty(type);
-	      iterator it2 = text_to_iterable_string_fix(linea, " ,");
+	      iterator it2 = text_to_iterable_string_fix_tam(linea, " ,",string_fix_tam);
 	      while(iterable_has_next(&it2)) {
 	    	  	char * tx = iterable_next(&it2);
 	            parse(e,tx,type);
@@ -282,17 +282,17 @@ typedef struct{
 }dependencies_list;
 
 bool iterable_list_has_next(iterator * current_iterable) {
-	dependencies_list * dp = (dependencies_list *) current_iterable->dependencies;
+	dependencies_list * dp = (dependencies_list *) current_iterable->dps;
 	return dp->i < list_size(dp->ls);
 }
 
 void * iterable_list_see_next(iterator * current_iterable){
-	dependencies_list * dp = (dependencies_list *) current_iterable->dependencies;
+	dependencies_list * dp = (dependencies_list *) current_iterable->dps;
     return list_get(dp->ls,dp->i);
 }
 
 void * iterable_list_next(iterator * current_iterable){
-	dependencies_list * dp = (dependencies_list *) current_iterable->dependencies;
+	dependencies_list * dp = (dependencies_list *) current_iterable->dps;
 	int old_i = dp->i;
 	dp->i = dp->i +1;
 	return list_get(dp->ls,old_i);
@@ -337,7 +337,7 @@ bool list_equals(const list * ls1, const list * ls2) {
 string_fix list_delimiters = "[ ,]";
 
 list * list_parse(list * out, char * text) {
-	iterator it = text_to_iterable_string_fix(text,list_delimiters);
+	iterator it = text_to_iterable_string_fix_tam(text,list_delimiters,string_fix_tam);
 	char tmp[out->type_element->size];
 	tmp_type = * out->type_element;
 	while(iterable_has_next(&it)){
@@ -351,7 +351,7 @@ list * list_parse(list * out, char * text) {
 
 list list_parse_s(char * text) {
 	list res = list_empty(&string_fix_type);
-	iterator it = text_to_iterable_string_fix(text, list_delimiters);
+	iterator it = text_to_iterable_string_fix_tam(text, list_delimiters,string_fix_tam);
 	while(iterable_has_next(&it)){
 			void * e = iterable_next(&it);
 			list_add(&res,e);

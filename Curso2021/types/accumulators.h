@@ -59,8 +59,10 @@ void * reduce_right_e(iterator * st, void * base, int size_base,
 		void * (*add)(void * out, const void * e), bool isdone(void *));
 
 
-void * iterable_min(iterator * st,int (*comparator)(const void * e1, const void * e2), void * minvalue);
-void * iterable_max(iterator * st, int (*comparator)(const void * e1, const void * e2), void * maxvalue);
+void * iterable_min(iterator * st,int (*comparator)(const void * e1, const void * e2));
+void * iterable_min_naturalorder(iterator * st);
+void * iterable_max(iterator * st, int (*comparator)(const void * e1, const void * e2));
+void * iterable_max_naturalorder(iterator * st);
 bool iterable_all(iterator * st, bool (*p)(const void * in));
 bool iterable_any(iterator * st, bool (*p)(const void * in));
 void * iterable_first(iterator * st, bool (*p)(const void * in));
@@ -83,5 +85,6 @@ set_multimap iterable_grouping_set(iterator * st, void * (*f_key)(void * out, vo
 
 void test_accumulators_1();
 void test_accumulators_2();
+void test_accumulators_3();
 
 #endif /* ACCUMULATORS_H_ */

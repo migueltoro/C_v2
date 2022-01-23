@@ -48,7 +48,7 @@ int count_primos_file_2(char * file){
 	int sum = 0;
 	while(iterable_has_next(&it)){
 		char * line = (char *) iterable_next(&it);
-		iterator it2 = text_to_iterable_string_fix(line," ,");
+		iterator it2 = text_to_iterable_string_fix_tam(line," ,",string_fix_tam);
 		while(iterable_has_next(&it2)) {
 			char * num = (char *) iterable_next(&it2);
 			long e;
@@ -69,7 +69,7 @@ list file_to_list(char * file){
        long e;
        while(iterable_has_next(&it)){
              char * line = (char *) iterable_next(&it);
-             iterator it2 = text_to_iterable_string_fix(line," ,");
+             iterator it2 = text_to_iterable_string_fix_tam(line," ,",string_fix_tam);
              while(iterable_has_next(&it2)) {
                     char * num = (char *) iterable_next(&it2);
                     parse(&e,num,&long_type);
@@ -112,7 +112,7 @@ list file_to_list_of_list(char * file){
 	while(iterable_has_next(&it1)) {
 	      char* linea = (char*)iterable_next(&it1);
 	      list ls = list_empty(&long_type);
-	      iterator it2 = text_to_iterable_string_fix(linea, " ,");
+	      iterator it2 = text_to_iterable_string_fix_tam(linea, " ,",string_fix_tam);
 	      while(iterable_has_next(&it2)) {
 	    	  	char * tx = iterable_next(&it2);
 	            parse(&x,tx,&long_type);

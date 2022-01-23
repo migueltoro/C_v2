@@ -9,6 +9,7 @@
 #include "../types/list.h"
 #include "../types/math2.h"
 
+
 set set_empty(type * type_element){
 	hash_table t = hash_table_empty(type_element,&int_type);
 	set st = {t};
@@ -104,7 +105,7 @@ bool set_equals(const set * s1, const set * s2) {
 }
 
 set * set_parse(set * out, char * text) {
-	iterator it = text_to_iterable_string_fix(text, "{ ,}");
+	iterator it = text_to_iterable_string_fix_tam(text, "{ ,}",string_fix_tam);
 	char tmp[out->hash_table.key_type->size];
 	tmp_type = *out->hash_table.key_type;
 	while(iterable_has_next(&it)) {
@@ -118,7 +119,7 @@ set * set_parse(set * out, char * text) {
 
 set set_parse_s(char * text) {
 	set res = set_empty(&string_fix_type);
-	iterator it = text_to_iterable_string_fix(text, "{ ,}");
+	iterator it = text_to_iterable_string_fix_tam(text, "{ ,}",string_fix_tam);
 	while(iterable_has_next(&it)) {
 		set_add(&res, iterable_next(&it));
 	}
