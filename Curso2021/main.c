@@ -70,6 +70,7 @@ int main() {
 //test_ejemplos_trees_4();
 //test_matrices_1();
 //test_histograma();
-test_accumulators_4("ficheros/quijote.txt");
+//test_accumulators_4("ficheros/quijote.txt");
+test_accumulators_6();
 }
 

@@ -41,7 +41,7 @@ list list_of(void * data, int size, type * type_element){
 	list r = {false,type_element,0,size,malloc(size*sizeof(void *)),heap_empty()};
 	char * d = (char *) data;
 	for(int i=0; i<size;i++){
-		r.elements[i] = d+i*r.type_element->size;
+		r.elements[i] = d+i*r.type->size;
 	}
 	r.size = size;
 	r.tam = size;
@@ -110,7 +110,7 @@ list list_of_type(type * type, int n, ...) {
 
 
 list list_copy(list * in){
-	list r = list_empty(in->type_element);
+	list r = list_empty(in->type);
 	int n = list_size(in);
 	for(int i = 0; i<n; i++){
 		list_add(&r,list_get(in,i));
@@ -153,7 +153,7 @@ list list_of_list_of_file_type(char * file, type * type){
 void * list_to_array(list * ls, void * array) {
 	char * base = (char *) array;
 	int n = list_size(ls);
-	type * t = ls->type_element;
+	type * t = ls->type;
 	int size = t->size;
 	for (int i = 0; i < n; i++) {
 		void * e = list_get(ls, i);
@@ -165,7 +165,7 @@ void * list_to_array(list * ls, void * array) {
  void * list_of_list_to_2_array(list * ls, void * array){
 	char * base = (char *) array;
 	int nf = list_size(ls);
-	type * t = ((list *) list_get(ls,0))->type_element;
+	type * t = ((list *) list_get(ls,0))->type;
 	int size = t->size;
 	int nc = list_size((list *) list_get(ls,0));
 	for(int i = 0; i<nf; i++){
@@ -182,7 +182,7 @@ list list_sublist(list * ls, int a, int b){
 	check_position_index(a,ls->size,__FILE__,__LINE__);
 	check_position_index(b,ls->size,__FILE__,__LINE__);
 	check_argument(b>a,__FILE__,__LINE__,"limites inconsistentes a = %d, b = %d",a,b);
-	list r = {true,ls->type_element,b-a,b-a,ls->elements+a,ls->hp};
+	list r = {true,ls->type,b-a,b-a,ls->elements+a,ls->hp};
 	return r;
 }
 
@@ -192,7 +192,7 @@ void * list_get(list * list, const int index){
 }
 
 char * list_get_string(list * ls, const int index, char * mem){
-	return tostring(list_get(ls,index),mem,ls->type_element);
+	return tostring(list_get(ls,index),mem,ls->type);
 }
 
 int list_size(list * ls){
@@ -208,7 +208,7 @@ void list_add_pointer(list * list, void * element) {
 
 void list_add(list * ls, void * element){
 	check_argument(!ls->is_view,__FILE__,__LINE__,"no se puede modificar una vista");
-	void * e = heap_copy_and_mem(&ls->hp,element,ls->type_element->size);
+	void * e = heap_copy_and_mem(&ls->hp,element,ls->type->size);
 	list_add_pointer(ls,e);
 }
 
@@ -235,7 +235,7 @@ void list_set_pointer(list * list, int index, void * e) {
 void * list_set(list * list, const int index, const void * e) {
 	check_argument(!list->is_view,__FILE__,__LINE__,"no se puede modificar una vista");
 	void * res = list->elements[index];
-	void * cp = heap_copy_and_mem(&list->hp,e,list->type_element->size);
+	void * cp = heap_copy_and_mem(&list->hp,e,list->type->size);
 	list_set_pointer(list,index, cp);
 	return res;
 }
@@ -243,7 +243,7 @@ void * list_set(list * list, const int index, const void * e) {
 
 void list_add_left(list * ls, void * element){
 	check_argument(!ls->is_view,__FILE__,__LINE__,"no se puede modificar una vista");
-	void * e = heap_copy_and_mem(&ls->hp,element,ls->type_element->size);
+	void * e = heap_copy_and_mem(&ls->hp,element,ls->type->size);
 	list_add_pointer(ls,e);
 	void * last_element = list_get(ls,list_size(ls)-1);
 	for(int i = list_size(ls)-1; i>0;i--){
@@ -254,7 +254,7 @@ void list_add_left(list * ls, void * element){
 
 
 list list_filter(list * ls, bool (*predicate)(void * e)){
-	list r = list_empty(ls->type_element);
+	list r = list_empty(ls->type);
 	for(int i =0; i< ls->size; i++){
 		void * e = list_get(ls,i);
 		if(predicate(e)){
@@ -301,7 +301,7 @@ void * iterable_list_next(iterator * current_iterable){
 iterator list_iterable(list * ls){
 	dependencies_list dl = {ls,0};
 	int size_dl = sizeof(dependencies_list);
-	iterator s_list = iterable_create(ls->type_element,iterable_list_has_next,iterable_list_next,iterable_list_see_next,NULL,&dl,size_dl);
+	iterator s_list = iterable_create(ls->type,iterable_list_has_next,iterable_list_next,iterable_list_see_next,NULL,&dl,size_dl);
 	return s_list;
 }
 
@@ -315,7 +315,7 @@ char * list_tostring(list * ls, char * mem){
 bool list_contains(list * list, const void * e) {
 	bool res = false;
 	for(int i=0; !res && i<list_size(list); i++) {
-		res = equals(list_get(list, i), e, list->type_element);
+		res = equals(list_get(list, i), e, list->type);
 	}
 	return res;
 }
@@ -328,7 +328,7 @@ bool list_equals(const list * ls1, const list * ls2) {
 		while(i<ls1->size && res) {
 			void* e1 = list_get(ls1, i);
 			void* e2 = list_get(ls2, i++);
-			res = equals(e1, e2,ls1->type_element);
+			res = equals(e1, e2,ls1->type);
 		}
 	}
 	return res;
@@ -338,8 +338,8 @@ string_fix list_delimiters = "[ ,]";
 
 list * list_parse(list * out, char * text) {
 	iterator it = text_to_iterable_string_fix_tam(text,list_delimiters,string_fix_tam);
-	char tmp[out->type_element->size];
-	tmp_type = * out->type_element;
+	char tmp[out->type->size];
+	tmp_type = * out->type;
 	while(iterable_has_next(&it)){
 		void * txt = iterable_next(&it);
 		parse_st(tmp,txt);
@@ -383,9 +383,15 @@ list list_of_file(char * file){
 	return r;
 }
 
+void list_clear(list * ls) {
+	type t = * ls->type;
+	list_free(ls);
+	*ls = list_empty(type_copy(&t));
+}
+
 void list_free(list * list) {
 	if (list != NULL) {
-		type_free(list->type_element);
+		type_free(list->type);
 		free(list->elements);
 		heap_free(&list->hp);
 	}
@@ -393,7 +399,7 @@ void list_free(list * list) {
 
 void list_free_2(list * ls, void (*f)(void * in)) {
 	if (ls != NULL) {
-		type_free(ls->type_element);
+		type_free(ls->type);
 		for (int i = 0; i < ls->size; i++) {
 			f(list_get(ls, i));
 		}
@@ -517,7 +523,7 @@ void list_quick_sort(list * ls, int (*order)(const void * e1, const void * e2)){
 }
 
 list merge_list(list * ls1, list * ls2, int (*order)(const void * e1, const void * e2)) {
-	list ls3 = list_empty(ls1->type_element);
+	list ls3 = list_empty(ls1->type);
 	int s1 = ls1->size;
 	int k1 = 0;
 	int s2 = ls2->size;
@@ -609,34 +615,34 @@ int _tmp_order(const void * e1, const void * e2){
 }
 
 int_pair bh_naturalorder(list * ls, void * pivot, int i, int j){
-	_list_type = ls->type_element;
+	_list_type = ls->type;
 	return bh(ls,pivot,i,j,_tmp_order);
 }
 void list_quick_sort_naturalorder(list * ls){
-	_list_type = ls->type_element;
+	_list_type = ls->type;
 	return list_quick_sort(ls,_tmp_order);
 }
 
 void basic_sort_naturalorder(list * ls){
-	_list_type = ls->type_element;
+	_list_type = ls->type;
 	return basic_sort(ls,_tmp_order);
 }
 int bs_naturalorder(list * ls, void * element){
-	_list_type = ls->type_element;
+	_list_type = ls->type;
 	return bs(ls,element,_tmp_order);
 }
 
 void list_merge_sort_naturalorder(list * ls){
-	_list_type = ls->type_element;
+	_list_type = ls->type;
 	return list_merge_sort(ls,_tmp_order);
 }
 list merge_list_naturalorder(list * ls1, list * ls2){
-	_list_type = ls1->type_element;
+	_list_type = ls1->type;
 	return merge_list(ls1,ls2,_tmp_order);
 }
 
 void * k_esimo_naturalorder(list * ls,int k){
-	_list_type = ls->type_element;
+	_list_type = ls->type;
 	return k_esimo(ls,k,_tmp_order);
 }
 

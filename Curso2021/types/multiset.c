@@ -15,7 +15,7 @@ multiset multiset_empty(type * type_element){
 }
 
 multiset multiset_of(list * ls){
-	multiset st = multiset_empty(ls->type_element);
+	multiset st = multiset_empty(ls->type);
 	for(int i =0;i <ls->size;i++){
 		multiset_add(&st,list_get(ls,i));
 	}

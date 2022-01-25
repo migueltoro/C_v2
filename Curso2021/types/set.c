@@ -17,7 +17,7 @@ set set_empty(type * type_element){
 }
 
 set set_of(list * ls){
-	set st = set_empty(ls->type_element);
+	set st = set_empty(ls->type);
 	for(int i =0;i <ls->size;i++){
 		set_add(&st,list_get(ls,i));
 	}

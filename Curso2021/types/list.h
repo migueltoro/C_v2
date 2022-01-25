@@ -25,7 +25,7 @@
 
 typedef struct {
 	bool is_view;
-	type * type_element;
+	type * type;
 	int size;
 	int tam;
 	void ** elements;
@@ -68,6 +68,7 @@ bool list_contains(list * list, const void * e);
 bool list_equals(const list * ls1, const list * ls2);
 list * list_parse(list * out, char * text);
 list list_parse_s(char * text);
+
 extern string_fix list_delimiters;
 
 void * list_to_array(list * ls, void * array);
@@ -96,6 +97,7 @@ void list_merge_sort_naturalorder(list * ls);
 list merge_list_naturalorder(list * ls1, list * ls2);
 void * k_esimo_naturalorder(list * ls,int k);
 
+void list_clear(list * ls);
 void list_free(list * ls);
 void list_free_2(list * ls, void (*f)(void * in));
 void test_list_1();

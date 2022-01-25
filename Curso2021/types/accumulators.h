@@ -33,30 +33,12 @@ typedef struct {
 
 char * estadisticos_tostring(void * in, char * mem);
 
-void * accumulate_left(iterator * st, void * base,
-		void * (*add)(void * out, const void * e));
-void * accumulate_left_e(iterator * st, void * base,
-		void * (*add)(void * out, const void * e),
-		bool isdone(void *));
-void * accumulate_left_e_r(iterator * st, void * base,
-		void * result,
-		void * (*add)(void * out, const void * e),
-		bool isdone(void * in), void * (*f_result)(void * out, const void * in));
+void * accumulate_left(iterator * st, void * base, void * (*add)(void * out, const void * e));
+void * accumulate_right(iterator * st, void * base, void * (*add)(void * out, const void * e));
 
-void * accumulate_right(iterator * st, void * base, int size_element,
-		void * (*add)(void * out, const void * e));
-void * accumulate_right_r(iterator * st, void * base, void * result, int size_element,
-		void * (*add)(void * out, const void * e),
-		void * (f_result)(void * out, const void * e));
+void * reduce_left(iterator * st, void * base, void * (*add)(void * out, const void * e));
+void * reduce_right(iterator * st, void * base, void * (*add)(void * out, const void * e));
 
-void * reduce_left(iterator * st, void * base, int size_base,
-		void * (*add)(void * out, const void * e));
-void * reduce_left_e(iterator * st, void * base, int size_base,
-		void * (*add)(void * out, const void * e), bool isdone(void *));
-void * reduce_right(iterator * st, void * base, int size_base,
-		void * (*add)(void * out, const void * e));
-void * reduce_right_e(iterator * st, void * base, int size_base,
-		void * (*add)(void * out, const void * e), bool isdone(void *));
 
 
 void * iterable_min(iterator * st,int (*comparator)(const void * e1, const void * e2));

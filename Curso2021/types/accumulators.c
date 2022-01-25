@@ -7,44 +7,7 @@
 
 #include "../types/accumulators.h"
 
-
-void * accumulate_left_e_r(iterator * st, void * base, void * result,
-		void * (*add)(void * out, const void * e),
-		bool isdone(void * in), void * (*f_result)(void * out, const void * in)) {
-
-	while (iterable_has_next(st) && !isdone(base)) {
-		void * e = iterable_next(st);
-		add(base, e);
-	}
-	return f_result(result, base);
-}
-
-void * accumulate_left_r(iterator * st,
-		void * base,
-		void * result,
-		void * (*add)(void * out, const void * e), void * (*f_result)(void * out, const void * in)) {
-
-	while (iterable_has_next(st)) {
-		void * e = iterable_next(st);
-		add(base, e);
-	}
-	return f_result(result, base);
-}
-
-void * accumulate_left_e(iterator * st, void * base,
-		void * (*add)(void * out, const void * e),
-		bool isdone(void * in)) {
-
-	while (iterable_has_next(st) && !isdone(base)) {
-		void * e = iterable_next(st);
-		add(base, e);
-	}
-	return base;
-}
-
-void * accumulate_left(iterator * st, void * base,
-		void * (*add)(void * out, const void * e)) {
-
+void * accumulate_left(iterator * st, void * base, void * (*add)(void * out, const void * e)) {
 	while (iterable_has_next(st)) {
 		void * e = iterable_next(st);
 		add(base, e);
@@ -53,39 +16,28 @@ void * accumulate_left(iterator * st, void * base,
 }
 
 
-void accumulate_right_private(iterator * st, void * base, int size_element,
-		void * (*add)(void * out, const void * e)) {
+void accumulate_right_private(iterator * st, void * base, void * (*add)(void * out, const void * e)) {
 	if (iterable_has_next(st)) {
-		char se[size_element];
+		char se[st->type->size];
 		void * e = iterable_next(st);
-		copy(se, e, size_element);
-		accumulate_right_private(st, base, size_element, add);
+		copy(se, e, st->type->size);
+		accumulate_right_private(st, base, add);
 		add(base, se);
 	}
 }
 
-void * accumulate_right(iterator * st, void * base, int size_element,
-		void * (*add)(void * out, const void * e)) {
-	accumulate_right_private(st,base,size_element,add);
+void * accumulate_right(iterator * st, void * base, void * (*add)(void * out, const void * e)) {
+	accumulate_right_private(st,base,add);
 	return base;
 }
 
 
-void * accumulate_right_r(iterator * st, void * base, void * result, int size_element,
-		void * (*add)(void * out, const void * e),
-		void * (f_result)(void * out, const void * e)) {
-	accumulate_right_private(st,base,size_element,add);
-	return f_result(result,base);
-}
-
-
-void * reduce_left(iterator * st, void * base, int size_base,
-		void * (*add)(void * out, const void * e)) {
+void * reduce_left(iterator * st, void * base, void * (*add)(void * out, const void * e)) {
 	bool first = true;
 	while (iterable_has_next(st)) {
 		void * e = iterable_next(st);
 		if (first) {
-			copy(base, e, size_base);
+			copy(base, e, st->type->size);
 			first = false;
 		} else {
 			add(base, e);
@@ -94,32 +46,15 @@ void * reduce_left(iterator * st, void * base, int size_base,
 	return base;
 }
 
-void * reduce_left_e(iterator * st, void * base, int size_base,
-		void * (*add)(void * out, const void * e), bool isdone(void *)) {
-	bool first = true;
-	while (iterable_has_next(st)) {
-		void * e = iterable_next(st);
-		if (first) {
-			copy(base, e, size_base);
-			first = false;
-		} else {
-			add(base, e);
-			if (isdone(base)) break;
-		}
-	}
-	return base;
-}
 
-
-void reduce_right_private(iterator * st, void * base, int size_base,
-		void * (*add)(void * out, const void * e), bool * first) {
+void reduce_right_private(iterator * st, void * base, void * (*add)(void * out, const void * e), bool * first) {
 	if (iterable_has_next(st)) {
-		char se[size_base];
+		char se[st->type->size];
 		void * e = iterable_next(st);
-		copy(se, e, size_base);
-		reduce_right_private(st, base, size_base, add, first);
+		copy(se, e,st->type->size);
+		reduce_right_private(st, base, add, first);
 		if (*first) {
-			copy(base, e, size_base);
+			copy(base, e,st->type->size);
 			* first = false;
 		} else {
 			add(base, se);
@@ -127,37 +62,11 @@ void reduce_right_private(iterator * st, void * base, int size_base,
 	}
 }
 
-void * reduce_right(iterator * st, void * base, int size_base,
-		void * (*add)(void * out, const void * e)) {
+void * reduce_right(iterator * st, void * base, void * (*add)(void * out, const void * e)) {
 	bool first = true;
-	reduce_right_private(st, base, size_base, add, &first);
+	reduce_right_private(st, base, add, &first);
 	return base;
 }
-
-void reduce_right_e_private(iterator * st, void * base, int size_base,
-		void * (*add)(void * out, const void * e), bool isdone(void *),
-		bool * first) {
-	if (iterable_has_next(st)) {
-		char se[size_base];
-		void * e = iterable_next(st);
-		copy(se, e, size_base);
-		reduce_right_private(st, base, size_base, add, first);
-		if (*first) {
-			copy(base, e, size_base);
-			*first = false;
-		} else {
-			if (!isdone(base)) add(base, se);
-		}
-	}
-}
-
-void * reduce_right_e(iterator * st, void * base, int size_base,
-		void * (*add)(void * out, const void * e), bool isdone(void *)) {
-	bool first = true;
-	reduce_right_e_private(st, base, size_base, add, isdone, &first);
-	return base;
-}
-
 
 list iterable_to_list(iterator * st){
 	list r = list_empty(st->type);
@@ -486,7 +395,7 @@ void test_accumulators_1(){
 	st = iterable_range_double(4,500,3);
 	estadisticos est= estadisticos_ini;
 	estadisticos est_r;
-	void * e = accumulate_left_r(&st,&est,&est_r,add_estadisticos,result_estadisticos);
+	void * e = accumulate_left(&st,&est,add_estadisticos);
 	printf("3:  \n%s\n\n",estadisticos_tostring(e,mem));
 	st = iterable_range_double(4,500,3);
 	st = iterable_range_long(4,500,3);
@@ -498,28 +407,7 @@ void test_accumulators_1(){
 	st = iterable_range_long(7,500,3);
 	long r1 = *(long *) iterable_first(&st,esmultiplo17);
 	printf("7:  \n%ld\n",r1);
-	double r7;
-	st = iterable_range_long(7, 500, 3);
-	reduce_left(&st,&r7,sizeof(double),long_sum);
-	printf("8:  \n%ld\n", r7);
-	st = iterable_range_long(7, 500, 3);
-	reduce_right(&st,&r7,sizeof(double),long_sum);
-	printf("8.1:  \n%ld\n", r7);
-	st = iterable_range_long(7, 500, 3);
-	reduce_left(&st,&r7,sizeof(double),long_max);
-	printf("9:  \n%ld\n", r7);
-	st = iterable_range_long(7, 500, 3);
-	reduce_right(&st,&r7,sizeof(double),long_max);
-	printf("9.1:  \n%ld\n", r7);
-	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
-	iterator p3 = text_to_iterable_string_fix_tam(text," ;.",20);
-	string_var emp = string_var_empty();
-	void * sr = accumulate_left(&p3,&emp,string_var_add_string_fix);
-	printf("10: %s\n",string_var_tostring(sr,mem,NULL));
-	p3 = text_to_iterable_string_fix_tam(text," ;.",20);
-	emp = string_var_empty();
-	sr = accumulate_right(&p3,&emp,30,string_var_add_string_fix);
-	printf("11: %s\n",string_var_tostring(sr,mem,NULL));
+
 	iterator rr = iterable_range_long(0, 500, 2);
 	iterator rr1 = iterable_map(&rr, &double_type, _random);
 	set ms = iterable_to_set(&rr1);
@@ -597,6 +485,57 @@ void test_accumulators_5(char * file) {
 		n++;
 	}
 	printf("%d\n",n);
+}
+
+char * str_cat(char * out, char * in){
+	strcat(out,in);
+	return out;
+}
+
+void test_accumulators_6(char *file) {
+	char mem[4000];
+	double r7;
+	iterator st = iterable_range_long(7, 500, 3);
+	reduce_left(&st, &r7, long_sum);
+	printf("1:  \n%ld\n", r7);
+	st = iterable_range_long(7, 500, 3);
+	reduce_right(&st, &r7, long_sum);
+	printf("1.1:  \n%ld\n", r7);
+	st = iterable_range_long(7, 500, 3);
+	reduce_left(&st, &r7, long_max);
+	printf("1:  \n%ld\n", r7);
+	st = iterable_range_long(7, 500, 3);
+	reduce_right(&st, &r7, long_max);
+	printf("2.1:  \n%ld\n", r7);
+	char text[] =
+			"El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
+	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	string_var emp = string_var_empty();
+	void *sr = accumulate_left(&p3, &emp, string_var_add_string_fix);
+	printf("10: %s\n", string_var_tostring(sr, mem, NULL));
+	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	emp = string_var_empty();
+	sr = accumulate_right(&p3, &emp, string_var_add_string_fix);
+	printf("11: %s\n", string_var_tostring(sr, mem, NULL));
+	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	char b[10000];
+	void *r2 = accumulate_left(&p3, b, str_cat);
+	printf("12: %s\n", b);
+	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	b[0] = '\0';
+	r2 = accumulate_right(&p3, b, str_cat);
+	printf("13: %s\n", b);
+	printf("14: %d\n", strlen(b));
+	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	type t = string_fix_type_of_tam(20);
+	list ls = list_empty(&t);
+	r2 = accumulate_left(&p3,&ls,list_add);
+	printf("15: %s\n", list_tostring(&ls,mem));
+	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	list_clear(&ls);
+	r2 = accumulate_right(&p3,&ls,list_add);
+	printf("16: %s\n",list_tostring(&ls,mem));
+	printf("17: %d", list_size(&ls));
 }
 
 
