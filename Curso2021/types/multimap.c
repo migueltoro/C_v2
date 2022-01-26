@@ -75,7 +75,7 @@ char * list_multimap_tostring(list_multimap * lm, char * mem){
 
 void list_multimap_toconsole(list_multimap * lm){
 	iterator it = hash_table_items_iterable(&(lm->hash_table));
-	iterable_toconsole_sep(&it,"\n","","\n");
+	iterable_to_console_sep(&it,"\n","","\n");
 }
 
 iterator list_multimap_iterable(list_multimap * lm){

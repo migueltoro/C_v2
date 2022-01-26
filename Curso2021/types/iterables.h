@@ -68,8 +68,8 @@ iterator iterable_enumerate(iterator * st);
 
 char * iterable_tostring(iterator * st, char * mem);
 char * iterable_tostring_sep(iterator * st, char * sep, char * prefix, char * suffix, char * mem);
-void iterable_toconsole(iterator * st);
-void iterable_toconsole_sep(iterator * st, char * sep, char * prefix, char * suffix);
+void iterable_to_console(iterator * st);
+void iterable_to_console_sep(iterator * st, char * sep, char * prefix, char * suffix);
 string_var iterable_tostring_sep_big(iterator * st,char * sep,char * prefix,char * suffix);
 string_var iterable_tostring_big(iterator * st);
 

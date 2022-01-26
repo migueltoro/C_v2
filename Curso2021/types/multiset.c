@@ -98,6 +98,6 @@ void test_multiset() {
 	char * s = multiset_tostring(&st, mem);
 	printf("%s\n",s);
 	iterator it = multiset_items_iterable(&st);
-	iterable_toconsole_sep(&it,"\n","","");
+	iterable_to_console_sep(&it,"\n","","");
 	multiset_free(&st);
 }

@@ -33,11 +33,11 @@ typedef struct {
 
 char * estadisticos_tostring(void * in, char * mem);
 
-void * accumulate_left(iterator * st, void * base, void * (*add)(void * out, const void * e));
-void * accumulate_right(iterator * st, void * base, void * (*add)(void * out, const void * e));
+void * accumulate_left(iterator * st, void * base, bool (*add)(void * out, const void * e));
+void * accumulate_right(iterator * st, void * base, bool (*add)(void * out, const void * e));
 
-void * reduce_left(iterator * st, void * base, void * (*add)(void * out, const void * e));
-void * reduce_right(iterator * st, void * base, void * (*add)(void * out, const void * e));
+void * reduce_left(iterator * st, void * base, bool (*add)(void * out, const void * e));
+void * reduce_right(iterator * st, void * base, bool (*add)(void * out, const void * e));
 
 
 
@@ -68,5 +68,8 @@ set_multimap iterable_grouping_set(iterator * st, void * (*f_key)(void * out, vo
 void test_accumulators_1();
 void test_accumulators_2();
 void test_accumulators_3();
+void test_accumulators_4(char * file);
+void test_accumulators_5(char * file);
+void test_accumulators_6();
 
 #endif /* ACCUMULATORS_H_ */

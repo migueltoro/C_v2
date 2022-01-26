@@ -48,7 +48,7 @@ void test_palabras() {
 	printf("%d\n", n);
 	multiset fq = frecuencias_de_palabras("ficheros/quijote.txt");
 	iterator ifq = multiset_items_iterable(&fq);
-	iterable_toconsole_sep(&ifq,"\n","","");
+	iterable_to_console_sep(&ifq,"\n","","");
 }
 
 

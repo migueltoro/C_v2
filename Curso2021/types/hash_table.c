@@ -406,7 +406,7 @@ void test_hash_table() {
 	printf("%s\n",hash_table_tostring(&ht2,mem));
 	printf("\n6: \n");
 	iterator iht = hash_table_items_iterable(&ht2);
-	iterable_toconsole_sep(&iht,"\n","","\n");
+	iterable_to_console_sep(&iht,"\n","","\n");
 }
 
 

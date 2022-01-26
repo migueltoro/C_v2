@@ -7,65 +7,73 @@
 
 #include "../types/accumulators.h"
 
-void * accumulate_left(iterator * st, void * base, void * (*add)(void * out, const void * e)) {
-	while (iterable_has_next(st)) {
+void * accumulate_left(iterator * st, void * base, bool (*add)(void * out, const void * e)) {
+	bool f = false;
+	while (iterable_has_next(st) && !f) {
 		void * e = iterable_next(st);
-		add(base, e);
+		f = add(base, e);
 	}
 	return base;
 }
 
 
-void accumulate_right_private(iterator * st, void * base, void * (*add)(void * out, const void * e)) {
+bool accumulate_right_private(iterator * st, void * base, bool (*add)(void * out, const void * e)) {
+	bool f;
 	if (iterable_has_next(st)) {
 		char se[st->type->size];
 		void * e = iterable_next(st);
 		copy(se, e, st->type->size);
-		accumulate_right_private(st, base, add);
-		add(base, se);
+		f = accumulate_right_private(st, base, add);
+		if(!f) f = add(base, se);
 	}
+	return f;
 }
 
-void * accumulate_right(iterator * st, void * base, void * (*add)(void * out, const void * e)) {
+void * accumulate_right(iterator * st, void * base, bool (*add)(void * out, const void * e)) {
 	accumulate_right_private(st,base,add);
 	return base;
 }
 
 
-void * reduce_left(iterator * st, void * base, void * (*add)(void * out, const void * e)) {
+void * reduce_left(iterator * st, void * base, bool (*add)(void * out, const void * e)) {
 	bool first = true;
-	while (iterable_has_next(st)) {
+	bool f = false;
+	while (iterable_has_next(st) && !f) {
 		void * e = iterable_next(st);
 		if (first) {
 			copy(base, e, st->type->size);
 			first = false;
-		} else {
-			add(base, e);
+		} else if(!f) {
+			f = add(base, e);
 		}
 	}
-	return base;
+	if(first) return NULL;
+	else return base;
 }
 
 
-void reduce_right_private(iterator * st, void * base, void * (*add)(void * out, const void * e), bool * first) {
+bool reduce_right_private(iterator * st, void * base, bool (*add)(void * out, const void * e), bool * first) {
+	bool f = false;
 	if (iterable_has_next(st)) {
 		char se[st->type->size];
 		void * e = iterable_next(st);
 		copy(se, e,st->type->size);
-		reduce_right_private(st, base, add, first);
+		f = reduce_right_private(st, base, add, first);
 		if (*first) {
 			copy(base, e,st->type->size);
 			* first = false;
-		} else {
-			add(base, se);
+		} else if(!f){
+			f = add(base, se);
 		}
 	}
+	return f;
 }
 
-void * reduce_right(iterator * st, void * base, void * (*add)(void * out, const void * e)) {
+void * reduce_right(iterator * st, void * base, bool (*add)(void * out, const void * e)) {
 	bool first = true;
 	reduce_right_private(st, base, add, &first);
-	return base;
+	if(first) return NULL;
+	else return base;
 }
 
 list iterable_to_list(iterator * st){
@@ -224,6 +232,8 @@ void* iterable_min_naturalorder(iterator *st) {
 	return minvalue;
 }
 
+
+
 void * iterable_max(iterator * st,int (*comparator)(const void * out, const void * in)) {
 	type * t = st->type;
 	void * maxvalue = malloc(t->size);
@@ -365,14 +375,14 @@ bool esmultiplo44(const long *in){
 	return (*in)%44 == 0;
 }
 
-long * long_sum(long * out, long * in){
+bool long_sum(long * out, long * in){
 	*out = *out + *in;
-	return out;
+	return false;
 }
 
-long * long_max(long * out, long * in){
+bool long_max(long * out, long * in){
 	*out = MAX(*out,*in);
-	return out;
+	return false;
 }
 
 double * _random(double * out, long * in);
@@ -407,7 +417,6 @@ void test_accumulators_1(){
 	st = iterable_range_long(7,500,3);
 	long r1 = *(long *) iterable_first(&st,esmultiplo17);
 	printf("7:  \n%ld\n",r1);
-
 	iterator rr = iterable_range_long(0, 500, 2);
 	iterator rr1 = iterable_map(&rr, &double_type, _random);
 	set ms = iterable_to_set(&rr1);
@@ -464,6 +473,14 @@ int cmp(char * lin1, char * lin2){
 	return order(&r1,&r2,&int_type);
 }
 
+bool max_len(char * p1, char * p2){
+	int r1 = strlen(p1);
+	int r2 = strlen(p2);
+	int r = order(&r1,&r2,&int_type);
+	if(r < 0) strcpy(p1,p2);
+	return false;
+}
+
 void test_accumulators_4(char * file) {
 	string_fix_tam = 100;
 	iterator g1 = file_iterable_string_fix(file);
@@ -487,12 +504,17 @@ void test_accumulators_5(char * file) {
 	printf("%d\n",n);
 }
 
-char * str_cat(char * out, char * in){
+bool str_cat(char * out, char * in){
 	strcat(out,in);
-	return out;
+	return false;
 }
 
-void test_accumulators_6(char *file) {
+bool str_var_cat(char * out, char * in){
+	string_var_add_string_fix(out,in);
+	return false;
+}
+
+void test_accumulators_6() {
 	char mem[4000];
 	double r7;
 	iterator st = iterable_range_long(7, 500, 3);
@@ -511,11 +533,11 @@ void test_accumulators_6(char *file) {
 			"El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
 	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
 	string_var emp = string_var_empty();
-	void *sr = accumulate_left(&p3, &emp, string_var_add_string_fix);
+	void *sr = accumulate_left(&p3, &emp, str_var_cat);
 	printf("10: %s\n", string_var_tostring(sr, mem, NULL));
 	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
 	emp = string_var_empty();
-	sr = accumulate_right(&p3, &emp, string_var_add_string_fix);
+	sr = accumulate_right(&p3, &emp, str_var_cat);
 	printf("11: %s\n", string_var_tostring(sr, mem, NULL));
 	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
 	char b[10000];
@@ -536,6 +558,40 @@ void test_accumulators_6(char *file) {
 	r2 = accumulate_right(&p3,&ls,list_add);
 	printf("16: %s\n",list_tostring(&ls,mem));
 	printf("17: %d", list_size(&ls));
+}
+
+void test_accumulators_7() {
+	long p = 2;
+	long suma;
+	_ref_long = 2000;
+	iterator it1 = iterable_iterate(&long_type,&p,menor_que_long,siguiente_primo_f);
+	iterator it2 = iterable_map(&it1,&long_type,square_long_f);
+	long s = *(long*) reduce_left(&it2, &suma,long_sum);
+	printf("%d\n",s);
+	it1 = iterable_iterate(&long_type,&p,menor_que_long,siguiente_primo_f);
+	it2 = iterable_map(&it1,&long_type,square_long_f);
+	s = *(long*) reduce_right(&it2, &suma,long_sum);
+	printf("%d\n",s);
+}
+
+void test_accumulators_8() {
+	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
+	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	char b[10000];
+	void *r2 = accumulate_left(&p3, b, str_cat);
+	printf("1: %s\n", b);
+	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	b[0] = '\0';
+	r2 = accumulate_right(&p3, b, str_cat);
+	printf("2: %s\n", b);
+}
+
+void test_accumulators_9() {
+	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
+	char p[20];
+	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	char * s = (char *) reduce_left(&p3,p,max_len);
+	printf("%s\n",s);
 }
 
 

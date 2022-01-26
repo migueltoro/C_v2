@@ -488,11 +488,11 @@ string_var iterable_tostring_big(iterator * st){
 	return iterable_tostring_sep_big(st,",","{","}");
 }
 
-void iterable_toconsole(iterator * st){
-	iterable_toconsole_sep(st,",", "{", "}");
+void iterable_to_console(iterator * st){
+	iterable_to_console_sep(st,",", "{", "}");
 }
 
-void iterable_toconsole_sep(iterator * st, char * sep, char * prefix, char * suffix) {
+void iterable_to_console_sep(iterator * st, char * sep, char * prefix, char * suffix) {
 	char m[Tam_String];
 	bool first = true;
 	printf("%s",prefix);
@@ -556,16 +556,16 @@ void test_iterables_1() {
 	char delimiters[] = " ,;.()";
 	char text1[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
 	iterator sp = text_to_iterable_string_fix_tam(text1, delimiters,20);
-	iterable_toconsole(&sp);
+	iterable_to_console(&sp);
 	printf("\n_______________\n");
 	char text2[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
 	iterator p3;
 	text_to_iterable_string_fix_function(&p3, text2);
-	iterable_toconsole(&p3);
+	iterable_to_console(&p3);
 	printf("\n_______________\n");
 	char text3[] = "Quédese eso del barbero a mi cargo, dijo SAncho, y al de vuestra merced se quede el procurar venir a ser rey y el hacerme conde. Así será, respondió Don Quijote. ";
 	text_to_iterable_string_fix_function(&p3, text3);
-	iterable_toconsole(&p3);
+	iterable_to_console(&p3);
 }
 
 void test_iterables_2() {
@@ -589,11 +589,11 @@ void test_iterables_3(){
 	iterator fit = file_iterable_string_fix("ficheros/datos_entrada.txt");
 	iterator fit3 = iterable_filter(&fit,string_fix_not_all_space);
 	iterator fmap = iterable_flatmap(&fit3,&t,text_to_iterable_string_fix_function);
-	iterable_toconsole_sep(&fmap,"\n","{","}");
+	iterable_to_console_sep(&fmap,"\n","{","}");
 	printf("\n_________________\n");
 	char text[] = "(23....,45.)";
 	iterator it = text_to_iterable_string_fix_tam("(23....,45.)"," ,.()",20);
-	iterable_toconsole_sep(&it,",","{","}");
+	iterable_to_console_sep(&it,",","{","}");
 }
 
 
@@ -601,7 +601,7 @@ void test_iterables_5() {
 	long e0 =2;
 	_ref_long = 1000;
 	iterator it = iterable_iterate(&long_type,&e0, menor_que_long, siguiente_primo_f);
-	iterable_toconsole(&it);
+	iterable_to_console(&it);
 }
 
 void test_iterables_6() {
@@ -610,7 +610,7 @@ void test_iterables_6() {
 	iterator r = iterable_range_long(0, 1000, 9);
 	iterator r2 = iterable_consecutive_pairs(&r);
 	iterator r3 = iterable_enumerate(&r2);
-	iterable_toconsole(&r3);
+	iterable_to_console(&r3);
 }
 
 iterator * new_it() {
@@ -625,7 +625,7 @@ iterator * new_it() {
 
 void test_iterables_7() {
 	iterator * it = new_it();
-	iterable_toconsole(it);
+	iterable_to_console(it);
 }
 
 int num_palabras() {
@@ -634,7 +634,7 @@ int num_palabras() {
 	iterator t2 = iterable_filter(iterable_copy(&t1), string_fix_not_all_space);
 	iterator t3 = iterable_flatmap(iterable_copy(&t2),type_copy(&t),text_to_iterable_string_fix_function);
 	iterator t4 = iterable_enumerate(iterable_copy(&t3));
-	iterable_toconsole_sep(&t4, "\n", "", "");
+	iterable_to_console_sep(&t4, "\n", "", "");
 	return 0;
 }
 

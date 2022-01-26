@@ -107,7 +107,7 @@ void test__ejemplos_trees_1_1() {
 	bool r = false;
 	hash_table_put(&ht, &h, &r);
 	iterator it = hash_table_items_iterable(&ht);
-	iterable_toconsole(&it);
+	iterable_to_console(&it);
 	printf("\n%s",tostring(hash_table_get(&ht,&h),mem,&bool_type));
 	bool r1 = false;
 	bool r2 = false;

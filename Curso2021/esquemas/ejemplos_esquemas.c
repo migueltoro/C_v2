@@ -89,7 +89,7 @@ void test_esquemas() {
 	list_multimap lm = grupos_list_en_fichero_1("ficheros/numeros_2.txt",&long_type, &long_type, rest);
 	iterator it = list_multimap_iterable(&lm);
 	printf("2:\n");
-	iterable_toconsole_sep(&it, "\n", "", "");
+	iterable_to_console_sep(&it, "\n", "", "");
 	list_multimap_free(&lm);
 	iterable_free(&it);
 	set_multimap sm = grupos_set_en_fichero_1("ficheros/numeros_2.txt",&long_type, &long_type, rest);
