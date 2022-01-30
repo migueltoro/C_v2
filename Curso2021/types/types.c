@@ -723,7 +723,6 @@ char* strtok_r2(char *str, const char *delim, char **save_pointer) {
 	return ret;
 }
 
-
 char * string_fix_concat(char * out, const char * in, type * t){
 	int n1 = strlen(in);
 	int n2 = strlen(out);

@@ -14,7 +14,7 @@ int _nprimes = 20;
 
 
 int get_index_block(hash_table * table, void * key);
-int find_data_entry(hash_table * table, int index_block, void * key);
+int find_data_entry(hash_table * table, int bq, void * key);
 void ini_data(hash_table * table);
 int rehash(hash_table * table);
 void * hash_table_put_private(hash_table * table, void * key, void * value);
@@ -52,9 +52,9 @@ int get_index_block(hash_table * table, void * key) {
 	return index;
 }
 
-int find_data_entry(hash_table * table, int index_block, void * key) {
+int find_data_entry(hash_table * table, int bq, void * key) {
 	int r = -1;
-	int next = table->blocks[index_block];
+	int next = table->blocks[bq];
 	while (next >= 0) {
 		if (equals(key,table->data[next].key,table->key_type)) {
 			r = next;
@@ -147,23 +147,23 @@ int rehash(hash_table * table) {
 	return 1;
 }
 
-entry * ocupa_primera_libre(hash_table * table, int index) {
+entry * ocupa_primera_libre(hash_table * table, int bq) {
 	int first_free = table->first_free_data;
 	table->first_free_data = table->data[first_free].next;
-	if (table->blocks[index] < 0) {
+	if (table->blocks[bq] < 0) {
 		table->data[first_free].next = -1;
 	} else {
-		table->data[first_free].next = table->blocks[index];
+		table->data[first_free].next = table->blocks[bq];
 	}
-	table->blocks[index] = first_free;
+	table->blocks[bq] = first_free;
 	return table->data+first_free;
 }
 
-void libera(hash_table * table, int index, int index_data) {
-	if (table->blocks[index] == index_data) {
-		table->blocks[index] = table->data[index_data].next;
+void libera(hash_table * table, int bq, int index_data) {
+	if (table->blocks[bq] == index_data) {
+		table->blocks[bq] = table->data[index_data].next;
 	} else {
-		int i = table->blocks[index];
+		int i = table->blocks[bq];
 		while (table->data[i].next != index_data) {
 			i = table->data[i].next;
 		}

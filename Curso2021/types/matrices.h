@@ -40,16 +40,16 @@ typedef struct {
 
 matrix matrix_of_array(void * a, int nf, int nc, type * type_element);
 matrix matrix_of(int nf, int nc, type * type_element);
-matrix matrix_of_file(char * file, type * type, char * sep, int n, int m);
+matrix matrix_of_file(char * file, type * type, int n, int m);
 
-void * matrix_get(matrix * s, int i, int j);
-void matrix_set(matrix * s, int i, int j, void * value);
+void * matrix_get(matrix * s, int f, int c);
+void matrix_set(matrix * s, int f, int c, void * value);
 int matrix_nf(matrix * s);
 int matrix_nc(matrix * s);
 void * matrix_center(matrix * s);
 list matrix_corners(matrix * s);
 
-int matrix_get_int(matrix * s, int i, int j);
+int matrix_get_int(matrix * s, int f, int c);
 
 void matrix_free(matrix * m);
 

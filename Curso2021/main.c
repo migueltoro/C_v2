@@ -53,7 +53,7 @@ int main() {
 //test_token();
 //test_tokenizer();
 //test_tupla();
-test_list_2();
+//test_list_2();
 //test_hash_table();
 //test_dates_2("ficheros/fechas_2.txt");
 //test_set_3();
@@ -68,7 +68,7 @@ test_list_2();
 //test_tree_2();
 //test_parse_tree_2();
 //test_ejemplos_trees_4();
-//test_matrices_1();
+test_matrices_3();
 //test_histograma();
 //test_accumulators_4("ficheros/quijote.txt");
 //test_accumulators_10();

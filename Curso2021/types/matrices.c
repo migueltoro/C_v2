@@ -18,32 +18,45 @@ matrix matrix_of(int nf, int nc, type * type){
 	return matrix_of_array(array, nf, nc, type);
 }
 
-matrix matrix_of_file(char * file, type * type, char * sep, int n, int m) {
-	list ls = list_of_list_of_file_type(file, type,sep,n,m);
-	int nf = list_size(&ls);
-	int nc = list_size(list_get(&ls, 0));
-	void * array = malloc(nf*nc*type->size);
-	list_of_list_to_2_array(&ls, array);
-	return matrix_of_array(array, nf, nc, type);
+matrix matrix_of_file(char *file, type *type, int nf, int nc) {
+	matrix m = matrix_of(nf,nc,type);
+	iterator it1 = file_iterable_string_fix_tam(file,string_fix_tam);
+	char e[type->size];
+	int f = 0;
+	while (iterable_has_next(&it1)) {
+		char *linea = (char*) iterable_next(&it1);
+		iterator it2 = text_to_iterable_string_fix_tam(linea," ,",50);
+		int c = 0;
+		while (iterable_has_next(&it2)) {
+			char *tx = iterable_next(&it2);
+			parse(e, tx, type);
+			matrix_set(&m,f,c,e);
+			c++;
+		}
+		f++;
+	}
+	return m;
 }
+
 
 int matrix_nf(matrix * s){
 	return s->nf;
 }
+
 int matrix_nc(matrix * s){
 	return s->nc;
 }
 
-void * matrix_get(matrix * s, int i, int j){
-	return s->datos + s->type->size*(s->__nc*(s->iv+i)+ s->jv+ j);
+void * matrix_get(matrix * s, int f, int c){
+	return s->datos + s->type->size*(s->__nc*(s->iv+f)+ s->jv+ c);
 }
 
-int matrix_get_int(matrix * s, int i, int j) {
-	return to_int(matrix_get(s,i,j));
+int matrix_get_int(matrix * s, int f, int c) {
+	return to_int(matrix_get(s,f,c));
 }
 
-void matrix_set(matrix * s, int i, int j, void * value){
-	copy(s->datos + s->type->size*(s->__nc*(s->iv+i)+ s->jv+ j), value, s->type->size);
+void matrix_set(matrix * s, int f, int c, void * value){
+	copy(s->datos + s->type->size*(s->__nc*(s->iv+f)+ s->jv+ c), value, s->type->size);
 }
 
 void matrix_set_value(matrix * s, void * value) {
@@ -260,7 +273,7 @@ void test_matrices_1() {
 void test_matrices_3(){
 	char mem[250];
 	char sep[] = " ,";
-	matrix r = matrix_of_file("ficheros/datos_entrada.txt",&int_type,sep,100,20);
+	matrix r = matrix_of_file("ficheros/datos_entrada.txt",&int_type,49,5);
 	matrix_print(&r, "1____");
 	list cn = matrix_corners(&r);
 	list_tostring(&cn,mem);
@@ -281,7 +294,7 @@ void test_matrices_4(){
 	matrix r = matrix_of_array(mat1,3,3,&int_type);
 	matrix_print(&r,"1___");
 	int value =0;
-	matrix_set(&r,0,0,&value);
+	matrix_set(&r,1,2,&value);
 	matrix_print(&r,"2___");
 	int mat2[3][3] = { { 1, 1, 2 }, { 2, 3, 4}, {5, 6, 7}};
 	matrix r2 = matrix_of_array(mat2,3,3,&int_type);
