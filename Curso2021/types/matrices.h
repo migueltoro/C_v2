@@ -40,7 +40,7 @@ typedef struct {
 
 matrix matrix_of_array(void * a, int nf, int nc, type * type_element);
 matrix matrix_of(int nf, int nc, type * type_element);
-matrix matrix_of_file(char * file, type * type);
+matrix matrix_of_file(char * file, type * type, char * sep, int n, int m);
 
 void * matrix_get(matrix * s, int i, int j);
 void matrix_set(matrix * s, int i, int j, void * value);

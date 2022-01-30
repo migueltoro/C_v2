@@ -594,6 +594,24 @@ void test_accumulators_9() {
 	printf("%s\n",s);
 }
 
+char c;
 
+bool p_palabra(char * out, char * in){
+	bool r = in[0] == c;
+	if(r) strcpy(out,in);
+	return r;
+}
+
+void test_accumulators_10() {
+	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
+	char p[20] = "No existe";
+	c = 'x';
+	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	void * s = accumulate_left(&p3,p,p_palabra);
+	printf("%s\n",s);
+	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	s = accumulate_right(&p3,p,p_palabra);
+	printf("%s\n",s);
+}
 
 

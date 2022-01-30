@@ -36,6 +36,7 @@ char * estadisticos_tostring(void * in, char * mem);
 void * accumulate_left(iterator * st, void * base, bool (*add)(void * out, const void * e));
 void * accumulate_right(iterator * st, void * base, bool (*add)(void * out, const void * e));
 
+
 void * reduce_left(iterator * st, void * base, bool (*add)(void * out, const void * e));
 void * reduce_right(iterator * st, void * base, bool (*add)(void * out, const void * e));
 

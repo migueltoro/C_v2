@@ -37,9 +37,9 @@ void swap_in_list(list * ls, int a, int b);
 list list_empty(type * element);
 list list_empty_tam(type * element, int tam);
 list list_of(void * data, int size, type * type);
-list list_of_file(char * file);
-list list_of_file_type(char * file, type * type);
-list list_of_list_of_file_type(char * file, type * type);
+list list_of_file(char * file, int n);
+list list_of_file_type(char * file, type * type, int n);
+list list_of_list_of_file_type(char * file, type * type, char * sep, int n, int m);
 list list_of_int(int n, ...);
 list list_of_long(int n, ...);
 list list_of_double(int n, ...);
@@ -61,7 +61,7 @@ void list_set_pointer(list * list, int index, void * element);
 
 list list_copy(list * in);
 list list_filter(list * ls, bool (*predicate)(void * e));
-list list_map(list * ls, type * type_element, void * (*f)(void * out, void * in));
+list list_map(list * ls, type * t, void * (*f)(void * out, void * in));
 
 char * list_tostring(list * ls, char * mem);
 bool list_contains(list * list, const void * e);

@@ -18,8 +18,8 @@ matrix matrix_of(int nf, int nc, type * type){
 	return matrix_of_array(array, nf, nc, type);
 }
 
-matrix matrix_of_file(char * file, type * type) {
-	list ls = list_of_list_of_file_type(file, type);
+matrix matrix_of_file(char * file, type * type, char * sep, int n, int m) {
+	list ls = list_of_list_of_file_type(file, type,sep,n,m);
 	int nf = list_size(&ls);
 	int nc = list_size(list_get(&ls, 0));
 	void * array = malloc(nf*nc*type->size);
@@ -259,7 +259,8 @@ void test_matrices_1() {
 
 void test_matrices_3(){
 	char mem[250];
-	matrix r = matrix_of_file("ficheros/datos_entrada.txt",&int_type);
+	char sep[] = " ,";
+	matrix r = matrix_of_file("ficheros/datos_entrada.txt",&int_type,sep,100,20);
 	matrix_print(&r, "1____");
 	list cn = matrix_corners(&r);
 	list_tostring(&cn,mem);
