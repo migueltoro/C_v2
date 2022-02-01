@@ -27,8 +27,8 @@
 #include "ejemplos/ejemplos0.h"
 #include "ejemplos/ejemplos1.h"
 #include "ejemplos/ejemplos2.h"
+#include "ejemplos_files/ejemplos_files.h"
 #include "histograma/histograma.h"
-#include "files/ejemplos_files.h"
 #include "trees/ejemplos_tree_1.h"
 #include "trees/ejemplos_tree_2.h"
 #include "trees/ejemplos_tree_3.h"
@@ -62,15 +62,15 @@ int main() {
 //test_esquemas();
 //test_marca();
 //test_ruta();
-//test_palabras();
+test_palabras();
 //test_binary_tree_2();
 //test_parse_binary_tree_2();
 //test_tree_2();
 //test_parse_tree_2();
 //test_ejemplos_trees_4();
-test_matrices_3();
+//test_matrices_3();
 //test_histograma();
 //test_accumulators_4("ficheros/quijote.txt");
-//test_accumulators_10();
+//test_accumulators_12();
 }
 

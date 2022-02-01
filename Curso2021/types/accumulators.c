@@ -95,23 +95,22 @@ set iterable_to_set(iterator * st) {
 }
 
 multiset iterable_to_multiset(iterator * st) {
-	multiset r = multiset_empty(&st->type);
+	multiset r = multiset_empty(st->type);
 	while (iterable_has_next(st)) {
 		void * e = iterable_next(st);
-		multiset_add_n(&r, e, 1);
+		multiset_add(&r, e);
 	}
 	return r;
 }
 
 
 multiset iterable_counting(iterator * st, void * (*f_key)(void * out, void * in), type * key_type){
-	char mem[20];
-	int uno = 1;
+	char mem[key_type->size];
 	multiset ms = multiset_empty(key_type);
 	while(iterable_has_next(st)){
 		void * next = iterable_next(st);
 		void * key = f_key(mem,next);
-		multiset_add_n(&ms,key,1);
+		multiset_add(&ms,key);
 	}
 	return ms;
 }
@@ -612,6 +611,33 @@ void test_accumulators_10() {
 	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
 	s = accumulate_right(&p3,p,p_palabra);
 	printf("%s\n",s);
+}
+
+void test_accumulators_11() {
+	char mem[1000];
+	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
+	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	multiset r = iterable_to_multiset(&p3);
+	iterator ir = multiset_items_iterable(&r);
+	iterable_to_console_sep(&ir,"\n","","");
+}
+
+list lst() {
+	new_rand();
+	list ls = list_empty(&int_type);
+	for (int i = 0; i < 100; i++) {
+		int r = entero_aleatorio(0, 30);
+		list_add(&ls, &r);
+	}
+	return ls;
+}
+
+void test_accumulators_12() {
+	list ls = lst();
+	iterator p3 = list_iterable(&ls);
+	multiset r = iterable_to_multiset(&p3);
+	iterator ir = multiset_items_iterable(&r);
+	iterable_to_console_sep(&ir, "\n", "", "");
 }
 
 

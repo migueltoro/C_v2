@@ -6,7 +6,7 @@
  */
 
 
-#include "../files/ejemplos_files.h"
+#include "../ejemplos_files/ejemplos_files.h"
 
 //suma los primos del fichero
 

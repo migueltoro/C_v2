@@ -21,7 +21,7 @@ multiset multiset_empty(type * type_element);
 multiset multiset_of(list * ls);
 void multiset_add(multiset * st, void * element);
 void multiset_add_n(multiset * st, void * element, int n);
-void multiset_remove(multiset * st, void * element, int n);
+void multiset_remove_n(multiset * st, void * element, int n);
 int multiset_size(multiset * st);
 bool multiset_contains(multiset * st, void * element);
 int multiset_count(multiset * st, void * element);

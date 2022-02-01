@@ -23,14 +23,15 @@ multiset multiset_of(list * ls){
 }
 
 void multiset_add_n(multiset * st, void * element, int n) {
-	if (hash_table_contains_key(&st->hash_table, element)) {
-		 int count = *(int *) hash_table_get(&st->hash_table, element);
+	void * e = hash_table_get(&st->hash_table, element);
+	int count;
+	if(e != NULL) {
+		 count = *(int *)  e;
 		 count = count + n;
-		 hash_table_put(&st->hash_table, element,&count);
 	} else {
-		int nn = n;
-		hash_table_put(&st->hash_table, element,&nn);
+		count = n;
 	}
+	hash_table_put(&st->hash_table, element,&count);
 }
 
 void multiset_add(multiset * st, void * element){
@@ -45,11 +46,11 @@ bool multiset_contains(multiset * st, void * element){
 	return hash_table_contains_key(&(st->hash_table),element);
 }
 
-void multiset_remove(multiset * st, void * element, int nu) {
+void multiset_remove_n(multiset * st, void * element, int nu) {
 	if (hash_table_contains_key(&st->hash_table, element)) {
 		void * n = hash_table_get(&st->hash_table, element);
 		int m = MAX(*(int*) n -nu, 0);
-		if(m>0) *(int*) n = m;
+		if(m>0) hash_table_put(&st->hash_table, element, &m);
 		else hash_table_remove(&st->hash_table, element);
 	}
 }
@@ -76,12 +77,30 @@ void multiset_free(multiset * st){
 }
 
 multiset complete_multiset() {
+	char mem[30];
 	int tam = 50;
-	multiset st = multiset_empty(&double_type);
+	type t = string_fix_type_of_tam(10);
+	multiset st = multiset_empty(type_copy(&t));
 	for (int i = 0; i < tam; i++) {
-		double a2 = double_aleatorio(0, 1000);
-		multiset_add(&st,&a2);
+		int a2 = entero_aleatorio(0, 10);
+		char * b2 = tostring(&a2,mem,&int_type);
+		multiset_add(&st,b2);
 	}
+	return st;
+}
+
+multiset complete_multiset_2() {
+	char mem[30];
+	int tam = 50;
+	type t = string_fix_type_of_tam(10);
+	list ls = list_empty(type_copy(&t));
+	for (int i = 0; i < tam; i++) {
+		int a2 = entero_aleatorio(0, 10);
+		char * b2 = tostring(&a2,mem,&int_type);
+		list_add(&ls,b2);
+	}
+	iterator it = list_iterable(&ls);
+	multiset st = iterable_to_multiset(&it);
 	return st;
 }
 

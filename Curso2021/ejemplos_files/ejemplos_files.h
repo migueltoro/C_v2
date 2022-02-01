@@ -5,8 +5,8 @@
  *      Author: migueltoro
  */
 
-#ifndef EJEMPLOS2_H_
-#define EJEMPLOS2_H_
+#ifndef EJEMPLOS_FILES_H_
+#define EJEMPLOS_FILES_H_
 
 #include "../types/types.h"
 #include "../types/iterables.h"
@@ -23,4 +23,4 @@ bool is_palindrome(list * ls);
 void test_ejemplos_files();
 
 
-#endif /* EJEMPLOS2_H_ */
+#endif /* EJEMPLOS_FILES_H_ */

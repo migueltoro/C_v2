@@ -28,15 +28,15 @@ void set_add(set * st, void * element){
 	hash_table_put(&st->hash_table,element,NULL);
 }
 
+void set_remove(set * st, void * element) {
+	hash_table_remove(&st->hash_table,element);
+}
+
 void set_add_all(set * st, iterator * it){
 	while(iterable_has_next(it)){
 		void * e = iterable_next(it);
 		set_add(st,e);
 	}
-}
-
-void set_remove(set * st, void * element){
-	hash_table_remove(&st->hash_table,element);
 }
 
 int set_size(set * st){
