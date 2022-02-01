@@ -43,6 +43,7 @@ multiset frecuencias_de_palabras(char * file) {
 	return r;
 }
 
+
 set palabras_distintas(char * file) {
 	type t = string_fix_type_of_tam(20);
 	iterator git1 = file_iterable_string_fix_tam(file,100);
