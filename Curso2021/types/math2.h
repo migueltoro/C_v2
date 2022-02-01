@@ -64,6 +64,9 @@ bool es_primo_f(long * a);
  */
 long siguiente_primo(long a);
 long * siguiente_primo_f(long * out, long * in);
+
+long * inc_1_long(long * out, long * in);
+int * inc_1_int(int * out, int * in);
 /**
  * Inicializa el generador de numeros aleatorios
  */

@@ -113,6 +113,16 @@ void new_rand(){
 	srand((unsigned) time(&t));
 }
 
+long * inc_1_long(long * out, long * in){
+	*out = *(in)+1;
+	return out;
+}
+
+int * inc_1_int(int * out, int * in){
+	*out = *(in)+1;
+	return out;
+}
+
 
 /**
  * @pre b &gt; a

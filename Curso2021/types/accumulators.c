@@ -104,12 +104,12 @@ multiset iterable_to_multiset(iterator * st) {
 }
 
 
-multiset iterable_counting(iterator * st, void * (*f_key)(void * out, void * in), type * key_type){
+multiset iterable_to_multiset_groups(iterator * st, type * key_type, void * (*f_key)(void * out, void * in)){
 	char mem[key_type->size];
 	multiset ms = multiset_empty(key_type);
 	while(iterable_has_next(st)){
-		void * next = iterable_next(st);
-		void * key = f_key(mem,next);
+		void * e = iterable_next(st);
+		void * key = f_key(mem,e);
 		multiset_add(&ms,key);
 	}
 	return ms;
@@ -125,6 +125,8 @@ list_multimap iterable_to_list_multimap(iterator * items) {
 	return lm;
 }
 
+
+
 set_multimap iterable_to_set_multimap(iterator * items) {
 	type * t = items->type;
 	set_multimap lm = set_multimap_empty(types(t,0),types(t,1));
@@ -135,8 +137,30 @@ set_multimap iterable_to_set_multimap(iterator * items) {
 	return lm;
 }
 
-list_multimap iterable_grouping_list(iterator * st, void * (*f_key)(void * out, void * in), type * key_type){
-	char mem[20];
+hash_table iterable_grouping_reduce(iterator *st, type * key_type,
+		void* (*f_key)(void *out, void *in),
+		bool (*add)(void *out, const void *e)) {
+	type *value_type = st->type;
+	char mem_key[key_type->size];
+	char mem_value[value_type->size];
+	hash_table ht = hash_table_empty(key_type, value_type);
+	while (iterable_has_next(st)) {
+		void *next = iterable_next(st);
+		void *key = f_key(mem_key, next);
+		void * e = hash_table_get(&ht, key);
+		if(e == NULL){
+			hash_table_put(&ht, key, next);
+		} else {
+			copy(mem_value,next,value_type->size);
+			add(mem_value,next);
+			hash_table_put(&ht, key, mem_value);
+		}
+	}
+	return ht;
+}
+
+list_multimap iterable_grouping_list(iterator * st, type * key_type, void * (*f_key)(void * out, void * in)){
+	char mem[key_type->size];
 	type * value_type = st->type;
 	list_multimap lm = list_multimap_empty(key_type,value_type);
 	while(iterable_has_next(st)){
@@ -147,8 +171,8 @@ list_multimap iterable_grouping_list(iterator * st, void * (*f_key)(void * out, 
 	return lm;
 }
 
-set_multimap iterable_grouping_set(iterator * st, void * (*f_key)(void * out, void * in), type * key_type){
-	char mem[20];
+set_multimap iterable_grouping_set(iterator * st, type * key_type, void * (*f_key)(void * out, void * in)){
+	char mem[key_type->size];
 	type * value_type = st->type;
 	set_multimap sm = set_multimap_empty(key_type,value_type);
 	while(iterable_has_next(st)){
@@ -390,7 +414,7 @@ void test_accumulators_1(){
 	char mem[4000];
 	iterator st;
 	st = iterable_range_long(4,500,3);
-	multiset ht = iterable_counting(&st,resto17,&long_type);
+	multiset ht = iterable_to_multiset_groups(&st,resto17,&long_type);
 	char * s = multiset_tostring(&ht,mem);
 	printf("1:  \n%s\n\n",s);
 	st = iterable_range_long(4,500,3);
@@ -639,5 +663,45 @@ void test_accumulators_12() {
 	iterator ir = multiset_items_iterable(&r);
 	iterable_to_console_sep(&ir, "\n", "", "");
 }
+
+
+long a = 0;
+long b = 20;
+
+long * entero_aleatorio_long(long * out, void * in){
+	*out = entero_aleatorio(a,b);
+	return out;
+}
+
+void test_accumulators_13() {
+	char mem[5000];
+	new_rand();
+	_ref_long = 100;
+	int e = 0;
+	iterator r = iterable_iterate(&long_type,&e,menor_que_long,inc_1_long);
+	iterator r2 = iterable_map(&r,&long_type,entero_aleatorio_long);
+	multiset ms = iterable_to_multiset(&r2);
+	iterator r3 = multiset_items_iterable(&ms);
+	iterable_to_console_sep(&r3, ",", "{", "}");
+}
+
+long * resto(long * out, long * in){
+	*out = (*in)%7;
+	return out;
+}
+
+void test_accumulators_14() {
+	char mem[5000];
+	new_rand();
+	_ref_long = 100;
+	int e = 0;
+	iterator r = iterable_iterate(&long_type,&e,menor_que_long,inc_1_long);
+	iterator r2 = iterable_map(&r,&long_type,entero_aleatorio_long);
+	multiset ms = iterable_to_multiset_groups(&r2,&long_type,resto);
+	iterator r3 = multiset_items_iterable(&ms);
+	iterable_to_console_sep(&r3, ",", "{", "}");
+}
+
+
 
 

@@ -60,10 +60,10 @@ set iterable_to_set(iterator * st);
 multiset iterable_to_multiset(iterator * st);
 list_multimap iterable_to_list_multimap(iterator * st);
 set_multimap iterable_to_set_multimap(iterator * st);
-multiset iterable_counting(iterator * st, void * (*f_key)(void * out, void * in),type * key_type);
-list_multimap iterable_grouping_list(iterator * st, void * (*f_key)(void * out, void * in), type * key_type);
-set_multimap iterable_grouping_set(iterator * st, void * (*f_key)(void * out, void * in), type * key_type);
-
+multiset iterable_to_multiset_groups(iterator * st, type * key_type, void * (*f_key)(void * out, void * in));
+list_multimap iterable_grouping_list(iterator * st, type * key_type, void * (*f_key)(void * out, void * in));
+set_multimap iterable_grouping_set(iterator * st, type * key_type, void * (*f_key)(void * out, void * in));
+hash_table iterable_grouping_reduce(iterator * st, type * key_type, void * (*f_key)(void * out, void * in), bool (*add)(void * out, const void * e));
 
 
 void test_accumulators_1();

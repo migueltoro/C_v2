@@ -10,8 +10,9 @@
 //list_multimap
 
 list_multimap list_multimap_empty(type * key_type, type * value_type){
-	hash_table t = hash_table_empty(key_type,&list_type);
-	list_multimap lm = {t,value_type};
+	type  t = generic_type_1(&list_type, value_type);
+	hash_table ht = hash_table_empty(key_type,type_copy(&t));
+	list_multimap lm = {ht,value_type};
 	return lm;
 }
 
@@ -121,11 +122,14 @@ void test_list_multimap() {
 	printf("%s\n", mem);
 }
 
+
+
 // set_multimap
 
 set_multimap set_multimap_empty(type * key_type, type * value_type){
-	hash_table t = hash_table_empty(key_type,&set_type);
-    set_multimap sm = {t,value_type};
+	type  t = generic_type_1(&set_type, value_type);
+	hash_table ht = hash_table_empty(key_type,type_copy(&t));
+    set_multimap sm = {ht,value_type};
 	return sm;
 }
 

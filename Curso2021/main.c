@@ -62,7 +62,7 @@ int main() {
 //test_esquemas();
 //test_marca();
 //test_ruta();
-test_palabras();
+//test_palabras();
 //test_binary_tree_2();
 //test_parse_binary_tree_2();
 //test_tree_2();
@@ -71,6 +71,6 @@ test_palabras();
 //test_matrices_3();
 //test_histograma();
 //test_accumulators_4("ficheros/quijote.txt");
-//test_accumulators_12();
+test_accumulators_14();
 }
 
