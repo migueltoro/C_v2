@@ -570,7 +570,7 @@ void test_iterables_1() {
 
 void test_iterables_2() {
 	char mem[500];
-	_ref_long = 500;
+	menor_que_long_ref = 500;
 	iterator r = iterable_range_long(0,1400,7);
 	iterator r2 = iterable_map(&r,&long_type,cuadrado);
 	iterator r3 = iterable_filter(&r2,menor_que_long);
@@ -599,7 +599,7 @@ void test_iterables_3(){
 
 void test_iterables_5() {
 	long e0 =2;
-	_ref_long = 1000;
+	menor_que_long_ref = 1000;
 	iterator it = iterable_iterate(&long_type,&e0, menor_que_long, siguiente_primo_f);
 	iterable_to_console(&it);
 }

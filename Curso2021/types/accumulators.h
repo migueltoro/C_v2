@@ -16,6 +16,7 @@
 #include "../types/multiset.h"
 #include "../types/multimap.h"
 #include "../types/multiset.h"
+#include "../types/math2.h"
 
 
 
@@ -63,7 +64,15 @@ set_multimap iterable_to_set_multimap(iterator * st);
 multiset iterable_to_multiset_groups(iterator * st, type * key_type, void * (*f_key)(void * out, void * in));
 list_multimap iterable_grouping_list(iterator * st, type * key_type, void * (*f_key)(void * out, void * in));
 set_multimap iterable_grouping_set(iterator * st, type * key_type, void * (*f_key)(void * out, void * in));
-hash_table iterable_grouping_reduce(iterator * st, type * key_type, void * (*f_key)(void * out, void * in), bool (*add)(void * out, const void * e));
+list_multimap iterable_grouping_list_map(iterator * st, type * key_type, type * value_type,
+		void * (*f_key)(void * out, void * in), void * (*f_map)(void * out, void * in));
+set_multimap iterable_grouping_set_map(iterator * st, type * key_type, type * value_type,
+		void * (*f_key)(void * out, void * in), void * (*f_map)(void * out, void * in));
+hash_table iterable_grouping_reduce(iterator * st, type * key_type,
+		void * (*f_key)(void * out, void * in), bool (*add)(void * out, const void * e));
+hash_table iterable_grouping_reduce_map(iterator * st, type * key_type, type * value_type,
+		void * (*f_key)(void * out, void * in),
+		bool (*add)(void * out, const void * e), void * (*f_map)(void * out, void * in));
 
 
 void test_accumulators_1();

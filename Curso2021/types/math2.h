@@ -29,7 +29,7 @@
 bool es_par(int a);
 bool es_par_f(int *a);
 
-extern long _ref_long;
+extern long menor_que_long_ref;
 
 bool menor_que_long(long * a);
 bool multiplo_de_long(long * a);
@@ -65,8 +65,16 @@ bool es_primo_f(long * a);
 long siguiente_primo(long a);
 long * siguiente_primo_f(long * out, long * in);
 
-long * inc_1_long(long * out, long * in);
-int * inc_1_int(int * out, int * in);
+extern long inc_long_ref;
+extern long inc_int_ref;
+
+long * inc_long_f(long * out, long * in);
+int * inc_int_f(int * out, int * in);
+
+extern long resto_base;
+
+long * resto_f(long * out, long * in);
+
 /**
  * Inicializa el generador de numeros aleatorios
  */
@@ -80,6 +88,11 @@ void new_rand();
  */
 int entero_aleatorio(int a, int b);
 int * entero_aleatorio_f(int * out, int_pair * in);
+
+extern long entero_aleatorio_long_a;
+extern long entero_aleatorio_long_b;
+
+long * entero_aleatorio_long_f(long * out, void * in);
 /**
  * @pre b &gt; a
  * @param a Límite inferior
@@ -87,7 +100,11 @@ int * entero_aleatorio_f(int * out, int_pair * in);
  * @return Un double aleatorio que  está en el intervalo  a &le; = r &lt; b
  */
 double double_aleatorio(double a, double b);
-double * double_aleatorio_f(double * out, punto * in);
+
+extern double double_aleatorio_a;
+extern double double_aleatorio_b;
+
+double * double_aleatorio_f(double * out, double * in);
 /**
  * @param a Un entero
  * @param b Un segundo entero

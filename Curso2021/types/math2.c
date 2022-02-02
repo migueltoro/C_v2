@@ -21,14 +21,14 @@ bool es_par_f(int * a) {
 	return es_par(*a);
 }
 
-long _ref_long;
+long menor_que_long_ref;
 
 bool menor_que_long(long * a){
-	return *a < _ref_long;
+	return *a < menor_que_long_ref;
 }
 
 bool multiplo_de_long(long * in){
-	return (*in)%_ref_long == 0;
+	return (*in)%menor_que_long_ref == 0;
 }
 
 /**
@@ -113,16 +113,25 @@ void new_rand(){
 	srand((unsigned) time(&t));
 }
 
-long * inc_1_long(long * out, long * in){
-	*out = *(in)+1;
+long inc_long_ref = 1;
+long inc_int_ref = 1;
+
+long * inc_long_f(long * out, long * in){
+	*out = *(in)+inc_long_ref;
 	return out;
 }
 
-int * inc_1_int(int * out, int * in){
-	*out = *(in)+1;
+int * inc_int_f(int * out, int * in){
+	*out = *(in)+inc_int_ref;
 	return out;
 }
 
+long resto_base;
+
+long * resto_f(long * out, long * in){
+	*out = (*in)%resto_base;
+	return out;
+}
 
 /**
  * @pre b &gt; a
@@ -142,8 +151,11 @@ int entero_aleatorio(int a, int b) {
 	return valor;
 }
 
-int * entero_aleatorio_f(int * out, int_pair * in){
-	*out = entero_aleatorio(in->a,in->b);
+long entero_aleatorio_long_a = 0;
+long entero_aleatorio_long_b = 20;
+
+long * entero_aleatorio_long_f(long * out, void * in){
+	*out = entero_aleatorio(entero_aleatorio_long_a,entero_aleatorio_long_b);
 	return out;
 }
 
@@ -159,8 +171,12 @@ double double_aleatorio(double a, double b) {
 	return r;
 }
 
-double * double_aleatorio_f(double * out, punto * in){
-	*out = double_aleatorio(in->x,in->y);
+
+double double_aleatorio_a = 0;
+double double_aleatorio_b = 20;
+
+double * double_aleatorio_f(double * out, double * in){
+	*out = double_aleatorio(double_aleatorio_a,double_aleatorio_b);
 	return out;
 }
 

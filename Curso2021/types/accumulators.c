@@ -145,15 +145,40 @@ hash_table iterable_grouping_reduce(iterator *st, type * key_type,
 	char mem_value[value_type->size];
 	hash_table ht = hash_table_empty(key_type, value_type);
 	while (iterable_has_next(st)) {
-		void *next = iterable_next(st);
-		void *key = f_key(mem_key, next);
-		void * e = hash_table_get(&ht, key);
-		if(e == NULL){
-			hash_table_put(&ht, key, next);
+		void *e = iterable_next(st);
+		void *key = f_key(mem_key,e);
+		void * a = hash_table_get(&ht, key);
+		if(a == NULL){
+			hash_table_put(&ht, key,e);
 		} else {
-			copy(mem_value,next,value_type->size);
-			add(mem_value,next);
+			copy(mem_value,a,value_type->size);
+			add(mem_value,e);
 			hash_table_put(&ht, key, mem_value);
+		}
+	}
+	return ht;
+}
+
+hash_table iterable_grouping_reduce_map(iterator *st, type *key_type,
+		type *value_type, void* (*f_key)(void *out, void *in),
+		bool (*add)(void *out, const void *e),
+		void* (*f_map)(void *out, void *in)) {
+
+	char mem_key[key_type->size];
+	char mem_value[value_type->size];
+	char mem_value_a[value_type->size];
+	hash_table ht = hash_table_empty(key_type, value_type);
+	while (iterable_has_next(st)) {
+		void *e = iterable_next(st);
+		void *key = f_key(mem_key, e);
+		void *a = hash_table_get(&ht, key);
+		void *t = f_map(mem_value,e);
+		if (a == NULL) {
+			hash_table_put(&ht,key,t);
+		} else {
+			copy(mem_value_a, a, value_type->size);
+			add(mem_value_a, t);
+			hash_table_put(&ht, key,mem_value_a);
 		}
 	}
 	return ht;
@@ -164,9 +189,24 @@ list_multimap iterable_grouping_list(iterator * st, type * key_type, void * (*f_
 	type * value_type = st->type;
 	list_multimap lm = list_multimap_empty(key_type,value_type);
 	while(iterable_has_next(st)){
-		void * next = iterable_next(st);
-		void * key = f_key(mem,next);
-		list_multimap_put(&lm,key,next);
+		void * e = iterable_next(st);
+		void * key = f_key(mem,e);
+		list_multimap_put(&lm,key,e);
+	}
+	return lm;
+}
+
+list_multimap iterable_grouping_list_map(iterator *st, type *key_type,
+		type *value_type, void* (*f_key)(void *out, void *in),
+		void* (*f_map)(void *out, void *in)) {
+	char mem_key[key_type->size];
+	char mem_value[value_type->size];
+	list_multimap lm = list_multimap_empty(key_type, value_type);
+	while (iterable_has_next(st)) {
+		void *e = iterable_next(st);
+		void *key = f_key(mem_key, e);
+		void *t = f_map(mem_value,e);
+		list_multimap_put(&lm, key, t);
 	}
 	return lm;
 }
@@ -176,12 +216,29 @@ set_multimap iterable_grouping_set(iterator * st, type * key_type, void * (*f_ke
 	type * value_type = st->type;
 	set_multimap sm = set_multimap_empty(key_type,value_type);
 	while(iterable_has_next(st)){
-		void * next = iterable_next(st);
-		void * key = f_key(mem,next);
-		set_multimap_put(&sm,key,next);
+		void * e = iterable_next(st);
+		void * key = f_key(mem,e);
+		set_multimap_put(&sm,key,e);
 	}
 	return sm;
 }
+
+
+set_multimap iterable_grouping_set_map(iterator *st, type *key_type,
+		type *value_type, void* (*f_key)(void *out, void *in),
+		void* (*f_map)(void *out, void *in)) {
+	char mem_key[key_type->size];
+	char mem_value[value_type->size];
+	set_multimap lm = set_multimap_empty(key_type, value_type);
+	while (iterable_has_next(st)) {
+		void *e = iterable_next(st);
+		void *key = f_key(mem_key, e);
+		void *t = f_map(mem_value,e);
+		set_multimap_put(&lm, key, t);
+	}
+	return lm;
+}
+
 
 estadisticos estadisticos_ini = {0,0,0,-DBL_MAX,DBL_MAX,0,0,0};
 
@@ -586,7 +643,7 @@ void test_accumulators_6() {
 void test_accumulators_7() {
 	long p = 2;
 	long suma;
-	_ref_long = 2000;
+	menor_que_long_ref = 2000;
 	iterator it1 = iterable_iterate(&long_type,&p,menor_que_long,siguiente_primo_f);
 	iterator it2 = iterable_map(&it1,&long_type,square_long_f);
 	long s = *(long*) reduce_left(&it2, &suma,long_sum);
@@ -664,44 +721,67 @@ void test_accumulators_12() {
 	iterable_to_console_sep(&ir, "\n", "", "");
 }
 
-
-long a = 0;
-long b = 20;
-
-long * entero_aleatorio_long(long * out, void * in){
-	*out = entero_aleatorio(a,b);
-	return out;
-}
-
 void test_accumulators_13() {
 	char mem[5000];
 	new_rand();
-	_ref_long = 100;
+	menor_que_long_ref = 100;
+	entero_aleatorio_long_a = 0;
+	entero_aleatorio_long_b = 20;
 	int e = 0;
-	iterator r = iterable_iterate(&long_type,&e,menor_que_long,inc_1_long);
-	iterator r2 = iterable_map(&r,&long_type,entero_aleatorio_long);
+	iterator r = iterable_iterate(&long_type,&e,menor_que_long,inc_long_f);
+	iterator r2 = iterable_map(&r,&long_type,entero_aleatorio_long_f);
 	multiset ms = iterable_to_multiset(&r2);
 	iterator r3 = multiset_items_iterable(&ms);
 	iterable_to_console_sep(&r3, ",", "{", "}");
 }
 
-long * resto(long * out, long * in){
-	*out = (*in)%7;
-	return out;
+void freq() {
+	new_rand();
+	menor_que_long_ref = 100;
+	entero_aleatorio_long_a = 0;
+	entero_aleatorio_long_b = 20;
+	resto_base = 13;
+	inc_long_ref = 1;
+	int e = 0;
+	iterator r = iterable_iterate(&long_type, &e, menor_que_long, inc_long_f);
+	iterator r2 = iterable_map(&r, &long_type, entero_aleatorio_long_f);
+	multiset ms = iterable_to_multiset_groups(&r2, &long_type, resto_f);
+	iterator r3 = multiset_items_iterable(&ms);
+	iterable_to_console_sep(&r3, ",", "{", "}");
 }
 
 void test_accumulators_14() {
 	char mem[5000];
 	new_rand();
-	_ref_long = 100;
+	menor_que_long_ref = 100;
 	int e = 0;
-	iterator r = iterable_iterate(&long_type,&e,menor_que_long,inc_1_long);
-	iterator r2 = iterable_map(&r,&long_type,entero_aleatorio_long);
-	multiset ms = iterable_to_multiset_groups(&r2,&long_type,resto);
+	iterator r = iterable_iterate(&long_type,&e,menor_que_long,inc_long_f);
+	iterator r2 = iterable_map(&r,&long_type,entero_aleatorio_long_f);
+	multiset ms = iterable_to_multiset_groups(&r2,&long_type,resto_f);
 	iterator r3 = multiset_items_iterable(&ms);
 	iterable_to_console_sep(&r3, ",", "{", "}");
 }
 
+long * sum(long * out, long *in){
+	*out = *out+*in;
+	return sum;
+}
 
+void test_accumulators_15() {
+	char mem[5000];
+	new_rand();
+	menor_que_long_ref = 100;
+	entero_aleatorio_long_a = 0;
+	entero_aleatorio_long_b = 20;
+	resto_base = 13;
+	inc_long_ref = 1;
+	int e = 0;
+	iterator r = iterable_iterate(&long_type, &e, menor_que_long, inc_long_f);
+	iterator r2 = iterable_map(&r, &long_type, entero_aleatorio_long_f);
+	hash_table ms = iterable_grouping_reduce_map(&r2, &long_type, &long_type,
+			resto_f, sum, square_long_f);
+	iterator r3 = hash_table_items_iterable(&ms);
+	iterable_to_console_sep(&r3, ",", "{", "}");
+}
 
 
