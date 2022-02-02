@@ -60,8 +60,8 @@ bool reduce_right_private(iterator * st, void * base, bool (*add)(void * out, co
 		copy(se, e,st->type->size);
 		f = reduce_right_private(st, base, add, first);
 		if (*first) {
-			copy(base, e,st->type->size);
-			* first = false;
+			copy(base,e,st->type->size);
+			*first = false;
 		} else if(!f){
 			f = add(base, se);
 		}
@@ -455,15 +455,6 @@ bool esmultiplo44(const long *in){
 	return (*in)%44 == 0;
 }
 
-bool long_sum(long * out, long * in){
-	*out = *out + *in;
-	return false;
-}
-
-bool long_max(long * out, long * in){
-	*out = MAX(*out,*in);
-	return false;
-}
 
 double * _random(double * out, long * in);
 
@@ -641,14 +632,12 @@ void test_accumulators_6() {
 }
 
 void test_accumulators_7() {
-	long p = 2;
-	long suma;
-	menor_que_long_ref = 2000;
-	iterator it1 = iterable_iterate(&long_type,&p,menor_que_long,siguiente_primo_f);
+	iterator it1 = iterable_primos(2,3);
 	iterator it2 = iterable_map(&it1,&long_type,square_long_f);
+	long suma;
 	long s = *(long*) reduce_left(&it2, &suma,long_sum);
 	printf("%d\n",s);
-	it1 = iterable_iterate(&long_type,&p,menor_que_long,siguiente_primo_f);
+	it1 = iterable_primos(2,3);
 	it2 = iterable_map(&it1,&long_type,square_long_f);
 	s = *(long*) reduce_right(&it2, &suma,long_sum);
 	printf("%d\n",s);
@@ -724,40 +713,23 @@ void test_accumulators_12() {
 void test_accumulators_13() {
 	char mem[5000];
 	new_rand();
-	menor_que_long_ref = 100;
-	entero_aleatorio_long_a = 0;
-	entero_aleatorio_long_b = 20;
-	int e = 0;
-	iterator r = iterable_iterate(&long_type,&e,menor_que_long,inc_long_f);
-	iterator r2 = iterable_map(&r,&long_type,entero_aleatorio_long_f);
-	multiset ms = iterable_to_multiset(&r2);
+	iterator r = iterable_random_int(100,0,20) ;
+	multiset ms = iterable_to_multiset(&r);
 	iterator r3 = multiset_items_iterable(&ms);
 	iterable_to_console_sep(&r3, ",", "{", "}");
 }
 
 void freq() {
-	new_rand();
-	menor_que_long_ref = 100;
-	entero_aleatorio_long_a = 0;
-	entero_aleatorio_long_b = 20;
-	resto_base = 13;
-	inc_long_ref = 1;
-	int e = 0;
-	iterator r = iterable_iterate(&long_type, &e, menor_que_long, inc_long_f);
-	iterator r2 = iterable_map(&r, &long_type, entero_aleatorio_long_f);
-	multiset ms = iterable_to_multiset_groups(&r2, &long_type, resto_f);
+	iterator r = iterable_random_int(100,0,20);
+	multiset ms = iterable_to_multiset_groups(&r, &long_type, remainder_f);
 	iterator r3 = multiset_items_iterable(&ms);
 	iterable_to_console_sep(&r3, ",", "{", "}");
 }
 
 void test_accumulators_14() {
-	char mem[5000];
-	new_rand();
-	menor_que_long_ref = 100;
-	int e = 0;
-	iterator r = iterable_iterate(&long_type,&e,menor_que_long,inc_long_f);
-	iterator r2 = iterable_map(&r,&long_type,entero_aleatorio_long_f);
-	multiset ms = iterable_to_multiset_groups(&r2,&long_type,resto_f);
+	remainder_base = 13;
+	iterator r = iterable_random_int(100,0,20);
+	multiset ms = iterable_to_multiset_groups(&r,&long_type,remainder_f);
 	iterator r3 = multiset_items_iterable(&ms);
 	iterable_to_console_sep(&r3, ",", "{", "}");
 }
@@ -768,18 +740,10 @@ long * sum(long * out, long *in){
 }
 
 void test_accumulators_15() {
-	char mem[5000];
-	new_rand();
-	menor_que_long_ref = 100;
-	entero_aleatorio_long_a = 0;
-	entero_aleatorio_long_b = 20;
-	resto_base = 13;
-	inc_long_ref = 1;
-	int e = 0;
-	iterator r = iterable_iterate(&long_type, &e, menor_que_long, inc_long_f);
-	iterator r2 = iterable_map(&r, &long_type, entero_aleatorio_long_f);
-	hash_table ms = iterable_grouping_reduce_map(&r2, &long_type, &long_type,
-			resto_f, sum, square_long_f);
+	remainder_base = 13;
+	iterator r = iterable_random_int(100,0,20);
+	hash_table ms = iterable_grouping_reduce_map(&r, &long_type, &long_type,
+			remainder_f, sum, square_long_f);
 	iterator r3 = hash_table_items_iterable(&ms);
 	iterable_to_console_sep(&r3, ",", "{", "}");
 }

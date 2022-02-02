@@ -71,6 +71,6 @@ int main() {
 //test_matrices_3();
 //test_histograma();
 //test_accumulators_4("ficheros/quijote.txt");
-test_accumulators_15();
+test_accumulators_7();
 }
 

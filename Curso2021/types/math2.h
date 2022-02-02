@@ -47,10 +47,12 @@ bool es_impar_f(int *a);
  */
 bool es_divisible_int(int a, int b);
 bool es_divisible_long(long a, long b);
-bool es_divisible_int_f(int_pair * in);
-bool es_divisible_long_f(long_pair * in);
 
+extern int es_divisible_int_base;
+bool es_divisible_int_f(int * in);
 
+extern long es_divisible_long_base;
+bool es_divisible_long_f(int * in);
 
 /**
  * @param a Un entero
@@ -71,9 +73,18 @@ extern long inc_int_ref;
 long * inc_long_f(long * out, long * in);
 int * inc_int_f(int * out, int * in);
 
-extern long resto_base;
+bool long_sum(long * out, long * in);
+bool long_max(long * out, long * in);
 
-long * resto_f(long * out, long * in);
+extern long es_multiplo_base;
+bool es_multiplo(long * in);
+
+extern long remainder_base;
+
+long * remainder_f(long * out, long * in);
+
+bool true_p(void * in);
+bool false_p(void * in);
 
 /**
  * Inicializa el generador de numeros aleatorios

@@ -53,16 +53,18 @@ bool es_divisible_int(int a, int b) {
 	return (a % b) == 0;
 }
 
-bool es_divisible_int_f(int_pair * in) {
-	return es_divisible_int(in->a,in->b);
+int es_divisible_int_base;
+bool es_divisible_int_f(int * in) {
+	return *in % es_divisible_int_base;
 }
 
 bool es_divisible_long(long a, long b) {
 	return (a % b) == 0;
 }
 
-bool es_divisible_long_f(long_pair * in) {
-	return es_divisible_long(in->a,in->b);
+long es_divisible_long_base;
+bool es_divisible_long_f(int * in) {
+	return *in % es_divisible_long_base;
 }
 /**
  * @param a Un entero
@@ -126,13 +128,36 @@ int * inc_int_f(int * out, int * in){
 	return out;
 }
 
-long resto_base;
+bool long_sum(long * out, long * in){
+	*out = *out + *in;
+	return false;
+}
 
-long * resto_f(long * out, long * in){
-	*out = (*in)%resto_base;
+bool long_max(long * out, long * in){
+	*out = MAX(*out,*in);
+	return false;
+}
+
+long es_multiplo_base;
+
+bool es_multiplo(long * in){
+	return (*in)%es_multiplo_base == 0;
+}
+
+long remainder_base;
+
+long * remainder_f(long * out, long * in){
+	*out = (*in)%remainder_base;
 	return out;
 }
 
+bool true_p(void * in){
+	return true;
+}
+
+bool false_p(void * in){
+	return false;
+}
 /**
  * @pre b &gt; a
  * @param a Límite inferior

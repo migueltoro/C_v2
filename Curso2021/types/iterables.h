@@ -56,6 +56,10 @@ iterator file_iterable_string_fix_tam(char * file, int num_chars_per_line_max);
 iterator text_to_iterable_string_fix(char * text, const char * delimiters);
 iterator text_to_iterable_string_fix_tam(char * text, const char * delimiters, int tam);
 iterator * text_to_iterable_string_fix_function(iterator * out, char * text);
+iterator iterable_random_int(int n, int a, int b);
+iterator iterable_words_in_file(char * file, int line_tam, int word_tam, char * sep);
+iterator iterable_primos(int a, int b);
+
 
 extern string_fix text_to_iterable_delimiters;
 

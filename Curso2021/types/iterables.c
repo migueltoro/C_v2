@@ -346,6 +346,27 @@ iterator iterable_iterate(type * type,
 	return new_st;
 }
 
+iterator iterable_random_int(int n, int a, int b) {
+	new_rand();
+	entero_aleatorio_long_a = a;
+	entero_aleatorio_long_b = b;
+	menor_que_long_ref = n;
+	inc_long_ref = 1;
+	int e = 0;
+	iterator r = iterable_iterate(&long_type, &e, menor_que_long, inc_long_f);
+	iterator r2 = iterable_map(iterable_copy(&r), &long_type, entero_aleatorio_long_f);
+	return r2;
+}
+
+iterator iterable_primos(int a, int b) {
+	if (!es_primo(a))
+		a = siguiente_primo(a);
+	menor_que_long_ref = b;
+	iterator r = iterable_iterate(&long_type,&a,menor_que_long, siguiente_primo_f);
+	return r;
+}
+
+
 typedef struct{
 	char * text;
 	char * token;
@@ -446,6 +467,15 @@ iterator file_iterable_string_fix_tam(char * file, int n) {
 	char * r = fgets(it_file.state,n,dp->file);
 	dp->has_next = r!=NULL;
 	return it_file;
+}
+
+iterator iterable_words_in_file(char *file, int line_tam, int word_tam, char * sep) {
+	type t = string_fix_type_of_tam(word_tam);
+	strcpy(text_to_iterable_delimiters,sep);
+	iterator r1 = file_iterable_string_fix_tam(file, line_tam);
+	iterator r2 = iterable_filter(iterable_copy(&r1), string_fix_not_all_space);
+	iterator r3 = iterable_flatmap(iterable_copy(&r2), type_copy(&t),text_to_iterable_string_fix_function);
+	return r3;
 }
 
 char * iterable_tostring(iterator * st,

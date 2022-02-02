@@ -8,11 +8,17 @@
 #include "palabras.h"
 
 int numero_de_palabras(char * file) {
-	iterator git1 = file_iterable_string_fix(file);
-	iterator git2 = iterable_filter(&git1, string_fix_not_all_space);
-	iterator gmap = iterable_flatmap(&git2,&string_fix_type,text_to_iterable_string_fix_function);
-	int n = iterable_size(&gmap);
-	iterables_free(3,&git1,&git2,&gmap);
+	iterator r = iterable_words_in_file(file,100,20," ,;.()");
+	int n = iterable_size(&r);
+	iterable_free(&r);
+	return n;
+}
+
+int numero_de_palabras_2(char * file) {
+	iterator r = iterable_words_in_file(file,100,20," ,;.()");
+	int n = 0;
+	for(;iterable_has_next(&r);iterable_next(&r)) n++;
+	iterable_free(&r);
 	return n;
 }
 
@@ -43,6 +49,13 @@ multiset frecuencias_de_palabras(char * file) {
 	return r;
 }
 
+multiset frecuencias_de_palabras_2(char * file) {
+	iterator r = iterable_words_in_file(file,100,20," ,;.()");
+	multiset ms = iterable_to_multiset(&r);
+	iterable_free(&r);
+	return ms;
+}
+
 
 set palabras_distintas(char * file) {
 	type t = string_fix_type_of_tam(20);
@@ -56,15 +69,15 @@ set palabras_distintas(char * file) {
 
 
 void test_palabras() {
-	int n = numero_de_palabras("ficheros/quijote.txt");
+	int n = numero_de_palabras_2("ficheros/quijote.txt");
 	printf("%d\n", n);
-	multiset fq = frecuencias_de_palabras("ficheros/quijote.txt");
+	multiset fq = frecuencias_de_palabras_2("ficheros/quijote.txt");
 	iterator ifq = multiset_items_iterable(&fq);
 	iterable_to_console_sep(&ifq,"\n","","");
 }
 
 void test_palabras_2() {
-	int n = numero_de_palabras("ficheros/quijote.txt");
+	int n = numero_de_palabras_2("ficheros/quijote.txt");
 	printf("%d\n", n);
 	set fq = palabras_distintas("ficheros/quijote.txt");
 	iterator ifq = set_iterable(&fq);
