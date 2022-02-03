@@ -85,11 +85,11 @@ void test_ejemplos_trees_1() {
 	iterator it = file_iterable_string_fix("ficheros/trees_1.txt");
 	while (iterable_file_has_next(&it)) {
 		char* line = (char*) iterable_file_next(&it);
-		tree * t = tree_parse_m(line);
-		tree * t2 = tree_map_m(t, &int_type, int_parse);
+		tree * t = tree_parse(line);
+		tree * t2 = tree_map(t, &int_type, int_parse);
 		list r = niveles_cumplen_predicado_2(t2,pp);
 		printf("Tree = %s, Niveles = %s\n",tree_tostring(t2,mem),list_tostring(&r,mem2));
-		heap_clear(&memory_heap_tree);
+		heap_clear(&heap_tree);
 		list_free(&r);
 	}
 	iterable_free(&it);

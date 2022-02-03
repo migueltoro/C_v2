@@ -36,11 +36,11 @@ void test_ejemplos_trees_3() {
 	iterator it = file_iterable_string_fix("ficheros/trees_3.txt");
 	while (iterable_file_has_next(&it)) {
 		char* line = (char*) iterable_file_next(&it);
-		binary_tree * t = binary_tree_parse_m(line);
-		binary_tree * t2 = binary_tree_map_m(t, &int_type, int_parse);
+		binary_tree * t = binary_tree_parse(line);
+		binary_tree * t2 = binary_tree_map(t, &int_type, int_parse);
 		bool r = suma_igual(t2);
 		printf("Tree = %s, Cumple = %s\n",binary_tree_tostring(t2,mem),MSG_BOOL(r));
-		heap_clear(&memory_heap_binary_tree);
+		heap_clear(&heap_binary_tree);
 	}
 	iterable_free(&it);
 }

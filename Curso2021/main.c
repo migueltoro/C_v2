@@ -65,12 +65,12 @@ int main() {
 //test_palabras();
 //test_binary_tree_2();
 //test_parse_binary_tree_2();
-//test_tree_2();
+test_tree_1();
 //test_parse_tree_2();
 //test_ejemplos_trees_4();
 //test_matrices_3();
 //test_histograma();
 //test_accumulators_4("ficheros/quijote.txt");
-test_accumulators_7();
+//test_accumulators_7();
 }
 

@@ -55,13 +55,13 @@ void test_ejemplos_trees_4() {
 		iterator it2 = text_to_iterable_string_fix_tam(line,"#",string_fix_tam);
 		char * tree_line = iterable_next(&it2);
 		char * list_line = iterable_next(&it2);
-		binary_tree * t = binary_tree_parse_m(tree_line);
-		binary_tree * t2 = binary_tree_map_m(t, &char_type, char_parse);
+		binary_tree * t = binary_tree_parse(tree_line);
+		binary_tree * t2 = binary_tree_map(t, &char_type, char_parse);
 		list ls = list_parse_2(list_line);
 		bool r = existe_camino(t2,&ls);
 		printf("Tree = %s, Lista %s, Cumple = %s\n",binary_tree_tostring(t2,mem),
 				list_tostring(&ls,mem1), MSG_BOOL(r));
-        heap_clear(&memory_heap_binary_tree);
+        heap_clear(&heap_binary_tree);
 	}
 	iterable_free(&it);
 }

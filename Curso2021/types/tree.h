@@ -36,16 +36,16 @@ typedef struct tr {
 	struct tr ** children;
 }tree;
 
-extern heap memory_heap_tree;
-extern heap memory_heap_binary_tree;
+extern heap heap_tree;
+extern heap heap_binary_tree;
 
-binary_tree * binary_tree_empty(heap * hp);
-binary_tree * binary_tree_leaf(void * label, type * type_label, heap * hp);
-binary_tree * binary_tree_new(void * label,type * type_label, binary_tree * left, binary_tree * right, heap * hp);
+binary_tree * binary_tree_empty_me(heap * hp);
+binary_tree * binary_tree_leaf_me(void * label, type * type_label, heap * hp);
+binary_tree * binary_tree_new_me(void * label,type * type_label, binary_tree * left, binary_tree * right, heap * hp);
 
-binary_tree * binary_tree_empty_m();
-binary_tree * binary_tree_leaf_m(void * label, type * type_label);
-binary_tree * binary_tree_new_m(void * label,type * type_label, binary_tree * left, binary_tree * right);
+binary_tree * binary_tree_empty();
+binary_tree * binary_tree_leaf(void * label, type * type);
+binary_tree * binary_tree_new(void * label, type * type, binary_tree * left, binary_tree * right);
 
 bool binary_tree_is_empty(const binary_tree * tree);
 bool binary_tree_is_leaf(const binary_tree * tree);
@@ -59,26 +59,26 @@ list binary_tree_to_list(const binary_tree * tree);
 int binary_tree_size(const binary_tree * tree);
 void binary_tree_toconsole(const binary_tree * tree);
 
-binary_tree * binary_tree_parse(char * text, heap * hp);
-binary_tree * binary_tree_parse_m(char * text);
-binary_tree * binary_tree_parse_m_f(binary_tree * t, char * text);
+binary_tree * binary_tree_parse_me(char * text, heap * hp);
+binary_tree * binary_tree_parse(char * text);
+binary_tree * binary_tree_parse_f(binary_tree * t, char * text);
 char* binary_tree_tostring(const binary_tree * e, char * out);
 bool binary_tree_equals(const binary_tree * e1, const binary_tree * e2);
 int binary_tree_naturalorder(const binary_tree * e1,const binary_tree * e2);
 
-binary_tree* binary_tree_map(binary_tree* tree_in, type * tipo_out, void* fmap(void* out, const void* in), heap* hp);
-binary_tree* binary_tree_map_m(binary_tree* tree_in, type * tipo_out, void* fmap(void* out, const void* in));
+binary_tree* binary_tree_map_me(binary_tree* tree_in, type * tipo_out, void* fmap(void* out, const void* in), heap* hp);
+binary_tree* binary_tree_map(binary_tree* tree_in, type * tipo_out, void* fmap(void* out, const void* in));
 
 extern type binary_tree_type;
 
 
-tree * tree_empty(heap * hp);
-tree * tree_leaf(void * label, type * type_label, heap * hp);
-tree * tree_new(void * label, type * type_label, int num_children, tree ** children, heap * hp);
+tree * tree_empty_me(heap * hp);
+tree * tree_leaf_me(void * label, type * type_label, heap * hp);
+tree * tree_new_me(void * label, type * type_label, int num_children, tree ** children, heap * hp);
 
-tree * tree_empty_m();
-tree * tree_leaf_m(void * label, type * type_label);
-tree * tree_new_m(void * label, type * type_label, int num_children, tree ** children);
+tree * tree_empty();
+tree * tree_leaf(void * label, type * type_label);
+tree * tree_new(void * label, type * type_label, int num_children, tree ** children);
 
 bool tree_is_empty(tree * t);
 bool tree_is_not_empty(tree * t);
@@ -95,15 +95,15 @@ int tree_size(const tree * tree);
 int tree_height(const tree * tree);
 void tree_toconsole(const tree * tree);
 
-tree * tree_parse(char * text, heap * hp);
-tree* tree_parse_m(char * text);
-tree* tree_parse_m_f(tree * t,char * text);
+tree * tree_parse_me(char * text, heap * hp);
+tree* tree_parse(char * text);
+tree* tree_parse_f(tree * t,char * text);
 char* tree_tostring(const tree * e, char * out);
 bool tree_equals(const tree * e1, const tree * e2);
 int tree_naturalorder(const tree * e1,const tree * e2);
 
-tree* tree_map(tree* t, type * tipo_out, void* fmap(void* out, const void* in), heap* hp);
-tree* tree_map_m(tree* t, type * tipo_out, void* fmap(void* out, const void* in));
+tree* tree_map_me(tree* t, type * tipo_out, void* fmap(void* out, const void* in), heap* hp);
+tree* tree_map(tree* t, type * tipo_out, void* fmap(void* out, const void* in));
 list tree_level(tree * t, int n);
 list tree_next_level(list * level);
 
