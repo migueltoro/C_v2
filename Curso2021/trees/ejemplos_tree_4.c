@@ -49,7 +49,7 @@ void test_ejemplos_trees_4() {
 	printf("\n~~~~~~~~~~~~~~~~~~~~ Test Tree 4 ~~~~~~~~~~~~~~~~~~~~\n");
 	char mem[300];
 	char mem1[300];
-	iterator it = file_iterable_string_fix("ficheros/trees_4.txt");
+	iterator it = iterable_file_string_fix("ficheros/trees_4.txt");
 	while (iterable_file_has_next(&it)) {
 		char* line = (char*) iterable_file_next(&it);
 		iterator it2 = text_to_iterable_string_fix_tam(line,"#",string_fix_tam);

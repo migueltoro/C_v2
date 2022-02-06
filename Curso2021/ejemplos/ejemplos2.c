@@ -16,7 +16,7 @@
 heap hp;
 
 void * to_data_time(time_t * t){
-	return heap_copy_and_mem(&hp,t,sizeof(time_t));
+	return heap_copy(&hp,t,sizeof(time_t));
 }
 
 void test_ejercicio2() {
@@ -29,7 +29,7 @@ void test_ejercicio2() {
 }
 
 list lee_iterativo(char * file, time_t a, time_t b) {
-	iterator f = file_iterable_string_fix(file);
+	iterator f = iterable_file_string_fix(file);
 	list lista = list_empty(&date_type);
 	while (iterable_has_next(&f)) {
 		char * linea = iterable_next(&f);
@@ -54,7 +54,7 @@ void rec(iterator * f, list * lis, time_t a, time_t b) {
 }
 
 list lee_recursivo(char * file, time_t a, time_t b) {
-	iterator f = file_iterable_string_fix(file);
+	iterator f = iterable_file_string_fix(file);
 	list lista = list_empty(&date_type);
 	rec(&f,&lista,a,b);
 	return lista;

@@ -11,7 +11,7 @@
 
 
 set set_empty(type * type_element){
-	hash_table t = hash_table_empty(type_element,&int_type);
+	map t = map_empty(type_element,&int_type);
 	set st = {t};
 	return st;
 }
@@ -25,11 +25,11 @@ set set_of(list * ls){
 }
 
 void set_add(set * st, void * element){
-	hash_table_put(&st->hash_table,element,NULL);
+	map_put(&st->hash_table,element,NULL);
 }
 
 void set_remove(set * st, void * element) {
-	hash_table_remove(&st->hash_table,element);
+	map_remove(&st->hash_table,element);
 }
 
 void set_add_all(set * st, iterator * it){
@@ -40,15 +40,15 @@ void set_add_all(set * st, iterator * it){
 }
 
 int set_size(set * st){
-	return hash_table_size(&st->hash_table);
+	return map_size(&st->hash_table);
 }
 
 bool set_contains(set * st, void * element){
-	return hash_table_contains_key(&(st->hash_table),element);
+	return map_contains_key(&(st->hash_table),element);
 }
 
 iterator set_iterable(set * st){
-	iterator r = hash_table_items_iterable(&st->hash_table);
+	iterator r = map_items_iterable(&st->hash_table);
 	iterator im = iterable_map(iterable_copy(&r),st->hash_table.key_type,pair_to_key);
 	return im;
 }
@@ -107,7 +107,7 @@ bool set_equals(const set * s1, const set * s2) {
 set * set_parse(set * out, char * text) {
 	iterator it = text_to_iterable_string_fix_tam(text, "{ ,}",string_fix_tam);
 	char tmp[out->hash_table.key_type->size];
-	tmp_type = *out->hash_table.key_type;
+	tmp_type = out->hash_table.key_type;
 	while(iterable_has_next(&it)) {
 		void * txt = iterable_next(&it);
 		parse_st(tmp,txt);
@@ -127,11 +127,26 @@ set set_parse_s(char * text) {
 	return res;
 }
 
-type set_type = {set_equals, set_tostring, NULL, set_parse, sizeof(set),1,NULL};
+set set_copy(set *s) {
+	set res = set_empty(s->hash_table.key_type);
+	iterator it = set_iterable(s);
+	while (iterable_has_next(&it)) {
+		set_add(&res, iterable_next(&it));
+	}
+	return res;
+}
+
+set * set_copy_p(set *s){
+	set r = set_copy(s);
+	set * r2 = heap_copy(&r,NULL,sizeof(set));
+	return r2;
+}
+
+type set_type = {"set",set_equals, set_tostring, NULL, set_parse, set_free, set_copy_p,sizeof(set),1,NULL};
 
 
 void set_free(set * st){
-	hash_table_free(&(st->hash_table));
+	map_free(&(st->hash_table));
 }
 
 set complete_set() {

@@ -11,21 +11,21 @@
 
 list_multimap list_multimap_empty(type * key_type, type * value_type){
 	type  t = generic_type_1(&list_type, value_type);
-	hash_table ht = hash_table_empty(key_type,type_copy(&t));
+	map ht = map_empty(key_type,type_copy(&t,NULL));
 	list_multimap lm = {ht,value_type};
 	return lm;
 }
 
 int list_multimap_size(list_multimap * lm){
-	return hash_table_size(&(lm->hash_table));
+	return map_size(&(lm->hash_table));
 }
 
 void * list_multimap_put(list_multimap * lm, void * key, void * value){
 	if(!list_multimap_contains_key(lm,key)){
 		list vl = list_empty(lm->value_type);
-		hash_table_put(&lm->hash_table,key,&vl);
+		map_put(&lm->hash_table,key,&vl);
 	}
-	list * values = hash_table_get(&lm->hash_table,key);
+	list * values = map_get(&lm->hash_table,key);
 	list_add(values,value);
 	return lm;
 }
@@ -39,13 +39,13 @@ list_multimap * list_multimap_put_all(list_multimap * lm, iterator * items) {
 }
 
 list_multimap list_multimap_copy(list_multimap * lm){
-	hash_table c = hash_table_copy(&(lm->hash_table));
+	map c = map_copy(&(lm->hash_table));
 	list_multimap r = {c,lm->value_type};
 	return r;
 }
 
 list_multimap list_multimap_add(list_multimap * lm1, list_multimap * lm2) {
-	iterator items = hash_table_items_iterable(&(lm2->hash_table));
+	iterator items = map_items_iterable(&(lm2->hash_table));
 	list_multimap r = list_multimap_copy(lm1);
 	while (iterable_has_next(&items)) {
 		pair * p = (pair *) iterable_next(&items);
@@ -62,30 +62,30 @@ list_multimap list_multimap_add(list_multimap * lm1, list_multimap * lm2) {
 }
 
 list * list_multimap_get(list_multimap * lm, void * key){
-	return (list *) hash_table_get(&(lm->hash_table),key);
+	return (list *) map_get(&(lm->hash_table),key);
 }
 
 bool list_multimap_contains_key(list_multimap * lm, void * key){
-	return hash_table_contains_key(&(lm->hash_table),key);
+	return map_contains_key(&(lm->hash_table),key);
 }
 
 char * list_multimap_tostring(list_multimap * lm, char * mem){
-	hash_table_tostring(&lm->hash_table,mem);
+	map_tostring(&lm->hash_table,mem);
 	return mem;
 }
 
 void list_multimap_toconsole(list_multimap * lm){
-	iterator it = hash_table_items_iterable(&(lm->hash_table));
+	iterator it = map_items_iterable(&(lm->hash_table));
 	iterable_to_console_sep(&it,"\n","","\n");
 }
 
 iterator list_multimap_iterable(list_multimap * lm){
-	return hash_table_items_iterable(&(lm->hash_table));
+	return map_items_iterable(&(lm->hash_table));
 }
 
 void list_multimap_free(list_multimap * lm){
 	if(lm != NULL){
-		hash_table_free(&lm->hash_table);
+		map_free(&lm->hash_table);
 	}
 }
 
@@ -128,21 +128,21 @@ void test_list_multimap() {
 
 set_multimap set_multimap_empty(type * key_type, type * value_type){
 	type  t = generic_type_1(&set_type, value_type);
-	hash_table ht = hash_table_empty(key_type,type_copy(&t));
+	map ht = map_empty(key_type,type_copy(&t,NULL));
     set_multimap sm = {ht,value_type};
 	return sm;
 }
 
 int set_multimap_size(set_multimap * sm){
-	return hash_table_size(&(sm->hash_table));
+	return map_size(&(sm->hash_table));
 }
 
 void * set_multimap_put(set_multimap * sm, void * key, void * value){
 	if(!set_multimap_contains_key(sm,key)){
 		set vl = set_empty(sm->value_type);
-		hash_table_put(&sm->hash_table,key,&vl);
+		map_put(&sm->hash_table,key,&vl);
 	}
-	set * values = (set *) hash_table_get(&sm->hash_table,key);
+	set * values = (set *) map_get(&sm->hash_table,key);
 	set_add(values,value);
 	return sm;
 }
@@ -156,13 +156,13 @@ set_multimap * set_multimap_put_all(set_multimap * lm, iterator * items) {
 }
 
 set_multimap set_multimap_copy(set_multimap * lm){
-	hash_table c = hash_table_copy(&(lm->hash_table));
+	map c = map_copy(&(lm->hash_table));
 	set_multimap r = {c,lm->value_type};
 	return r;
 }
 
 set_multimap set_multimap_add(set_multimap * lm1, set_multimap * lm2) {
-	iterator items = hash_table_items_iterable(&(lm2->hash_table));
+	iterator items = map_items_iterable(&(lm2->hash_table));
 	set_multimap r = set_multimap_copy(lm1);
 	while (iterable_has_next(&items)) {
 		pair * p = (pair *) iterable_next(&items);
@@ -180,25 +180,25 @@ set_multimap set_multimap_add(set_multimap * lm1, set_multimap * lm2) {
 }
 
 set * set_multimap_get(set_multimap * lm, void * key){
-	return (set *) hash_table_get(&lm->hash_table,key);
+	return (set *) map_get(&lm->hash_table,key);
 }
 
 bool set_multimap_contains_key(set_multimap * lm, void * key){
-	return hash_table_contains_key(&(lm->hash_table),key);
+	return map_contains_key(&(lm->hash_table),key);
 }
 
 char * set_multimap_tostring(set_multimap * lm, char * mem){
-	hash_table_tostring(&(lm->hash_table),mem);
+	map_tostring(&(lm->hash_table),mem);
 	return mem;
 }
 
 iterator set_multimap_iterable(set_multimap * sm){
-	return hash_table_items_iterable(&(sm->hash_table));
+	return map_items_iterable(&(sm->hash_table));
 }
 
 void set_multimap_free(set_multimap * lm){
 	if(lm != NULL){
-		hash_table_free(&lm->hash_table);
+		map_free(&lm->hash_table);
 	}
 }
 

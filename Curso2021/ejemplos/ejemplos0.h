@@ -20,9 +20,9 @@
 
 #include "../types/types.h"
 #include "../types/iterables.h"
-#include "../types/hash_table.h"
 #include "../types/heap.h"
 #include "../types/list.h"
+#include "../types/map.h"
 #include "../types/math2.h"
 
 
@@ -40,7 +40,7 @@ double n_problema6(list ls, double umbral);
 
 punto * n_problema8(list ls, int (*cmp)(const void *, const void *));
 
-hash_table n_problema11(list ls);
+map n_problema11(list ls);
 
 list n_problema61(char * file);
 

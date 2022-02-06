@@ -38,17 +38,17 @@ list niveles_cumplen_predicado_1(tree * t) {
 
 
 
-void niveles_cumplen_predicado_2_private(tree * t, int n, hash_table * ht, int height, bool (*p)(void * a)) {
+void niveles_cumplen_predicado_2_private(tree * t, int n, map * ht, int height, bool (*p)(void * a)) {
 	if (n > height) return;
 	switch (tree_get_subtype(t)) {
 	case Empty_Tree:
 		break;
 	case Leaf_Tree:
 	case Nary_Tree: {
-		bool r = *(bool*) hash_table_get(ht, &n);
+		bool r = *(bool*) map_get(ht, &n);
 		void * label = tree_label(t);
 		r = r && p(label);
-		hash_table_put(ht, &n, &r);
+		map_put(ht, &n, &r);
 		int nh = tree_child_number(t);
 		for (int i = 0; i < nh; i++) {
 			niveles_cumplen_predicado_2_private(tree_get_child(t, i), n + 1, ht,height,p);
@@ -58,19 +58,19 @@ void niveles_cumplen_predicado_2_private(tree * t, int n, hash_table * ht, int h
 }
 
 list niveles_cumplen_predicado_2(tree * t, bool (*p)(void * a)) {
-	hash_table ht = hash_table_empty(&int_type, &bool_type);
+	map ht = map_empty(&int_type, &bool_type);
 	int h = tree_height(t);
 	for (int i = 0; i <= h; i++) {
 		bool r = true;
-		hash_table_put(&ht, &i, &r);
+		map_put(&ht, &i, &r);
 	}
 	niveles_cumplen_predicado_2_private(t, 0, &ht, h, p);
 	list ls = list_empty(&bool_type);
 	for (int i = 0; i < h; i++) {
-		bool * r = (bool*)hash_table_get(&ht, &i);;
+		bool * r = (bool*)map_get(&ht, &i);;
 		list_add(&ls,r);
 	}
-	hash_table_free(&ht);
+	map_free(&ht);
 	return ls;
 }
 
@@ -82,7 +82,7 @@ void test_ejemplos_trees_1() {
 	printf("\n~~~~~~~~~~~~~~~~~~~~ Test Tree 1 ~~~~~~~~~~~~~~~~~~~~\n");
 	char mem[300];
 	char mem2[300];
-	iterator it = file_iterable_string_fix("ficheros/trees_1.txt");
+	iterator it = iterable_file_string_fix("ficheros/trees_1.txt");
 	while (iterable_file_has_next(&it)) {
 		char* line = (char*) iterable_file_next(&it);
 		tree * t = tree_parse(line);
@@ -98,20 +98,20 @@ void test_ejemplos_trees_1() {
 
 void test__ejemplos_trees_1_1() {
 	char mem[300];
-	hash_table ht = hash_table_empty(&int_type, &bool_type);
+	map ht = map_empty(&int_type, &bool_type);
 	int h = 4;
 	for (int i = 0; i <= h; i++) {
 		bool r = true;
-		hash_table_put(&ht, &i, &r);
+		map_put(&ht, &i, &r);
 	}
 	bool r = false;
-	hash_table_put(&ht, &h, &r);
-	iterator it = hash_table_items_iterable(&ht);
+	map_put(&ht, &h, &r);
+	iterator it = map_items_iterable(&ht);
 	iterable_to_console(&it);
-	printf("\n%s",tostring(hash_table_get(&ht,&h),mem,&bool_type));
+	printf("\n%s",tostring(map_get(&ht,&h),mem,&bool_type));
 	bool r1 = false;
 	bool r2 = false;
 	bool r3 = equals(&r1,&r2,&bool_type);
-	printf("\n%s",tostring(hash_table_get(&ht,&h),mem,&bool_type));
+	printf("\n%s",tostring(map_get(&ht,&h),mem,&bool_type));
 	printf("\n%s",MSG_BOOL(r3));
 }

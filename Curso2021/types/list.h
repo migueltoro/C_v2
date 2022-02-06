@@ -29,7 +29,6 @@ typedef struct {
 	int size;
 	int tam;
 	void ** elements;
-	heap hp;
 } list;
 
 void swap_in_list(list * ls, int a, int b);
@@ -45,6 +44,8 @@ list list_of_long(int n, ...);
 list list_of_double(int n, ...);
 list list_of_string(int n, ...);
 list list_of_type(type * type, int n, ...);
+list list_random_double(int n, double a, double b);
+list list_random_int(int n, int a, int b);
 
 list list_sublist(list * ls, int a, int b);
 void * list_get(list * ls, const int index);

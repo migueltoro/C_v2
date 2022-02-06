@@ -11,7 +11,7 @@
 //suma los primos del fichero
 
 long sum_primos_file(char * file){
-	iterator it = file_iterable_string_fix(file);
+	iterator it = iterable_file_string_fix(file);
 	long sum = 0;
 	while(iterable_has_next(&it)){
 		char * line = (char *) iterable_next(&it);
@@ -28,7 +28,7 @@ long sum_primos_file(char * file){
 //cuenta los primos del fichero
 
 int count_primos_file(char * file){
-	iterator it = file_iterable_string_fix(file);
+	iterator it = iterable_file_string_fix(file);
 	int sum = 0;
 	while(iterable_has_next(&it)){
 		char * line = (char *) iterable_next(&it);
@@ -44,7 +44,7 @@ int count_primos_file(char * file){
 //cuenta los primos del fichero con otra estructura
 
 int count_primos_file_2(char * file){
-	iterator it = file_iterable_string_fix(file);
+	iterator it = iterable_file_string_fix(file);
 	int sum = 0;
 	while(iterable_has_next(&it)){
 		char * line = (char *) iterable_next(&it);
@@ -64,7 +64,7 @@ int count_primos_file_2(char * file){
 //obtiene una lista del fichero
 
 list file_to_list(char * file){
-       iterator it = file_iterable_string_fix(file);
+       iterator it = iterable_file_string_fix(file);
        list ls = list_empty(&long_type);
        long e;
        while(iterable_has_next(&it)){
@@ -85,7 +85,7 @@ list file_to_list(char * file){
 //obtiene una lista del fichero
 
 list file_to_list_2(char * file) {
-	iterator f = file_iterable_string_fix(file);
+	iterator f = iterable_file_string_fix(file);
 	list ls = list_empty(&long_type);
 	long e;
 	while (iterable_has_next(&f)) {
@@ -107,7 +107,7 @@ list file_to_list_2(char * file) {
 
 list file_to_list_of_list(char * file){
 	list res = list_empty(&list_type);
-	iterator it1 = file_iterable_string_fix(file);
+	iterator it1 = iterable_file_string_fix(file);
 	int x;
 	while(iterable_has_next(&it1)) {
 	      char* linea = (char*)iterable_next(&it1);

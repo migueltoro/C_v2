@@ -25,7 +25,7 @@ void iterable_copy_state_to_auxiliary(iterator * st){
 }
 
 iterator * iterable_copy(iterator * it) {
-	return copy_and_mem(it,sizeof(iterator));
+	return heap_copy(it,NULL,sizeof(iterator));
 }
 
 bool iterable_has_next(iterator * st) {
@@ -52,7 +52,7 @@ iterator iterable_create(
 		int size_dp){
 	void * state = malloc(t->size);
 	void * a_state = malloc(t->size);
-	iterator r = {t,NULL,state,a_state,has_next,next,see_next,free_dp,copy_and_mem(dps,size_dp)};
+	iterator r = {t,NULL,state,a_state,has_next,next,see_next,free_dp,heap_copy(dps,NULL,size_dp)};
 	return r;
 }
 
@@ -116,7 +116,7 @@ void * iterable_flatmap_see_next(iterator * current_iterable){
 void * iterable_flatmap_next(iterator * c_iterable) {
 	dp_flatmap * d = (dp_flatmap *) c_iterable->dps;
 	iterator * depending_iterable = c_iterable->dp_iterable;
-	copy(c_iterable->a_state,iterable_next(&d->actual_iterable),c_iterable->type->size);
+	copy_size(c_iterable->a_state,iterable_next(&d->actual_iterable),c_iterable->type->size);
 	while(!iterable_has_next(&d->actual_iterable)){
 		if(iterable_has_next(depending_iterable)){
 			iterable_free(&d->actual_iterable);
@@ -158,7 +158,7 @@ void next_depending_state(iterator * c_iterable) {
 		void * r = iterable_next(depending_iterable);
 		if (dp->filter_predicate(r)) {
 			dp->has_next = true;
-			copy(c_iterable->state,r,c_iterable->type->size);
+			copy_size(c_iterable->state,r,c_iterable->type->size);
 			break;
 		}
 	}
@@ -197,11 +197,11 @@ pair * _f_consecutive_pair(pair * out, void * in) {
 	static char key[Tam_String];
 	static char value[Tam_String];
 	if(first){;
-		copy(value,in,pairs_type_size);
+		copy_size(value,in,pairs_type_size);
 		first = false;
 	} else {
-		copy(key,value,pairs_type_size);
-		copy(value,in,pairs_type_size);
+		copy_size(key,value,pairs_type_size);
+		copy_size(value,in,pairs_type_size);
 	}
 	out->key = key;
 	out->value = value;
@@ -221,7 +221,7 @@ iterator iterable_consecutive_pairs(iterator * st){
 	}
 	if(iterable_has_next(st)) {
 		type t = generic_type_2(&pair_type,st->type,st->type);
-		r = iterable_map(st,copy_and_mem(&t,sizeof(type)),_f_consecutive_pair);
+		r = iterable_map(st,heap_copy(&t,NULL,sizeof(type)),_f_consecutive_pair);
 	} else {
 		r = iterable_empty();
 	}
@@ -229,10 +229,12 @@ iterator iterable_consecutive_pairs(iterator * st){
 	return r;
 }
 
-pair_enumerate * _f_pair_enumerate(pair_enumerate * out, void * in) {
+int p_enum;
+
+enumerate * _f_pair_enumerate(enumerate * out, void * in) {
 	static int n;
 	if (in == NULL) {
-		n = 0;
+		n = p_enum;
 		return out;
 	}
 	out->counter = n;
@@ -241,12 +243,13 @@ pair_enumerate * _f_pair_enumerate(pair_enumerate * out, void * in) {
 	return out;
 }
 
-iterator iterable_enumerate(iterator * st){
-	pair_enumerate p;
+iterator iterable_enumerate(iterator * st, int n){
+	p_enum = n;
+	enumerate p;
 	pairs_type_size = st->type->size;
 	_f_pair_enumerate(&p,NULL);
-	type pt = generic_type_1(&pair_enumerate_type,st->type);
-	iterator r = iterable_map(st,copy_and_mem(&pt,sizeof(type)),_f_pair_enumerate);
+	type pt = generic_type_1(&enumerate_type,st->type);
+	iterator r = iterable_map(st,heap_copy(&pt,NULL,sizeof(type)),_f_pair_enumerate);
 	r.dp_iterable = iterable_copy(st);
 	return r;
 }
@@ -342,7 +345,7 @@ iterator iterable_iterate(type * type,
 	int size_di = sizeof(dp_iterate);
 	iterator new_st = iterable_create(type,iterable_iterate_has_next,
 			iterable_iterate_next,iterable_iterate_see_next,NULL,&di,size_di);
-	copy(new_st.state,initial_value,type->size);
+	copy_size(new_st.state,initial_value,type->size);
 	return new_st;
 }
 
@@ -408,7 +411,7 @@ iterator text_to_iterable_string_fix_tam(char * text, const char * delimiters, i
 	ds.delimiters = delimiters;
 	ds.token = strtok_r2(ds.text,delimiters,ds.saveptr);
 	type t = string_fix_type_of_tam(tam);
-	iterator r = iterable_create(type_copy(&t), iterable_split_has_next,
+	iterator r = iterable_create(type_copy(&t,NULL), iterable_split_has_next,
 			iterable_split_next, iterable_split_see_next,dependencies_split_free, &ds,size_ds);
 	return r;
 }
@@ -449,11 +452,11 @@ void * iterable_file_next(iterator * c_iterable){
 	return c_iterable->a_state;
 }
 
-iterator file_iterable_string_fix(char * file) {
-	return file_iterable_string_fix_tam(file,string_fix_tam);
+iterator iterable_file_string_fix(char * file) {
+	return iterable_file_string_fix_tam(file,string_fix_tam);
 }
 
-iterator file_iterable_string_fix_tam(char * file, int n) {
+iterator iterable_file_string_fix_tam(char * file, int n) {
 	FILE * st = fopen(file,"r");
 	char  ms[Tam_String];
 	if(st==NULL) sprintf(ms,"no se encuentra el fichero %s",file);
@@ -461,7 +464,7 @@ iterator file_iterable_string_fix_tam(char * file, int n) {
 	dp_file df = {st,false};
 	int size_df = sizeof(dp_file);
 	type t = string_fix_type_of_tam(n);
-	iterator it_file = iterable_create(type_copy(&t),iterable_file_has_next,iterable_file_next,
+	iterator it_file = iterable_create(type_copy(&t,NULL),iterable_file_has_next,iterable_file_next,
 			iterable_file_see_next,free_dependencies_file,&df,size_df);
 	dp_file * dp = (dp_file *)it_file.dps;
 	char * r = fgets(it_file.state,n,dp->file);
@@ -472,9 +475,37 @@ iterator file_iterable_string_fix_tam(char * file, int n) {
 iterator iterable_words_in_file(char *file, int line_tam, int word_tam, char * sep) {
 	type t = string_fix_type_of_tam(word_tam);
 	strcpy(text_to_iterable_delimiters,sep);
-	iterator r1 = file_iterable_string_fix_tam(file, line_tam);
+	iterator r1 = iterable_file_string_fix_tam(file, line_tam);
 	iterator r2 = iterable_filter(iterable_copy(&r1), string_fix_not_all_space);
-	iterator r3 = iterable_flatmap(iterable_copy(&r2), type_copy(&t),text_to_iterable_string_fix_function);
+	iterator r3 = iterable_flatmap(iterable_copy(&r2), type_copy(&t,NULL),text_to_iterable_string_fix_function);
+	return r3;
+}
+
+int word_tam_g;
+int counter_g;
+enumerate * word_to_enumerate(enumerate * out, char * word){
+	*out = enumerate_of(counter_g,word);
+	return out;
+}
+
+iterator * enumerate_expand_f(iterator * out, enumerate * in){
+	int counter = in->counter;
+	char * value = in->value;
+	counter_g = counter;
+	iterator r = text_to_iterable_string_fix_tam(value,text_to_iterable_delimiters,word_tam_g);
+	iterator r2 = iterable_map(&r,out->type,word_to_enumerate);
+	*out = r2;
+	return out;
+}
+
+iterator iterable_words_and_line_in_file(char *file, int line_tam, int word_tam, char *sep) {
+	type t = string_fix_type_of_tam(word_tam);
+	type t2 = generic_type_1(&enumerate_type,&t);
+	strcpy(text_to_iterable_delimiters, sep);
+	word_tam_g = word_tam;
+	iterator r1 = iterable_file_string_fix_tam(file, line_tam);
+	iterator r2 = iterable_enumerate(iterable_copy(&r1),0);
+	iterator r3 = iterable_flatmap(iterable_copy(&r2),type_copy(&t2,NULL),enumerate_expand_f);
 	return r3;
 }
 
@@ -606,7 +637,7 @@ void test_iterables_2() {
 	iterator r3 = iterable_filter(&r2,menor_que_long);
 	iterable_tostring(&r3,mem);
 	printf("\n%s\n",mem);
-	iterator fit = file_iterable_string_fix("ficheros/prueba.txt");
+	iterator fit = iterable_file_string_fix("ficheros/prueba.txt");
 	iterator fmap = iterable_map(&fit,&punto_type,punto_parse);
 	iterator ff = iterable_filter(&fmap,ft);
 	iterable_tostring(&ff,mem);
@@ -616,7 +647,7 @@ void test_iterables_2() {
 void test_iterables_3(){
 	type t = string_fix_type_of_tam(10);
 	string_fix_copy(text_to_iterable_delimiters," ,",&string_fix_type);
-	iterator fit = file_iterable_string_fix("ficheros/datos_entrada.txt");
+	iterator fit = iterable_file_string_fix("ficheros/datos_entrada.txt");
 	iterator fit3 = iterable_filter(&fit,string_fix_not_all_space);
 	iterator fmap = iterable_flatmap(&fit3,&t,text_to_iterable_string_fix_function);
 	iterable_to_console_sep(&fmap,"\n","{","}");
@@ -639,7 +670,7 @@ void test_iterables_6() {
 	iterator p3;
 	iterator r = iterable_range_long(0, 1000, 9);
 	iterator r2 = iterable_consecutive_pairs(&r);
-	iterator r3 = iterable_enumerate(&r2);
+	iterator r3 = iterable_enumerate(&r2,0);
 	iterable_to_console(&r3);
 }
 
@@ -649,7 +680,7 @@ iterator * new_it() {
 	r0 = iterable_filter(iterable_copy(&r),es_primo_f);
 	r1 = iterable_map(iterable_copy(&r0),&long_type,square_long_f);
 	r2 = iterable_consecutive_pairs(iterable_copy(&r1));
-	r3 = iterable_enumerate(iterable_copy(&r2));
+	r3 = iterable_enumerate(iterable_copy(&r2),0);
 	return iterable_copy(&r3);
 }
 
@@ -660,18 +691,27 @@ void test_iterables_7() {
 
 int num_palabras() {
 	type t = string_fix_type_of_tam(15);
-	iterator t1 = file_iterable_string_fix_tam("ficheros/quijote.txt",45);
+	iterator t1 = iterable_file_string_fix_tam("ficheros/quijote.txt",45);
 	iterator t2 = iterable_filter(iterable_copy(&t1), string_fix_not_all_space);
-	iterator t3 = iterable_flatmap(iterable_copy(&t2),type_copy(&t),text_to_iterable_string_fix_function);
-	iterator t4 = iterable_enumerate(iterable_copy(&t3));
+	iterator t3 = iterable_flatmap(iterable_copy(&t2),type_copy(&t,NULL),text_to_iterable_string_fix_function);
+	iterator t4 = iterable_enumerate(iterable_copy(&t3),1);
 	iterable_to_console_sep(&t4, "\n", "", "");
 	return 0;
 }
 
-
-
 void test_iterables_8() {
 	int n = num_palabras();
 	printf("===%d\n", n);
+}
+
+void test_iterables_9() {
+	iterator r = iterable_words_and_line_in_file("ficheros/quijote.txt",100,15," ,;.()");
+	iterable_to_console_sep(&r, "\n", "", "");
+}
+
+void test_iterables_10() {
+	iterator r = iterable_file_string_fix_tam("ficheros/quijote.txt",100);
+//	iterator t2 = iterable_filter(iterable_copy(&t1), string_fix_not_all_space);
+	printf("%d\n",iterable_size(&r));
 }
 

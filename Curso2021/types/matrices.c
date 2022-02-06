@@ -20,7 +20,7 @@ matrix matrix_of(int nf, int nc, type * type){
 
 matrix matrix_of_file(char *file, type *type, int nf, int nc) {
 	matrix m = matrix_of(nf,nc,type);
-	iterator it1 = file_iterable_string_fix_tam(file,string_fix_tam);
+	iterator it1 = iterable_file_string_fix_tam(file,string_fix_tam);
 	char e[type->size];
 	int f = 0;
 	while (iterable_has_next(&it1)) {
@@ -56,7 +56,7 @@ int matrix_get_int(matrix * s, int f, int c) {
 }
 
 void matrix_set(matrix * s, int f, int c, void * value){
-	copy(s->datos + s->type->size*(s->__nc*(s->iv+f)+ s->jv+ c), value, s->type->size);
+	copy_size(s->datos + s->type->size*(s->__nc*(s->iv+f)+ s->jv+ c), value, s->type->size);
 }
 
 void matrix_set_value(matrix * s, void * value) {

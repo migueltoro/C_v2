@@ -54,7 +54,7 @@ int marca_naturalorder(const marca * e1, const marca * e2, type * t){
 	return time_naturalorder(e1->time,e2->time,NULL);
 }
 
-type marca_type = {marca_equals,marca_tostring,marca_naturalorder,marca_parse,sizeof(marca),0,NULL};
+type marca_type = {"marca",marca_equals,marca_tostring,marca_naturalorder,marca_parse,free_0,copy_0,sizeof(marca),0,NULL};
 
 void test_marca() {
 	char mem[250];

@@ -5,7 +5,7 @@
  *      Author: migueltoro
  */
 
-#include "../data/coordenadas.h"
+#include "../coordenadas/coordenadas.h"
 
 coordenadas_2d coordenadas_2d_of(double latitud, double longitud){
 	coordenadas_2d c = {latitud, longitud};

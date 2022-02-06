@@ -8,13 +8,13 @@
 #ifndef MULTISET_H_
 #define MULTISET_H_
 
-#include "../types/hash_table.h"
 #include "../types/iterables.h"
 #include "../types/list.h"
 #include "../types/types.h"
+#include "map.h"
 
 typedef struct {
-	hash_table hash_table;
+	map hash_table;
 } multiset;
 
 multiset multiset_empty(type * type_element);

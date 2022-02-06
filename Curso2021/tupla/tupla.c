@@ -36,7 +36,7 @@ int smax_naturalorder(const smax * e1,const smax * e2, type * t){
     return r;
 }
 
-type smax_type = {smax_equals,smax_tostring,smax_naturalorder,smax_parse,sizeof(smax),0,NULL};
+type smax_type = {"smax",smax_equals,smax_tostring,smax_naturalorder,smax_parse,free_0,copy_0,sizeof(smax),0,NULL};
 
 void test_tupla(){
 	char mem[256];

@@ -9,14 +9,14 @@
 #define MULTIMAP_H_
 
 #include "../types/types.h"
-#include "../types/hash_table.h"
 #include "../types/iterables.h"
 #include "../types/list.h"
 #include "../types/set.h"
+#include "map.h"
 
 
 typedef struct {
-	hash_table hash_table;
+	map hash_table;
 	type * value_type;
 } list_multimap;
 
@@ -42,7 +42,7 @@ void list_multimap_free(list_multimap * lm);
 void test_list_multimap();
 
 typedef struct {
-	hash_table hash_table;
+	map hash_table;
 	type * value_type;
 } set_multimap;
 

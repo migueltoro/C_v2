@@ -31,10 +31,13 @@
 
 
 typedef struct gtp {
+	char name[15];
 	bool (*equals)(const void * e1, const void * e2, struct gtp * t);
 	char * (*tostring)(const void * e, char * mem, struct gtp * t);
 	int (*order)(const void * e1, const void * e2, struct gtp * t);
 	void * (*parse)(void * out, char * text, struct gtp * t);
+	void (*free)(void * e, struct gtp * t);
+	void * (*copy)(void * e, heap * h, struct gtp * t);
 	int size;
 	int num_types;
 	struct gtp * types[2];
@@ -44,9 +47,11 @@ typedef struct gtp {
 unsigned long int hash(const char * key);
 unsigned long int hash_code(void * in, type * t);
 
+// generic types
 
-
+type * type_copy(type * t, heap * hp);
 bool type_equals(const type * e1, const type* e2);
+char * type_tostring(type * t, char * mem);
 type generic_type_1(type * base, type * key_type);
 type generic_type_2(type *base, type * key_type, type * value_type);
 int num_types(type * t);
@@ -58,10 +63,21 @@ bool equals(const void * e1, const void * e2, type * type);
 char * tostring(const void * e, char * mem, type * type);
 int order(const void * e1, const void * e2, type * type);
 void * parse(void * out, char * text, type * type);
+void free_mem(void * e, type * type);
+void * copy(void * e, heap * h, type * type);
 
-extern type tmp_type;
+// utilities
 
-void set_tmp_type(type t);
+void * copy_size(void * out, void * in, int size);
+void * copy_in_pointer(void ** out, void * in, int size);
+void * swap(void * out, void * in, int size);
+void free_0(void * e, type * type);
+void * copy_0(void * e, heap * h, type * type);
+
+
+extern type * tmp_type;
+
+void set_tmp_type(type * t);
 bool equals_st(const void * e1, const void * e2);
 char * tostring_st(const void * e, char * mem);
 int order_st(const void * e1, const void * e2);
@@ -71,6 +87,7 @@ bool equals_type(const void * e1, const void * e2);
 char * tostring_type(const void * e, char * mem);
 int order_type(const void * e1, const void * e2);
 void * parse_type(void * out, char * text);
+
 
 // int s_type
 
@@ -220,18 +237,18 @@ extern type punto_type;
 typedef struct {
 	int counter;
 	void * value;
-}pair_enumerate;
+}enumerate;
 
-pair_enumerate pair_enumerate_of(int n, void * key);
+enumerate enumerate_of(int n, void * key);
 
-pair_enumerate * pair_enumerate_parse(pair_enumerate * out, char * text, type * t);
-char * pair_enumerate_tostring(const pair_enumerate * e, char * mem, type * t);
-bool pair_enumerate_equals(const pair_enumerate * e1, const pair_enumerate * e2, type * t);
-int pair_enumerate_naturalorder(const pair_enumerate * e1, const pair_enumerate * e2, type * t);
+enumerate * enumerate_parse(enumerate * out, char * text, type * t);
+char * enumerate_tostring(const enumerate * e, char * mem, type * t);
+bool enumerate_equals(const enumerate * e1, const enumerate * e2, type * t);
+int enumerate_naturalorder(const enumerate * e1, const enumerate * e2, type * t);
 
-#define to_pair_enumerate(a) *(pair_enumerate *) a
+#define to_enumerate(a) *(enumerate *) a
 
-extern type pair_enumerate_type;
+extern type enumerate_type;
 
 typedef struct {
 	void * key;
@@ -254,7 +271,7 @@ void * pair_to_value(void * value, pair * in);
 
 pair * pair_of_value(pair * p, void * value);
 
-void pair_free(pair * p);
+void pair_free(pair * p, type * t);
 
 
 #define to_pair(a) *(pair *) a
@@ -289,7 +306,7 @@ void * string_var_add_string_var(string_var * out, const string_var * in);
 
 void string_var_clear(string_var * in);
 
-void string_var_free(string_var * in);
+void string_var_free(string_var * in, type * t);
 
 // string_fix type
 
@@ -350,13 +367,6 @@ extern type optional_type;
 
 extern type null_type;
 
-
-// utilities
-
-void * copy(void * out, void * in, int size);
-void * copy_and_mem(void * in, int size);
-void * copy_in_pointer(void ** out, void * in, int size);
-void * swap(void * out, void * in, int size);
 
 void test_string();
 void test_types();

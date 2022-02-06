@@ -28,9 +28,36 @@ unsigned long int hash_code(void * in, type * t){
 	return hash_index;
 }
 
+// generic types
 
-type * type_copy(type * t) {
-	return copy_and_mem(t,sizeof(type));
+type * type_copy(type * t, heap * hp) {
+	return heap_copy(t,hp,sizeof(type));
+}
+
+bool type_equals(const type *t1, const type *t2) {
+	bool r = strcmp(t1->name, t2->name) == 0 && t1->num_types == t2->num_types;
+	switch (t1->num_types) {
+	case 0:
+		break;
+	case 1:
+		r = type_equals(t1->types[0], t2->types[0]);
+		break;
+	case 2:
+		r = type_equals(t1->types[0], t2->types[0])
+				&& type_equals(t1->types[1], t2->types[1]);
+		break;
+	}
+	return r;
+}
+
+char * type_tostring(type * t, char * mem){
+	char * r;
+	switch (t->num_types) {
+		case 0: strcpy(mem,t->name);break;
+		case 1: sprintf(mem,"%s(%s)",t->name,t->types[0]);break;
+		case 2: sprintf(mem,"%s(%s,%s)",t->name,t->types[0],t->types[1]);break;
+		}
+		return mem;
 }
 
 type generic_type_1(type *base, type * key_type) {
@@ -46,14 +73,14 @@ type generic_type_2(type *base, type * key_type, type * value_type) {
 	return rb;
 }
 
-
-void type_free(type *t) {
+void type_free(type * t) {
 	if (t->num_types == 1)
 		free(t->types[0]);
 	else if (t->num_types == 2) {
 		free(t->types[0]);
 		free(t->types[1]);
 	}
+	free(t);
 }
 
 int num_types(type * t){
@@ -64,6 +91,7 @@ type * types(type * base, int i){
 	return base->types[i];
 }
 
+// functions
 
 bool equals(const void *e1, const void *e2, type *type) {
 	return type->equals(e1,e2,type);
@@ -81,29 +109,79 @@ void* parse(void *out, char *text, type *type) {
 	return type->parse(out,text,type);
 }
 
-type tmp_type;
+void free_mem(void * e, type * type){
+	type->free(e,type);
+}
 
-void set_tmp_type(type t){
+void * copy(void * e, heap * h, type * type){
+	return type->copy(e,h,type);
+}
+
+type * tmp_type;
+
+void set_tmp_type(type * t){
 	tmp_type = t;
 }
 
 bool equals_st(const void * e1, const void * e2) {
-	return tmp_type.equals(e1,e2,&tmp_type);
+	return tmp_type->equals(e1,e2,&tmp_type);
 }
 
 char * tostring_st(const void * e, char * mem) {
-	return tmp_type.tostring(e,mem,&tmp_type);
+	return tmp_type->tostring(e,mem,&tmp_type);
 }
 
 int order_st(const void * e1, const void * e2){
-	return tmp_type.order(e1,e2,&tmp_type);
+	return tmp_type->order(e1,e2,&tmp_type);
 }
 
 void * parse_st(void * out, char * text){
-	return tmp_type.parse(out,text,&tmp_type);
+	return tmp_type->parse(out,text,&tmp_type);
+}
+
+// utilities
+
+void * copy_size(void * out, void * in, int size){
+	check_not_null(in,__FILE__,__LINE__,"puntero null");
+	check_not_null(out,__FILE__,__LINE__,"puntero null");
+	memcpy(out,in,size);
+	return out;
+}
+
+void * copy_in_pointer(void ** out, void * in, int size){
+	check_not_null(in,__FILE__,__LINE__,"puntero null");
+	check_not_null(out,__FILE__,__LINE__,"puntero null");
+	void * r = *out;
+	memcpy(r,in,size);
+	return out;
+}
+
+void * swap(void * out, void * in, int size){
+	check_not_null(in,__FILE__,__LINE__,"puntero null");
+	check_not_null(out,__FILE__,__LINE__,"puntero null");
+	check_argument(size>0,__FILE__,__LINE__,"size debe ser mayor que cero");
+	char tmp[size];
+	memcpy(tmp,in,size);
+	memcpy(in,out,size);
+	memcpy(out,tmp,size);
+	free(tmp);
+	return out;
+}
+
+void free_0(void * e, type * type){
+	if(e!=NULL) free(e);
+}
+
+void * copy_0(void * e, heap * hp, type * type){
+	return heap_copy(e,hp,type->size);
 }
 
 
+void * reduce_one_indirection(void * in){
+	void ** r = (void **) in;
+	void * out = * r;
+	return out;
+}
 
 // int type
 
@@ -137,7 +215,7 @@ int int_naturalorder(const int * e1,const int * e2, type * type){
     return r;
 }
 
-type int_type = {int_equals,int_tostring,int_naturalorder,int_parse,sizeof(int),0,NULL};
+type int_type = {"int",int_equals,int_tostring,int_naturalorder,int_parse,free_0,copy_0,sizeof(int),0,NULL};
 
 // char type
 
@@ -167,7 +245,7 @@ int char_naturalorder(const char * e1,const char * e2, type * type){
     return r;
 }
 
-type char_type = {char_equals, char_tostring, char_naturalorder, char_parse, sizeof(char),0,NULL};
+type char_type = {"char",char_equals, char_tostring, char_naturalorder, char_parse,free_0,copy_0, sizeof(char),0,NULL};
 
 // bool type
 
@@ -199,7 +277,7 @@ int bool_naturalorder(const bool * e1,const bool * e2, type * type) {
 }
 
 
-type bool_type = {bool_equals, bool_tostring, bool_naturalorder, bool_parse, sizeof(bool),0,NULL};
+type bool_type = {"bool",bool_equals, bool_tostring, bool_naturalorder, bool_parse,free_0,copy_0,sizeof(bool),0,NULL};
 
 // long type
 
@@ -234,7 +312,7 @@ int long_naturalorder(const long * e1,const long * e2, type * type){
 }
 
 
-type long_type = {long_equals,long_tostring,long_naturalorder,long_parse,sizeof(long),0,NULL};
+type long_type = {"long",long_equals,long_tostring,long_naturalorder,long_parse,free_0,copy_0,sizeof(long),0,NULL};
 
 // long long type
 
@@ -268,7 +346,7 @@ int long_long_naturalorder(const long long * e1,const long long * e2, type * typ
     return r;
 }
 
-type long_long_type = {long_long_equals,long_long_tostring,long_long_naturalorder,long_long_parse,sizeof(long long),0,NULL};
+type long_long_type = {"long_long",long_long_equals,long_long_tostring,long_long_naturalorder,long_long_parse,free_0,copy_0,sizeof(long long),0,NULL};
 
 // float type
 
@@ -302,7 +380,7 @@ int float_naturalorder(const float * e1, const float * e2, type * type){
     return r;
 }
 
-type float_type = {float_equals,float_tostring,float_naturalorder,float_parse,sizeof(float),0,NULL};
+type float_type = {"float",float_equals,float_tostring,float_naturalorder,float_parse,free_0,copy_0,sizeof(float),0,NULL};
 
 //double type
 
@@ -336,7 +414,7 @@ int double_naturalorder(const double * e1, const double * e2, type * type){
     return r;
 }
 
-type double_type = {double_equals,double_tostring,double_naturalorder,double_parse,sizeof(double),0,NULL};
+type double_type = {"double",double_equals,double_tostring,double_naturalorder,double_parse,free_0,copy_0,sizeof(double),0,NULL};
 
 // int_pair
 
@@ -369,8 +447,7 @@ int int_pair_naturalorder(const int_pair * p1, const int_pair * p2, type * type)
 }
 
 
-
-type int_pair_type = {int_pair_equals,int_pair_tostring,int_pair_naturalorder,int_pair_parse,sizeof(int_pair),0,NULL};
+type int_pair_type = {"ini_pair",int_pair_equals,int_pair_tostring,int_pair_naturalorder,int_pair_parse,free_0,copy_0,sizeof(int_pair),0,NULL};
 
 /////
 // int_pair
@@ -404,7 +481,7 @@ int long_pair_naturalorder(const long_pair * p1, const long_pair * p2, type * ty
 }
 
 
-type long_pair_type = {long_pair_equals,long_pair_tostring,long_pair_naturalorder,long_pair_parse,sizeof(long_pair),0,NULL};
+type long_pair_type = {"long_pair",long_pair_equals,long_pair_tostring,long_pair_naturalorder,long_pair_parse,free_0,copy_0,sizeof(long_pair),0,NULL};
 
 /////
 Cuadrante punto_cuadrante(const punto * p) {
@@ -453,7 +530,7 @@ int punto_naturalorder(const punto * p1, const punto * p2, type * type){
 	return double_naturalorder(&d1,&d2,NULL);
 }
 
-type punto_type = {punto_equals,punto_tostring,punto_naturalorder,punto_parse,sizeof(punto),0,NULL};
+type punto_type = {"punto",punto_equals,punto_tostring,punto_naturalorder,punto_parse,free_0,copy_0,sizeof(punto),0,NULL};
 
 
 // pair type
@@ -516,22 +593,34 @@ int pair_naturalorder(const pair * e1, const pair * e2, type * t){
 }
 
 
-void pair_free(pair * p){
-	if(p->key != NULL) free(p->key);
-	if(p->value != NULL) free(p->value);
+void pair_free(pair * p, type * t){
+	type * t0 = t->types[0];
+	type * t1 = t->types[1];
+	t0->free(p->key,t0);
+	t1->free(p->value,t1);
+	free(p);
+}
+
+pair * pair_copy(pair * p, heap * hp, type * t) {
+	type * t0 = t->types[0];
+	type * t1 = t->types[1];
+	void * k = t0->copy(p->key,hp,t0);
+	void * v = t1->copy(p->value,hp,t1);
+	pair pc = pair_of(k,v);
+	return (pair *) heap_copy(&pc,hp,sizeof(pair));
 }
 
 
-type pair_type = {pair_equals,pair_tostring,pair_naturalorder,pair_parse,sizeof(pair),2,NULL};
+type pair_type = {"pair",pair_equals,pair_tostring,pair_naturalorder,pair_parse,pair_free,pair_copy,sizeof(pair),2,NULL};
 
 // pair_enumerate
 
-pair_enumerate pair_enumerate_of(int counter, void * value){
-	pair_enumerate p = {counter,value};
+enumerate enumerate_of(int counter, void * value){
+	enumerate p = {counter,value};
 	return p;
 }
 
-pair_enumerate * pair_enumerate_parse(pair_enumerate * out, char * text, type * t) {
+enumerate * enumerate_parse(enumerate * out, char * text, type * t) {
 	char * tokens[20];
 	string_fix tt;
 	string_fix_copy(tt, text,&string_fix_type);
@@ -543,25 +632,39 @@ pair_enumerate * pair_enumerate_parse(pair_enumerate * out, char * text, type * 
 	return out;
 }
 
-char * pair_enumerate_tostring(const pair_enumerate * e, char * mem, type * t){
+char * enumerate_tostring(const enumerate * e, char * mem, type * t){
 	char a[Tam_String];
 	tostring(e->value,a,t->types[0]);
 	sprintf(mem,"(%d,%s)",e->counter,a);
 	return mem;
 }
-bool pair_enumerate_equals(const pair_enumerate * e1, const pair_enumerate * e2, type * t){
+bool enumerate_equals(const enumerate * e1, const enumerate * e2, type * t){
 	bool k = equals(e1->value,e2->value,t->types[0]);
 	return k && e1->counter == e2->counter;
 }
 
-int pair_enumerate_naturalorder(const pair_enumerate * e1, const pair_enumerate * e2, type * t){
+int enumerate_naturalorder(const enumerate * e1, const enumerate * e2, type * t){
 	int k = order(e1->value,e2->value,t->types[0]);
 	if(k == 0) k = order(&e1->counter,&e2->counter,&int_type);
     return k;
 }
 
+void enumerate_free(enumerate * e, type * t){
+	type * te = t->types[0];
+	te->free(e->value,te);
+	free(e);
+}
 
-type pair_enumerate_type = {pair_enumerate_equals,pair_enumerate_tostring,pair_enumerate_naturalorder,pair_enumerate_parse,sizeof(pair_enumerate),1,NULL};
+enumerate * enumerate_copy(enumerate * e, heap * hp, type * t) {
+	type * te = t->types[0];
+	void * value = te->copy(e->value,hp,te);
+	enumerate en = enumerate_of(e->counter,value);
+	return (enumerate *) heap_copy(&en,hp,sizeof(enumerate));
+}
+
+
+type enumerate_type = {"enumerate",enumerate_equals,enumerate_tostring,enumerate_naturalorder,
+		enumerate_parse,enumerate_free,enumerate_copy,sizeof(enumerate),1,NULL};
 
 // string type
 
@@ -626,7 +729,7 @@ void string_var_clear(string_var * in){
 	strcpy(in->data,"");
 }
 
-void string_var_free(string_var * in){
+void string_var_free(string_var * in, type * t){
 	string_var * st = (string_var * ) in;
 	free(st->data);
 }
@@ -649,8 +752,12 @@ int string_var_naturalorder(const string_var * e1, const string_var * e2, type *
 	return strcmp(e1->data, e2->data);
 }
 
+string_var * string_var_copy(string_var * e, heap * hp, type * t){
+	return NULL;
+}
 
-type string_var_type = {string_var_equals,string_var_tostring,string_var_naturalorder,string_var_parse,sizeof(string_var),0,NULL};
+
+type string_var_type = {"string_var",string_var_equals,string_var_tostring,string_var_naturalorder,string_var_parse,string_var_free, string_var_copy,sizeof(string_var),0,NULL};
 
 
 // string_fix_type
@@ -758,7 +865,7 @@ int string_fix_naturalorder(const char * e1,const char * e2, type * type){
 
 int string_fix_tam = Tam_String;
 
-type string_fix_type = {string_fix_equals,string_fix_tostring,string_fix_naturalorder,string_fix_parse,Tam_String,0,NULL};
+type string_fix_type = {"string_fix",string_fix_equals,string_fix_tostring,string_fix_naturalorder,string_fix_parse,free_0,copy_0,Tam_String,0,NULL};
 
 type string_fix_type_of_tam(int numchars) {
 	type r = string_fix_type;
@@ -772,6 +879,7 @@ bool string_fix_is_empty(char * in){
 bool string_fix_not_is_empty(char * in){
 	return strlen(in) > 0;
 }
+
 bool string_fix_all_space(char * in){
 	bool r = true; int i =-1;
 	while(in[++i] != '\0' && r)
@@ -810,54 +918,25 @@ optional optional_of(void * in){
 	return r;
 }
 
-type optional_type = {optional_equals,optional_tostring,optional_naturalorder,optional_parse,sizeof(optional),1,NULL};
+void optional_free(optional * e, type * t){
+	type * te = t->types[0];
+	te->free(e->value,te);
+	free(e);
+}
+
+optional * optional_copy(optional * e, heap * hp, type * t) {
+	type * te = t->types[0];
+	void * value = te->copy(e->value,hp,te);
+	optional en = optional_of(value);
+	return (optional *) heap_copy(&en,hp,sizeof(optional));
+}
+
+type optional_type = {"optional",optional_equals,optional_tostring,optional_naturalorder,optional_parse,optional_free, optional_copy,sizeof(optional),1,NULL};
 
 // null type
 
-type null_type = {NULL,NULL,NULL,NULL,0};
+type null_type = {"null",NULL,NULL,NULL,NULL,free_0,copy_0,0};
 
-// utilities
-
-void * copy(void * out, void * in, int size){
-	check_not_null(in,__FILE__,__LINE__,"puntero null");
-	check_not_null(out,__FILE__,__LINE__,"puntero null");
-	memcpy(out,in,size);
-	return out;
-}
-
-void * copy_in_pointer(void ** out, void * in, int size){
-	check_not_null(in,__FILE__,__LINE__,"puntero null");
-	check_not_null(out,__FILE__,__LINE__,"puntero null");
-	void * r = *out;
-	memcpy(r,in,size);
-	return out;
-}
-
-void * copy_and_mem(void * in, int size) {
-	check_not_null(in, __FILE__, __LINE__, "puntero null");
-	if (size == 0) return NULL;
-	void * element = (void *) malloc(size);
-	memcpy(element, in, size);
-	return element;
-}
-
-void * swap(void * out, void * in, int size){
-	check_not_null(in,__FILE__,__LINE__,"puntero null");
-	check_not_null(out,__FILE__,__LINE__,"puntero null");
-	check_argument(size>0,__FILE__,__LINE__,"size debe ser mayor que cero");
-	char tmp[size];
-	memcpy(tmp,in,size);
-	memcpy(in,out,size);
-	memcpy(out,tmp,size);
-	free(tmp);
-	return out;
-}
-
-void * reduce_one_indirection(void * in){
-	void ** r = (void **) in;
-	void * out = * r;
-	return out;
-}
 
 
 void test_string(){
@@ -914,7 +993,7 @@ void test_types() {
 	double b = 17;
 	double * c = &b;
 	double d = 18;
-	copy(&a,&d,sizeof(double));
+	copy_size(&a,&d,sizeof(double));
 	printf("a = %lf,d = %lf\n",a,d);
 	copy_in_pointer(&c,&d,sizeof(double));
 	printf("d = %lf,b = %lf\n",d,b);
@@ -953,8 +1032,8 @@ void test_types_1() {
 	parse(&p, "(34.56,56)", &t);
 	printf("2: %s\n", tostring(&p, mem, &t));
 	printf("3: %d,%d\n", types(&t, 0)->size, types(&t, 1)->size);
-	type t2 = generic_type_1(&pair_enumerate_type, &double_type);
-	pair_enumerate p2 = { 7, &a };
+	type t2 = generic_type_1(&enumerate_type, &double_type);
+	enumerate p2 = { 7, &a };
 	parse(&p2, "(5667,-55.12)", &t2);
 	printf("4: %s\n", tostring(&p2, mem, &t2));
 	type t3 = generic_type_1(&optional_type, &double_type);

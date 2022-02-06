@@ -70,7 +70,7 @@ char * get_integer(int * n, tokenizer * tk){
 
 token token_of(char * text,char * text_token, token_class type, int start_position, int end_position){
 	token t = {text,"",type,start_position,end_position};
-	copy(t.text_token,text_token,end_position-start_position);
+	copy_size(t.text_token,text_token,end_position-start_position);
 	return t;
 }
 
@@ -108,7 +108,7 @@ token_class token_cls(token * t){
 }
 
 
-type token_type = {NULL,token_tostring,NULL,NULL,sizeof(token),0,NULL};
+type token_type = {"token",NULL,token_tostring,NULL,NULL,free_0,copy_0,sizeof(token),0,NULL};
 
 tokenizer tokenizer_of(char * text){
 	int n = strlen(text);

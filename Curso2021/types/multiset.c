@@ -9,7 +9,7 @@
 #include "../types/accumulators.h"
 
 multiset multiset_empty(type * type_element){
-	hash_table t = hash_table_empty(type_element,&int_type);
+	map t = map_empty(type_element,&int_type);
 	multiset st = {t};
 	return st;
 }
@@ -23,7 +23,7 @@ multiset multiset_of(list * ls){
 }
 
 void multiset_add_n(multiset * st, void * element, int n) {
-	void * e = hash_table_get(&st->hash_table, element);
+	void * e = map_get(&st->hash_table, element);
 	int count;
 	if(e != NULL) {
 		 count = *(int *)  e;
@@ -31,7 +31,7 @@ void multiset_add_n(multiset * st, void * element, int n) {
 	} else {
 		count = n;
 	}
-	hash_table_put(&st->hash_table, element,&count);
+	map_put(&st->hash_table, element,&count);
 }
 
 void multiset_add(multiset * st, void * element){
@@ -39,48 +39,48 @@ void multiset_add(multiset * st, void * element){
 }
 
 int multiset_size(multiset * st){
-	return hash_table_size(&(st->hash_table));
+	return map_size(&(st->hash_table));
 }
 
 bool multiset_contains(multiset * st, void * element){
-	return hash_table_contains_key(&(st->hash_table),element);
+	return map_contains_key(&(st->hash_table),element);
 }
 
 void multiset_remove_n(multiset * st, void * element, int nu) {
-	if (hash_table_contains_key(&st->hash_table, element)) {
-		void * n = hash_table_get(&st->hash_table, element);
+	if (map_contains_key(&st->hash_table, element)) {
+		void * n = map_get(&st->hash_table, element);
 		int m = MAX(*(int*) n -nu, 0);
-		if(m>0) hash_table_put(&st->hash_table, element, &m);
-		else hash_table_remove(&st->hash_table, element);
+		if(m>0) map_put(&st->hash_table, element, &m);
+		else map_remove(&st->hash_table, element);
 	}
 }
 
 int multiset_count(multiset * st, void * element){
 	int r =0;
-	if (hash_table_contains_key(&st->hash_table, element)) {
-		void * n = hash_table_get(&st->hash_table, element);
+	if (map_contains_key(&st->hash_table, element)) {
+		void * n = map_get(&st->hash_table, element);
 	    r = *(int*) n;
 	}
 	return r;
 }
 
 iterator multiset_items_iterable(multiset * st){
-	return hash_table_items_iterable(&st->hash_table);
+	return map_items_iterable(&st->hash_table);
 }
 
 char * multiset_tostring(multiset * st, char * mem){
-	return hash_table_tostring(&st->hash_table,mem);
+	return map_tostring(&st->hash_table,mem);
 }
 
 void multiset_free(multiset * st){
-	hash_table_free(&(st->hash_table));
+	map_free(&(st->hash_table));
 }
 
 multiset complete_multiset() {
 	char mem[30];
 	int tam = 50;
 	type t = string_fix_type_of_tam(10);
-	multiset st = multiset_empty(type_copy(&t));
+	multiset st = multiset_empty(type_copy(&t,NULL));
 	for (int i = 0; i < tam; i++) {
 		int a2 = entero_aleatorio(0, 10);
 		char * b2 = tostring(&a2,mem,&int_type);
@@ -93,7 +93,7 @@ multiset complete_multiset_2() {
 	char mem[30];
 	int tam = 50;
 	type t = string_fix_type_of_tam(10);
-	list ls = list_empty(type_copy(&t));
+	list ls = list_empty(type_copy(&t,NULL));
 	for (int i = 0; i < tam; i++) {
 		int a2 = entero_aleatorio(0, 10);
 		char * b2 = tostring(&a2,mem,&int_type);

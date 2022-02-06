@@ -51,13 +51,15 @@ iterator iterable_empty();
 iterator iterable_range_long(long a, long b, long c);
 iterator iterable_range_double(double a, double b, double c);
 iterator iterable_iterate(type * type,void * initial_value, bool (*hash_next)(void * element), void * (*next)(void * out, void * in));
-iterator file_iterable_string_fix(char * file);
-iterator file_iterable_string_fix_tam(char * file, int num_chars_per_line_max);
+iterator iterable_file_string_fix(char * file);
+iterator iterable_file_string_fix_tam(char * file, int line_tam);
+iterator iterable_words_in_file(char * file, int line_tam, int word_tam, char * sep);
+iterator iterable_words_and_line_in_file(char * file, int line_tam, int word_tam, char * sep);
 iterator text_to_iterable_string_fix(char * text, const char * delimiters);
 iterator text_to_iterable_string_fix_tam(char * text, const char * delimiters, int tam);
 iterator * text_to_iterable_string_fix_function(iterator * out, char * text);
 iterator iterable_random_int(int n, int a, int b);
-iterator iterable_words_in_file(char * file, int line_tam, int word_tam, char * sep);
+
 iterator iterable_primos(int a, int b);
 
 
@@ -67,7 +69,7 @@ iterator iterable_map(iterator * st,type * type, void * (*map_function)(void * o
 iterator iterable_filter(iterator * st, bool (*map_filter)(void * in));
 iterator iterable_flatmap(iterator * st, type * type, iterator * (*map_function)(iterator * out, void * in));
 iterator iterable_consecutive_pairs(iterator * st);
-iterator iterable_enumerate(iterator * st);
+iterator iterable_enumerate(iterator * st, int n);
 
 
 char * iterable_tostring(iterator * st, char * mem);

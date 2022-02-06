@@ -10,7 +10,7 @@
 //Encontrar las frecuencias con las que se repiten los números de un fichero
 
 multiset frecuencias_en_fichero_1(char * file, type * t) {
-	iterator it = file_iterable_string_fix(file);
+	iterator it = iterable_file_string_fix(file);
 	multiset ms = multiset_empty(t);
 	char e[t->size];
 	while (iterable_has_next(&it)) {
@@ -29,7 +29,7 @@ multiset frecuencias_en_fichero_1(char * file, type * t) {
 
 list_multimap grupos_list_en_fichero_1(char * file, type *element_type, type *key_type,
 		void * f_key(void *out, void * in)) {
-	iterator it = file_iterable_string_fix(file);
+	iterator it = iterable_file_string_fix(file);
 	list_multimap ms = list_multimap_empty(key_type,element_type);
 	char e[element_type->size];
 	char key[key_type->size];
@@ -48,7 +48,7 @@ list_multimap grupos_list_en_fichero_1(char * file, type *element_type, type *ke
 
 set_multimap grupos_set_en_fichero_1(char * file, type * element_type, type * key_type,
 		void * f_key(void *out, void * in)) {
-	iterator it = file_iterable_string_fix(file);
+	iterator it = iterable_file_string_fix(file);
 	set_multimap ms = set_multimap_empty(key_type,element_type);
 	char e[element_type->size];
 	char key[key_type->size];
@@ -99,5 +99,5 @@ void test_esquemas() {
 	printf("4:\n\%s",string_var_data(&s));
 	set_multimap_free(&sm);
 	iterable_free(&it2);
-	string_var_free(&s);
+	string_var_free(&s,&string_var_type);
 }

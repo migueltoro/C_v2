@@ -5,7 +5,8 @@
  *      Author: migueltoro
  */
 
-#include "../types/hash_table.h"
+#include "map.h"
+
 #include "../types/list.h"
 
 int _primes[] = {13, 23, 41, 61, 83, 151, 199, 263, 383, 503, 641, 769, 911, 1049, 1559, 1709, 2069,5923,11587,56527};
@@ -13,26 +14,25 @@ int _next_prime = 0;
 int _nprimes = 20;
 
 
-int get_index_block(hash_table * table, void * key);
-int find_data_entry(hash_table * table, int bq, void * key);
-void ini_data(hash_table * table);
-int rehash(hash_table * table);
-void * hash_table_put_private(hash_table * table, void * key, void * value);
+int get_index_block(map * table, void * key);
+int find_data_entry(map * table, int bq, void * key);
+void ini_data(map * table);
+int rehash(map * table);
+void * hash_table_put_private(map * table, void * key, void * value);
 
-hash_table hash_table_empty(type * key_type, type * value_type){
-	hash_table t;
+map map_empty(type * key_type, type * value_type){
+	map t;
 	t.key_type = key_type;
 	t.value_type = value_type;
 	t.load_factor_limit = 0.75;
 	int capacity_blocks = _primes[_next_prime];
 	t.capacity_blocks = capacity_blocks;
 	t.capacity_data = (int) (t.load_factor_limit* capacity_blocks + 1);
-	t.hp = heap_empty();
 	ini_data(&t);
 	return t;
 }
 
-void ini_data(hash_table * table) {
+void ini_data(map * table) {
 	table->blocks = (int *) malloc(table->capacity_blocks*sizeof(int));
 	table->data = (entry *) malloc(table->capacity_data*sizeof(entry));
 	table->size = 0;
@@ -46,13 +46,13 @@ void ini_data(hash_table * table) {
 	table->data[table->capacity_data-1].next = -1;
 }
 
-int get_index_block(hash_table * table, void * key) {
+int get_index_block(map * table, void * key) {
 	unsigned long int hash_index = hash_code(key,table->key_type);
 	int index = (int) (hash_index % (table->capacity_blocks));
 	return index;
 }
 
-int find_data_entry(hash_table * table, int bq, void * key) {
+int find_data_entry(map * table, int bq, void * key) {
 	int r = -1;
 	int next = table->blocks[bq];
 	while (next >= 0) {
@@ -65,40 +65,40 @@ int find_data_entry(hash_table * table, int bq, void * key) {
 	return r;
 }
 
-int hash_table_size(hash_table * table){
+int map_size(map * table){
 	return table->size;
 }
 
-void * hash_table_put_pointer(hash_table * table, void * key, void * value){
+void * map_put_pointer(map * table, void * key, void * value){
 	rehash(table);
 	return hash_table_put_private(table,key,value);
 }
 
-void * hash_table_put(hash_table * table, void * key, void * value){
-	void * k = heap_copy_and_mem(&table->hp,key,table->key_type->size);
-    void * v = heap_copy_and_mem(&table->hp,value,table->value_type->size);
-    return hash_table_put_pointer(table,k,v);
+void * map_put(map * table, void * key, void * value){
+	void * k = copy(key,NULL,table->key_type);
+    void * v = copy(value,NULL,table->value_type);
+    return map_put_pointer(table,k,v);
 }
 
-hash_table * hash_table_put_all(hash_table * table, iterator * items){
+map * map_put_all(map * table, iterator * items){
 	while(iterable_has_next(items)){
 		pair * p = (pair *) iterable_next(items);
-		hash_table_put(table,p->key,p->value);
+		map_put(table,p->key,p->value);
 	}
 	return table;
 }
 
-hash_table hash_table_copy(hash_table * table) {
-	hash_table r = hash_table_empty(table->key_type,table->value_type);
-	iterator items = hash_table_items_iterable(table);
+map map_copy(map * table) {
+	map r = map_empty(table->key_type,table->value_type);
+	iterator items = map_items_iterable(table);
 	while (iterable_has_next(&items)) {
 		pair * p = (pair *) iterable_next(&items);
-		hash_table_put(&r, p->key, p->value);
+		map_put(&r, p->key, p->value);
 	}
 	return r;
 }
 
-void * hash_table_get(hash_table * table, void * key){
+void * map_get(map * table, void * key){
 	int index = get_index_block(table,key);
 	int pos = find_data_entry(table,index,key);
 	void * r = NULL;
@@ -109,7 +109,7 @@ void * hash_table_get(hash_table * table, void * key){
 }
 
 
-bool hash_table_contains_key(hash_table * table, void * key) {
+bool map_contains_key(map * table, void * key) {
 	int index = get_index_block(table, key);
 	int pos = find_data_entry(table, index, key);
 	bool r = false;
@@ -119,7 +119,7 @@ bool hash_table_contains_key(hash_table * table, void * key) {
 	return r;
 }
 
-int rehash(hash_table * table) {
+int rehash(map * table) {
 	if (table->size < table->capacity_data) return 0;
 	_next_prime = _next_prime + 1;
 	check_argument(_next_prime < _nprimes,__FILE__,__LINE__,"se ha acabado los números primos disponibles %d",_next_prime);
@@ -147,7 +147,7 @@ int rehash(hash_table * table) {
 	return 1;
 }
 
-entry * ocupa_primera_libre(hash_table * table, int bq) {
+entry * ocupa_primera_libre(map * table, int bq) {
 	int first_free = table->first_free_data;
 	table->first_free_data = table->data[first_free].next;
 	if (table->blocks[bq] < 0) {
@@ -159,7 +159,7 @@ entry * ocupa_primera_libre(hash_table * table, int bq) {
 	return table->data+first_free;
 }
 
-void libera(hash_table * table, int bq, int index_data) {
+void libera(map * table, int bq, int index_data) {
 	if (table->blocks[bq] == index_data) {
 		table->blocks[bq] = table->data[index_data].next;
 	} else {
@@ -173,7 +173,7 @@ void libera(hash_table * table, int bq, int index_data) {
 	table->first_free_data = index_data;
 }
 
-void * hash_table_put_private(hash_table * table, void * key, void * value) {
+void * hash_table_put_private(map * table, void * key, void * value) {
 	int index = get_index_block(table, key);
 	int pos = find_data_entry(table, index, key);
 	if (pos >= 0) {
@@ -187,7 +187,7 @@ void * hash_table_put_private(hash_table * table, void * key, void * value) {
 	return key;
 }
 
-void * hash_table_remove(hash_table * table, void * key) {
+void * map_remove(map * table, void * key) {
 	int index = get_index_block(table, key);
 	int index_data = find_data_entry(table,index,key);
 	if (index_data >= 0) {
@@ -197,16 +197,16 @@ void * hash_table_remove(hash_table * table, void * key) {
 	return key;
 }
 
-hash_table * hash_table_remove_all(hash_table * table, iterator * keys){
+map * map_remove_all(map * table, iterator * keys){
 	while(iterable_has_next(keys)){
 		void * key = iterable_next(keys);
-		hash_table_remove(table,key);
+		map_remove(table,key);
 	}
 	return table;
 }
 
 typedef struct{
-	hash_table * ht;
+	map * ht;
 	int nb;
 	int i;
 	int j;
@@ -219,7 +219,7 @@ bool iterable_hash_table_has_next(iterator * c_iterable) {
 
 void * iterable_hash_table_see_next(iterator * c_iterable){
 	dp_hash_table * dp = (dp_hash_table *) c_iterable->dps;
-	hash_table * table = dp->ht;
+	map * table = dp->ht;
 	pair * state = (pair *)c_iterable->state;
 	state->key = table->data[dp->j].key;
 	state->value = table->data[dp->j].value;
@@ -227,7 +227,7 @@ void * iterable_hash_table_see_next(iterator * c_iterable){
 }
 
 void next_state(dp_hash_table * dp){
-	hash_table * table = dp->ht;
+	map * table = dp->ht;
 	int i = dp->i;
 	int j = dp->j;
 	while(i<dp->nb){
@@ -242,7 +242,7 @@ void next_state(dp_hash_table * dp){
 
 void * iterable_hash_table_next(iterator * c_iterable){
 	dp_hash_table * dp = (dp_hash_table *) c_iterable->dps;
-	hash_table * table = dp->ht;
+	map * table = dp->ht;
 	pair * state = (pair *)c_iterable->state;
 	state->key = table->data[dp->j].key;
 	state->value = table->data[dp->j].value;
@@ -250,23 +250,23 @@ void * iterable_hash_table_next(iterator * c_iterable){
 	return c_iterable->state;
 }
 
-iterator hash_table_items_iterable(hash_table * ht){
+iterator map_items_iterable(map * ht){
 	dp_hash_table dh = {ht,ht->capacity_blocks,0,-1};
 	int size_dh = sizeof(dp_hash_table);
 	type t = generic_type_2(&pair_type,ht->key_type,ht->value_type);
-	iterator s_hash_table = iterable_create(type_copy(&t),iterable_hash_table_has_next,iterable_hash_table_next,iterable_hash_table_see_next,NULL,&dh,size_dh);
+	iterator s_hash_table = iterable_create(type_copy(&t,NULL),iterable_hash_table_has_next,iterable_hash_table_next,iterable_hash_table_see_next,NULL,&dh,size_dh);
 	next_state(s_hash_table.dps);
 	return s_hash_table;
 }
 
 
-char * hash_table_tostring(hash_table * table, char * mem) {
+char * map_tostring(map * table, char * mem) {
 	char m1[Tam_String];
 	char m2[Tam_String];
 	char m[Tam_String];
 	bool first = true;
 	strcpy(mem, "{");
-	iterator st = hash_table_items_iterable(table);
+	iterator st = map_items_iterable(table);
 	while (iterable_has_next(&st)) {
 		pair * next = (pair *) iterable_next(&st);
 		char * k = tostring(next->key,m1,table->key_type);
@@ -284,7 +284,7 @@ char * hash_table_tostring(hash_table * table, char * mem) {
 	return mem;
 }
 
-void hash_table_toconsole(hash_table * table){
+void map_toconsole(map * table){
 	printf("\n");
 	char mdata[500];
 	char mkey[256];
@@ -319,93 +319,71 @@ void hash_table_toconsole(hash_table * table){
 	printf("%s",mdata);
 }
 
-void hash_table_free(hash_table * table){
+void map_free(map *table) {
+	type * tk = table->key_type;
+	type * tv = table->value_type;
+	for (int i = 0; i < table->capacity_data; i++) {
+		entry e = table->data[i];
+		tk->free(e.key,tk);
+		tv->free(e.value,tv);
+	}
 	type_free(table->key_type);
 	type_free(table->value_type);
 	free(table->blocks);
 	free(table->data);
-}
-
-void hash_table_free_2(hash_table * table, void (*f_key)(void * in), void (*f_value)(void * in)){
-	type_free(table->key_type);
-	type_free(table->value_type);
-	for(int i =0; i < table->capacity_data; i++){
-		entry e = table->data[i];
-		f_key(e.key);
-		f_value(e.value);
-	}
-	hash_table_free(table);
+	free(table);
 }
 
 
-hash_table complete_table1() {
+map complete_table1() {
 	int tam = 100;
-	hash_table ht = hash_table_empty(&long_type,&double_type);
+	map ht = map_empty(&long_type,&double_type);
 	new_rand();
 	for (int i = 0; i < tam; i++) {
 		long a1 = i;
 		double a2 = double_aleatorio(0, 1000);
-		hash_table_put(&ht,&a1,&a2);
+		map_put(&ht,&a1,&a2);
 	}
 	for (int i = 3; i < tam; i++) {
 		long a1 = i;
 		double a2 = double_aleatorio(0, 1000);
-		hash_table_put(&ht,&a1,&a2);
+		map_put(&ht,&a1,&a2);
 	}
 	long a1 = 5;
-	hash_table_remove(&ht,&a1);
+	map_remove(&ht,&a1);
 	return ht;
 }
 
-hash_table complete_table2() {
+map complete_table2() {
 	int tam = 100;
-	hash_table ht = hash_table_empty(&long_type,&double_type);
+	map ht = map_empty(&long_type,&double_type);
 	new_rand();
 	for (int i = 0; i < tam; i++) {
 		long a1 = i;
 		double a2 = double_aleatorio(1000, 2000);
-		hash_table_put(&ht,&a1,&a2);
+		map_put(&ht,&a1,&a2);
 	}
 	for (int i = 3; i < tam; i++) {
 		long a1 = i;
 		double a2 = double_aleatorio(1000, 2000);
-		hash_table_put(&ht,&a1,&a2);
+		map_put(&ht,&a1,&a2);
 	}
 	long a1 = 5;
-	hash_table_remove(&ht,&a1);
+	map_remove(&ht,&a1);
 	return ht;
 }
 
 
-bool multiplo_7(long * in){
-	return (*in)%7 == 0;
-}
-
-char * pair_long_double(const pair * in, char * mem){
-	char m1[Tam_String];
-	char m2[Tam_String];
-	sprintf(mem,"(%s,%s)",tostring(in->key,m1,&long_type),tostring(in->value,m2,&double_type));
-	return mem;
-}
-
-char * pair_key_long(const pair * in, char * mem){
-	char m[Tam_String];
-	sprintf(mem,"%s",tostring(in->key,m,&long_type));
-	return mem;
-}
-
-
-
-void test_hash_table() {
+void test_map() {
 	char mem[3000];
 	printf("Hash Table test\n\n");
 	printf("2:\n");
-	hash_table ht = complete_table1();
-	hash_table ht2 = hash_table_copy(&ht);
-	hash_table_toconsole(&ht2);
-	printf("%s\n",hash_table_tostring(&ht2,mem));
+	map ht = complete_table1();
+	map ht2 = map_copy(&ht);
+	map_toconsole(&ht2);
+	printf("%s\n",map_tostring(&ht2,mem));
 	printf("\n6: \n");
-	iterator iht = hash_table_items_iterable(&ht2);
+	iterator iht = map_items_iterable(&ht2);
 	iterable_to_console_sep(&iht,"\n","","\n");
 }
 

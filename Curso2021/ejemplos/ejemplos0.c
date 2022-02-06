@@ -81,18 +81,18 @@ punto * n_problema8(list ls, int (*cmp)(const void *, const void *)) {
 	return r;
 }
 
-hash_table n_problema11(list ls){
-	hash_table r = hash_table_empty(&int_type,&list_type);
+map n_problema11(list ls){
+	map r = map_empty(&int_type,&list_type);
 	for (int i = 0; i <list_size(&ls); i++) {
 		punto * p = (punto *) list_get(&ls,i);
 		Cuadrante c = punto_cuadrante(p);
-		if(hash_table_contains_key(&r,&c)){
-			list * ls = hash_table_get(&r,&c);
+		if(map_contains_key(&r,&c)){
+			list * ls = map_get(&r,&c);
 			list_add(ls,p);
 		} else {
 			list ls = list_empty(&punto_type);
 			list_add(&ls,p);
-			hash_table_put(&r,&c,&ls);
+			map_put(&r,&c,&ls);
 		}
 	}
 	return r;
@@ -100,7 +100,7 @@ hash_table n_problema11(list ls){
 
 list n_problema61(char * file){
 	list r = list_empty(&punto_type);
-	iterator f = file_iterable_string_fix(file);
+	iterator f = iterable_file_string_fix(file);
 	while(iterable_has_next(&f)){
 		char * s = (char *) iterable_next(&f);
 		punto e = punto_parse_s(s);
@@ -193,10 +193,10 @@ void test_ejemplos_1(){
 
 	printf("\n\n");
 
-	hash_table t2 = n_problema11(r2);
+	map t2 = n_problema11(r2);
 	list * r;
 	for(int i=0;i<4;i++){
-		r = hash_table_get(&t2,&i);
+		r = map_get(&t2,&i);
 		if (r!=NULL) {
 			s = list_tostring(r,mem);
 			printf("%d == %s\n",i, s);

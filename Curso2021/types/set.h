@@ -10,12 +10,12 @@
 
 
 #include "../types/types.h"
-#include "../types/hash_table.h"
 #include "../types/iterables.h"
 #include "../types/list.h"
+#include "map.h"
 
 typedef struct {
-	hash_table hash_table;
+	map hash_table;
 } set;
 
 set set_empty(type* type_element);

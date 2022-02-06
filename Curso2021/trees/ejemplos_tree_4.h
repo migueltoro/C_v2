@@ -20,13 +20,13 @@
 
 #include "../types/types.h"
 #include "../types/iterables.h"
-#include "../types/hash_table.h"
 #include "../types/multimap.h"
 #include "../types/list.h"
 #include "../types/tree.h"
-#include "../types/hash_table.h"
 #include "../types/accumulators.h"
 #include "../types/heap.h"
+#include "../types/map.h"
+#include "../types/map.h"
 
 void test_ejemplos_trees_4();
 

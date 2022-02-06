@@ -239,8 +239,8 @@ void * time_pointer_copy(void * out, void * in){
 }
 
 
-type date_type = {time_equals,date_tostring,time_naturalorder,date_parse,sizeof(time_t),0,NULL};
-type time_type = {time_equals,time_tostring,time_naturalorder,time_parse,sizeof(time_t),0,NULL};
+type date_type = {"date",time_equals,date_tostring,time_naturalorder,date_parse,free_0,copy_0,sizeof(time_t),0,NULL};
+type time_type = {"time",time_equals,time_tostring,time_naturalorder,time_parse,free_0,copy_0,sizeof(time_t),0,NULL};
 
 bool pd(void * t){
 	time_t e = time_of_date(1,1,1992);
@@ -330,7 +330,7 @@ time_t * p_date(time_t * out, char * in){
 void test_dates_2(char *file) {
 	string_fix_tam = 100;
 	ref = time_of_date(1,1,2000);
-	iterator g1 = file_iterable_string_fix(file);
+	iterator g1 = iterable_file_string_fix(file);
 	iterator g2 = iterable_map(&g1,&date_type,p_date);
 	iterator g3 = iterable_filter(&g2,posterior);
 	int n = 0;

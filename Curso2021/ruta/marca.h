@@ -8,12 +8,12 @@
 #ifndef MARCA_H_
 #define MARCA_H_
 
+#include "../coordenadas/coordenadas.h"
 #include "../types/types.h"
 #include "../types/dates.h"
 #include "../types/list.h"
 #include "../types/iterables.h"
 #include "../types/accumulators.h"
-#include "../data/coordenadas.h"
 
 
 typedef struct {

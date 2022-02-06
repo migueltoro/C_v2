@@ -57,7 +57,7 @@ void test_ejemplos_trees_2() {
 	printf("\n~~~~~~~~~~~~~~~~~~~~ Test Tree 2 ~~~~~~~~~~~~~~~~~~~~\n");
 	char mem[300];
 	char mem2[300];
-	iterator it = file_iterable_string_fix("ficheros/trees_2.txt");
+	iterator it = iterable_file_string_fix("ficheros/trees_2.txt");
 	while (iterable_file_has_next(&it)) {
 		char* line = (char*) iterable_file_next(&it);
 		tree * t = tree_parse(line);

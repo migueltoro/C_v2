@@ -33,7 +33,7 @@ int ejercicio1iter(char* s1, char * s2){
 
 list leeFichero1(char* file) {
 	list r = list_empty(&string_fix_type);
-	iterator f = file_iterable_string_fix(file);
+	iterator f = iterable_file_string_fix(file);
 	while (iterable_has_next(&f)) {
 		char* s = iterable_next(&f);
 		list_add(&r, s);

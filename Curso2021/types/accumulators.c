@@ -22,7 +22,7 @@ bool accumulate_right_private(iterator * st, void * base, bool (*add)(void * out
 	if (iterable_has_next(st)) {
 		char se[st->type->size];
 		void * e = iterable_next(st);
-		copy(se, e, st->type->size);
+		copy_size(se, e, st->type->size);
 		f = accumulate_right_private(st, base, add);
 		if(!f) f = add(base, se);
 	}
@@ -41,7 +41,7 @@ void * reduce_left(iterator * st, void * base, bool (*add)(void * out, const voi
 	while (iterable_has_next(st) && !f) {
 		void * e = iterable_next(st);
 		if (first) {
-			copy(base, e, st->type->size);
+			copy_size(base, e, st->type->size);
 			first = false;
 		} else if(!f) {
 			f = add(base, e);
@@ -57,10 +57,10 @@ bool reduce_right_private(iterator * st, void * base, bool (*add)(void * out, co
 	if (iterable_has_next(st)) {
 		char se[st->type->size];
 		void * e = iterable_next(st);
-		copy(se, e,st->type->size);
+		copy_size(se, e,st->type->size);
 		f = reduce_right_private(st, base, add, first);
 		if (*first) {
-			copy(base,e,st->type->size);
+			copy_size(base,e,st->type->size);
 			*first = false;
 		} else if(!f){
 			f = add(base, se);
@@ -137,29 +137,29 @@ set_multimap iterable_to_set_multimap(iterator * items) {
 	return lm;
 }
 
-hash_table iterable_grouping_reduce(iterator *st, type * key_type,
+map iterable_grouping_reduce(iterator *st, type * key_type,
 		void* (*f_key)(void *out, void *in),
 		bool (*add)(void *out, const void *e)) {
 	type *value_type = st->type;
 	char mem_key[key_type->size];
 	char mem_value[value_type->size];
-	hash_table ht = hash_table_empty(key_type, value_type);
+	map ht = map_empty(key_type, value_type);
 	while (iterable_has_next(st)) {
 		void *e = iterable_next(st);
 		void *key = f_key(mem_key,e);
-		void * a = hash_table_get(&ht, key);
+		void * a = map_get(&ht, key);
 		if(a == NULL){
-			hash_table_put(&ht, key,e);
+			map_put(&ht, key,e);
 		} else {
-			copy(mem_value,a,value_type->size);
+			copy_size(mem_value,a,value_type->size);
 			add(mem_value,e);
-			hash_table_put(&ht, key, mem_value);
+			map_put(&ht, key, mem_value);
 		}
 	}
 	return ht;
 }
 
-hash_table iterable_grouping_reduce_map(iterator *st, type *key_type,
+map iterable_grouping_reduce_map(iterator *st, type *key_type,
 		type *value_type, void* (*f_key)(void *out, void *in),
 		bool (*add)(void *out, const void *e),
 		void* (*f_map)(void *out, void *in)) {
@@ -167,18 +167,18 @@ hash_table iterable_grouping_reduce_map(iterator *st, type *key_type,
 	char mem_key[key_type->size];
 	char mem_value[value_type->size];
 	char mem_value_a[value_type->size];
-	hash_table ht = hash_table_empty(key_type, value_type);
+	map ht = map_empty(key_type, value_type);
 	while (iterable_has_next(st)) {
 		void *e = iterable_next(st);
 		void *key = f_key(mem_key, e);
-		void *a = hash_table_get(&ht, key);
+		void *a = map_get(&ht, key);
 		void *t = f_map(mem_value,e);
 		if (a == NULL) {
-			hash_table_put(&ht,key,t);
+			map_put(&ht,key,t);
 		} else {
-			copy(mem_value_a, a, value_type->size);
+			copy_size(mem_value_a, a, value_type->size);
 			add(mem_value_a, t);
-			hash_table_put(&ht, key,mem_value_a);
+			map_put(&ht, key,mem_value_a);
 		}
 	}
 	return ht;
@@ -279,10 +279,10 @@ void * iterable_min(iterator * st, int (*comparator)(const void * out, const voi
 	while(iterable_has_next(st)){
 		void * next = iterable_next(st);
 		if(first) {
-			copy(minvalue, next, t->size);
+			copy_size(minvalue, next, t->size);
 			first = false;
 		} else if(comparator(next,minvalue) < 0) {
-			copy(minvalue, next, t->size);
+			copy_size(minvalue, next, t->size);
 		}
 	}
 	if(first) {
@@ -299,10 +299,10 @@ void* iterable_min_naturalorder(iterator *st) {
 	while (iterable_has_next(st)) {
 		void *next = iterable_next(st);
 		if (first) {
-			copy(minvalue, next, t->size);
+			copy_size(minvalue, next, t->size);
 			first = false;
 		} else if (order(next, minvalue,t) < 0) {
-			copy(minvalue, next, t->size);
+			copy_size(minvalue, next, t->size);
 		}
 	}
 	if(first) {
@@ -321,10 +321,10 @@ void * iterable_max(iterator * st,int (*comparator)(const void * out, const void
 	while (iterable_has_next(st)) {
 		void * next = iterable_next(st);
 		if (first) {
-			copy(maxvalue, next, t->size);
+			copy_size(maxvalue, next, t->size);
 			first = false;
 		} else if (comparator(next, maxvalue) > 0) {
-			copy(maxvalue, next, t->size);
+			copy_size(maxvalue, next, t->size);
 		}
 	}
 	if(first) {
@@ -341,10 +341,10 @@ void * iterable_max_naturalorder(iterator * st) {
 	while (iterable_has_next(st)) {
 		void * next = iterable_next(st);
 		if (first) {
-			copy(maxvalue, next, t->size);
+			copy_size(maxvalue, next, t->size);
 			first = false;
 		} else if (order(next, maxvalue,t) > 0) {
-			copy(maxvalue, next, t->size);
+			copy_size(maxvalue, next, t->size);
 		}
 	}
 	if(first) {
@@ -408,12 +408,29 @@ int iterable_size(iterator * st) {
 	return r;
 }
 
+Number numeric_type(type *t) {
+	Number r;
+	int sz = t->size;
+	if(sz == int_type.size) r = INTEGER;
+	else if(sz == double_type.size) r = DOUBLE;
+	else if(sz == long_type.size) r = LONG;
+	else if(sz == float_type.size) r = FLOAT;
+	else check_argument(false,__FILE__,__LINE__, "No es un tipo numerico");
+	return r;
+}
+
 double iterable_average(iterator * st) {
 	double r = 0;
 	int n = 0;
+	Number nm = numeric_type(st->type);
 	while (iterable_has_next(st)) {
 		void * e = iterable_next(st);
-		r =  r+*(double *) e;
+		switch(nm) {
+		case INTEGER: r +=  *(int *) e; break;
+		case DOUBLE: r +=  *(double *) e; break;
+		case LONG: r +=  *(long *) e; break;
+		case FLOAT: r +=  *(float *) e; break;
+		}
 		n = n+1;
 	}
 	check_argument(n != 0, __FILE__, __LINE__,"el número de elementos es cero y es %d",n);
@@ -521,11 +538,11 @@ void test_accumulators_2(){
 
 void test_accumulators_3(char * file) {
 	string_fix_tam = 100;
-	iterator git1 = file_iterable_string_fix(file);
+	iterator git1 = iterable_file_string_fix(file);
 	iterator git2 = iterable_filter(&git1, string_fix_not_all_space);
 	string_fix_tam = 20;
 	type t = string_fix_type_of_tam(string_fix_tam);
-	iterator gmap = iterable_flatmap(&git2,type_copy(&t),text_to_iterable_string_fix_function);
+	iterator gmap = iterable_flatmap(&git2,type_copy(&t,NULL),text_to_iterable_string_fix_function);
 	set st = iterable_to_set(&gmap);
 	int n = set_size(&st);
 	printf("%d\n", n);
@@ -554,19 +571,19 @@ bool max_len(char * p1, char * p2){
 
 void test_accumulators_4(char * file) {
 	string_fix_tam = 100;
-	iterator g1 = file_iterable_string_fix(file);
+	iterator g1 = iterable_file_string_fix(file);
 	iterator g2 = iterable_filter(&g1, string_fix_not_all_space);
 	string_fix_tam = 20;
 	char max[string_fix_tam];
 	type t = string_fix_type_of_tam(string_fix_tam);
-	iterator g3 = iterable_flatmap(&g2,type_copy(&t),text_to_iterable_string_fix_function);
+	iterator g3 = iterable_flatmap(&g2,type_copy(&t,NULL),text_to_iterable_string_fix_function);
 	char * r = (char *) iterable_max(&g3,cmp);
 	printf("%s,%d\n",r,strlen(r));
 }
 
 void test_accumulators_5(char * file) {
 	string_fix_tam = 100;
-	iterator g1 = file_iterable_string_fix(file);
+	iterator g1 = iterable_file_string_fix(file);
 	iterator g2 = iterable_filter(&g1, string_fix_all_space);
 	int n = 0;
 	for(;iterable_has_next(&g2);iterable_next(&g2)){
@@ -742,9 +759,9 @@ long * sum(long * out, long *in){
 void test_accumulators_15() {
 	remainder_base = 13;
 	iterator r = iterable_random_int(100,0,20);
-	hash_table ms = iterable_grouping_reduce_map(&r, &long_type, &long_type,
+	map ms = iterable_grouping_reduce_map(&r, &long_type, &long_type,
 			remainder_f, sum, square_long_f);
-	iterator r3 = hash_table_items_iterable(&ms);
+	iterator r3 = map_items_iterable(&ms);
 	iterable_to_console_sep(&r3, ",", "{", "}");
 }
 

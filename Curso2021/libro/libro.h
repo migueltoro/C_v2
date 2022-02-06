@@ -5,8 +5,8 @@
  *      Author: migueltoro
  */
 
-#ifndef PALABRAS_H_
-#define PALABRAS_H_
+#ifndef LIBRO_H_
+#define LIBRO_H_
 
 #include "../types/iterables.h"
 #include "../types/accumulators.h"
@@ -16,4 +16,4 @@ multiset frecuencias_de_palabras(char * file);
 
 void test_palabras();
 
-#endif /* PALABRAS_H_ */
+#endif /* LIBRO_H_ */

@@ -27,9 +27,9 @@ typedef struct {
 // #define heap_initial {0,10,malloc(10*sizeof(void *))}
 
 heap heap_empty();
-void * heap_copy_and_mem(heap * heap, void * source, int size);
+void * heap_copy(void * source, heap * heap, int size);
 void * heap_get_memory(heap * heap,int size);
-int heap_size_memory(heap * heap);
+int heap_size(heap * heap);
 
 void heap_free(heap * heap);
 void heap_clear(heap * heap);

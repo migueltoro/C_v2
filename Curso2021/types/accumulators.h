@@ -9,7 +9,6 @@
 #define ACCUMULATORS_H_
 
 #include "../types/types.h"
-#include "../types/hash_table.h"
 #include "../types/iterables.h"
 #include "../types/list.h"
 #include "../types/set.h"
@@ -17,6 +16,7 @@
 #include "../types/multimap.h"
 #include "../types/multiset.h"
 #include "../types/math2.h"
+#include "map.h"
 
 
 
@@ -31,6 +31,10 @@ typedef struct {
 	double varianza;
 	double desviacion_tipica;
 } estadisticos;
+
+typedef enum {INTEGER,LONG,FLOAT,DOUBLE} Number;
+
+Number numeric_type(type *t);
 
 char * estadisticos_tostring(void * in, char * mem);
 
@@ -50,6 +54,7 @@ void * iterable_max_naturalorder(iterator * st);
 bool iterable_all(iterator * st, bool (*p)(const void * in));
 bool iterable_any(iterator * st, bool (*p)(const void * in));
 void * iterable_first(iterator * st, bool (*p)(const void * in));
+void * iterable_last(iterator * st, bool (*p)(const void * in));
 double iterable_sum(iterator * st);
 int iterable_size(iterator * st);
 double iterable_average(iterator * st);
@@ -68,9 +73,9 @@ list_multimap iterable_grouping_list_map(iterator * st, type * key_type, type * 
 		void * (*f_key)(void * out, void * in), void * (*f_map)(void * out, void * in));
 set_multimap iterable_grouping_set_map(iterator * st, type * key_type, type * value_type,
 		void * (*f_key)(void * out, void * in), void * (*f_map)(void * out, void * in));
-hash_table iterable_grouping_reduce(iterator * st, type * key_type,
+map iterable_grouping_reduce(iterator * st, type * key_type,
 		void * (*f_key)(void * out, void * in), bool (*add)(void * out, const void * e));
-hash_table iterable_grouping_reduce_map(iterator * st, type * key_type, type * value_type,
+map iterable_grouping_reduce_map(iterator * st, type * key_type, type * value_type,
 		void * (*f_key)(void * out, void * in),
 		bool (*add)(void * out, const void * e), void * (*f_map)(void * out, void * in));
 

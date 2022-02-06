@@ -21,43 +21,51 @@ heap heap_empty() {
 	return r;
 }
 
-heap * memory_heap_add(heap * heap, void * element) {
+heap * heap_add(heap * heap, void * element) {
 	grow_memory_heap(heap);
 	heap->elements[heap->size] = element;
 	heap->size = heap->size + 1;
 	return heap;
 }
 
-void * heap_copy_and_mem(heap * heap, void * source, int size_element){
-	check_argument(size_element >= 0,__FILE__,__LINE__,"El tamaño a copiar debe ser mayor o igual a cero");
-	if(source == NULL || size_element == 0 ) return NULL;
-	void * element = (void *) malloc(size_element);
-	memcpy(element,source,size_element);
-	memory_heap_add(heap, element);
-	heap->size_memory += size_element;
-	heap->num_access_heap++;
-//	printf("\n%d==%d=%d\n",size_element,heap->size_memory,heap->num_access_memory_heap);
-	return element;
-}
-
 void * heap_get_memory(heap * heap,int size){
 	if(size == 0) return NULL;
 	void * element = (void *) malloc(size);
-	memory_heap_add(heap, element);
+	heap_add(heap, element);
 	heap->size_memory = heap->size_memory +size;
 	heap->num_access_heap++;
 //	printf("\n%d==%d==%d\n",size,heap->size_memory,heap->num_access_memory_heap);
 	return element;
 }
 
-int heap_size_memory(heap * heap){
+void* heap_copy(void *source, heap *heap, int size_element) {
+	check_argument(size_element > 0, __FILE__, __LINE__,
+			"El tamaño a copiar debe ser mayor a cero");
+	check_not_null(source, __FILE__, __LINE__, "puntero source es null");
+	void *element = (void*) malloc(size_element);
+	memcpy(element, source, size_element);
+	if (heap != NULL) {
+		heap_add(heap, element);
+		heap->size_memory += size_element;
+		heap->num_access_heap++;
+	}
+//	printf("\n%d==%d=%d\n",size_element,heap->size_memory,heap->num_access_memory_heap);
+	return element;
+}
+
+
+int heap_size(heap * heap){
 	return heap->size_memory;
 }
 
 void heap_free(heap * heap) {
 	for (int i = 0; i < heap->size; i++) {
-		free(heap->elements[i]);
+		if(heap->elements[i] !=NULL) free(heap->elements[i]);
 	}
+	free(heap->elements);
+}
+
+void heap_free_elements(heap * heap) {
 	free(heap->elements);
 }
 

@@ -9,7 +9,7 @@
 
 void testEjercicio1(char * path){
 	char mem[10000];
-	iterator it = file_iterable_string_fix(path);
+	iterator it = iterable_file_string_fix(path);
 	list listaPrimos = list_empty(&int_type);
 	while(iterable_has_next(&it)){
 		char * linea = (char*) iterable_next(&it);

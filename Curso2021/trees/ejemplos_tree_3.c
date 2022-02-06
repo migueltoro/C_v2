@@ -33,7 +33,7 @@ bool suma_igual(binary_tree * t){
 void test_ejemplos_trees_3() {
 	printf("\n~~~~~~~~~~~~~~~~~~~~ Test Tree 3 ~~~~~~~~~~~~~~~~~~~~\n");
 	char mem[300];
-	iterator it = file_iterable_string_fix("ficheros/trees_3.txt");
+	iterator it = iterable_file_string_fix("ficheros/trees_3.txt");
 	while (iterable_file_has_next(&it)) {
 		char* line = (char*) iterable_file_next(&it);
 		binary_tree * t = binary_tree_parse(line);
