@@ -49,7 +49,7 @@ bool set_contains(set * st, void * element){
 
 iterator set_iterable(set * st){
 	iterator r = map_items_iterable(&st->hash_table);
-	iterator im = iterable_map(iterable_copy(&r),st->hash_table.key_type,pair_to_key);
+	iterator im = iterable_map(iterable_copy_new(&r),st->hash_table.key_type,pair_key);
 	return im;
 }
 
@@ -209,7 +209,7 @@ void test_set_2() {
 void test_set_3() {
 	char mem1[512];
 	iterator it = iterable_range_long(3, 100, 5);
-	iterator it2 = *iterable_copy(&it);
+	iterator it2 = *iterable_copy_new(&it);
 	set s = set_empty(&long_type);
 	set_add_all(&s,&it);
 	set_add_all(&s,&it2);

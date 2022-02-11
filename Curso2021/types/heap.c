@@ -41,9 +41,8 @@ void * heap_get_memory(heap * heap,int size){
 void* heap_copy(void *source, heap *heap, int size_element) {
 	check_argument(size_element > 0, __FILE__, __LINE__,
 			"El tamaño a copiar debe ser mayor a cero");
-	check_not_null(source, __FILE__, __LINE__, "puntero source es null");
 	void *element = (void*) malloc(size_element);
-	memcpy(element, source, size_element);
+	if(source != NULL) memcpy(element, source, size_element);
 	if (heap != NULL) {
 		heap_add(heap, element);
 		heap->size_memory += size_element;

@@ -37,7 +37,8 @@ typedef struct gtp {
 	int (*order)(const void * e1, const void * e2, struct gtp * t);
 	void * (*parse)(void * out, char * text, struct gtp * t);
 	void (*free)(void * e, struct gtp * t);
-	void * (*copy)(void * e, heap * h, struct gtp * t);
+	void * (*copy_new)(void * in, heap * h, struct gtp * t);
+	void (*copy)(void * out, void * in, struct gtp * t);
 	int size;
 	int num_types;
 	struct gtp * types[2];
@@ -64,7 +65,8 @@ char * tostring(const void * e, char * mem, type * type);
 int order(const void * e1, const void * e2, type * type);
 void * parse(void * out, char * text, type * type);
 void free_mem(void * e, type * type);
-void * copy(void * e, heap * h, type * type);
+void * copy_new(void * in, heap * h, type * type);
+void copy(void * out, void * in, type * type);
 
 // utilities
 
@@ -72,7 +74,8 @@ void * copy_size(void * out, void * in, int size);
 void * copy_in_pointer(void ** out, void * in, int size);
 void * swap(void * out, void * in, int size);
 void free_0(void * e, type * type);
-void * copy_0(void * e, heap * h, type * type);
+void * copy_new_0(void * in, heap * h, type * type);
+void copy_0(void * out, void * in, type * type);
 
 
 extern type * tmp_type;
@@ -265,8 +268,8 @@ char * pair_tostring(const pair * e, char * mem, type * t);
 bool pair_equals(const pair * e1, const pair * e2, type * t);
 int pair_naturalorder(const pair * e1, const pair * e2, type * t);
 
-void * pair_to_key(void * key, pair * in);
-void * pair_to_value(void * value, pair * in);
+void * pair_key(void * key, pair * in);
+void * pair_value(void * value, pair * in);
 
 
 pair * pair_of_value(pair * p, void * value);
@@ -371,6 +374,7 @@ extern type null_type;
 void test_string();
 void test_types();
 void test_types_1();
+void test_generic_types_1();
 
 //definitions
 

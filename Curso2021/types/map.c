@@ -75,8 +75,8 @@ void * map_put_pointer(map * table, void * key, void * value){
 }
 
 void * map_put(map * table, void * key, void * value){
-	void * k = copy(key,NULL,table->key_type);
-    void * v = copy(value,NULL,table->value_type);
+	void * k = copy_new(key,NULL,table->key_type);
+    void * v = copy_new(value,NULL,table->value_type);
     return map_put_pointer(table,k,v);
 }
 
@@ -213,12 +213,12 @@ typedef struct{
 }dp_hash_table;
 
 bool iterable_hash_table_has_next(iterator * c_iterable) {
-	dp_hash_table * dp = (dp_hash_table *) c_iterable->dps;
+	dp_hash_table * dp = (dp_hash_table *) c_iterable->dp;
 	return dp->i < dp->nb;
 }
 
 void * iterable_hash_table_see_next(iterator * c_iterable){
-	dp_hash_table * dp = (dp_hash_table *) c_iterable->dps;
+	dp_hash_table * dp = (dp_hash_table *) c_iterable->dp;
 	map * table = dp->ht;
 	pair * state = (pair *)c_iterable->state;
 	state->key = table->data[dp->j].key;
@@ -241,7 +241,7 @@ void next_state(dp_hash_table * dp){
 }
 
 void * iterable_hash_table_next(iterator * c_iterable){
-	dp_hash_table * dp = (dp_hash_table *) c_iterable->dps;
+	dp_hash_table * dp = (dp_hash_table *) c_iterable->dp;
 	map * table = dp->ht;
 	pair * state = (pair *)c_iterable->state;
 	state->key = table->data[dp->j].key;
@@ -254,8 +254,8 @@ iterator map_items_iterable(map * ht){
 	dp_hash_table dh = {ht,ht->capacity_blocks,0,-1};
 	int size_dh = sizeof(dp_hash_table);
 	type t = generic_type_2(&pair_type,ht->key_type,ht->value_type);
-	iterator s_hash_table = iterable_create(type_copy(&t,NULL),iterable_hash_table_has_next,iterable_hash_table_next,iterable_hash_table_see_next,NULL,&dh,size_dh);
-	next_state(s_hash_table.dps);
+	iterator s_hash_table = iterable_create(type_copy(&t,NULL),iterable_hash_table_has_next,iterable_hash_table_next,NULL,&dh,size_dh);
+	next_state(s_hash_table.dp);
 	return s_hash_table;
 }
 

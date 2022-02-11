@@ -44,12 +44,13 @@
 int main() {
 //char mem[256];
 //test_types();
+//test_generic_types_2();
 //test_types_1();
 //test_string();
 //test_math2();
 //test_ejemplos1();
 //test_ejemplos_files();
-//test_iterables_9();
+//test_iterables_4();
 //test_token();
 //test_tokenizer();
 //test_tupla();
@@ -62,7 +63,7 @@ int main() {
 //test_esquemas();
 //test_marca();
 //test_ruta();
-test_palabras_3();
+test_palabras_6();
 //test_binary_tree_1();
 //test_parse_binary_tree_1();
 //test_tree_1();
@@ -70,7 +71,7 @@ test_palabras_3();
 //test_ejemplos_trees_4();
 //test_matrices_3();
 //test_histograma();
-//test_accumulators_4("ficheros/quijote.txt");
+//test_accumulators_0(); //("ficheros/quijote.txt");
 //test_accumulators_7();
 }
 

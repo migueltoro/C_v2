@@ -402,7 +402,7 @@ double iterable_sum(iterator * st) {
 int iterable_size(iterator * st) {
 	int r = 0;
 	while (iterable_has_next(st)) {
-		iterable_next(st);
+		void * e = iterable_next(st);
 		r = r+1;
 	}
 	return r;
@@ -474,6 +474,13 @@ bool esmultiplo44(const long *in){
 
 
 double * _random(double * out, long * in);
+
+void test_accumulators_0(){
+	char mem[4000];
+	iterator st = iterable_range_long(4,500,3);
+	int n = iterable_size(&st);
+	printf("%d\n",n);
+}
 
 void test_accumulators_1(){
 	char mem[4000];
@@ -572,11 +579,10 @@ bool max_len(char * p1, char * p2){
 void test_accumulators_4(char * file) {
 	string_fix_tam = 100;
 	iterator g1 = iterable_file_string_fix(file);
-	iterator g2 = iterable_filter(&g1, string_fix_not_all_space);
 	string_fix_tam = 20;
 	char max[string_fix_tam];
 	type t = string_fix_type_of_tam(string_fix_tam);
-	iterator g3 = iterable_flatmap(&g2,type_copy(&t,NULL),text_to_iterable_string_fix_function);
+	iterator g3 = iterable_flatmap(&g1,type_copy(&t,NULL),text_to_iterable_string_fix_function);
 	char * r = (char *) iterable_max(&g3,cmp);
 	printf("%s,%d\n",r,strlen(r));
 }
@@ -730,14 +736,14 @@ void test_accumulators_12() {
 void test_accumulators_13() {
 	char mem[5000];
 	new_rand();
-	iterator r = iterable_random_int(100,0,20) ;
+	iterator r = iterable_random_long(100,0,20) ;
 	multiset ms = iterable_to_multiset(&r);
 	iterator r3 = multiset_items_iterable(&ms);
 	iterable_to_console_sep(&r3, ",", "{", "}");
 }
 
 void freq() {
-	iterator r = iterable_random_int(100,0,20);
+	iterator r = iterable_random_long(100,0,20);
 	multiset ms = iterable_to_multiset_groups(&r, &long_type, remainder_f);
 	iterator r3 = multiset_items_iterable(&ms);
 	iterable_to_console_sep(&r3, ",", "{", "}");
@@ -745,7 +751,7 @@ void freq() {
 
 void test_accumulators_14() {
 	remainder_base = 13;
-	iterator r = iterable_random_int(100,0,20);
+	iterator r = iterable_random_long(100,0,20);
 	multiset ms = iterable_to_multiset_groups(&r,&long_type,remainder_f);
 	iterator r3 = multiset_items_iterable(&ms);
 	iterable_to_console_sep(&r3, ",", "{", "}");
@@ -758,11 +764,17 @@ long * sum(long * out, long *in){
 
 void test_accumulators_15() {
 	remainder_base = 13;
-	iterator r = iterable_random_int(100,0,20);
+	iterator r = iterable_random_long(100,0,20);
 	map ms = iterable_grouping_reduce_map(&r, &long_type, &long_type,
 			remainder_f, sum, square_long_f);
 	iterator r3 = map_items_iterable(&ms);
 	iterable_to_console_sep(&r3, ",", "{", "}");
+}
+
+void test_accumulators_16() {
+	iterator r = iterable_words_in_file("ficheros/short_quijote.txt", 100, 20," ,;.()");
+	int n = iterable_size(&r);
+	printf("%d",n);
 }
 
 

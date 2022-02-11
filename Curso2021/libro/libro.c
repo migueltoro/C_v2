@@ -36,7 +36,6 @@ set palabras_huecas(char * file){
 }
 
 set sg;
-
 bool no_hueca(char * in){
 	return set_contains(&sg,in);
 }
@@ -44,50 +43,42 @@ bool no_hueca(char * in){
 int numero_de_palabras_no_huecas(char * file) {
 	sg = palabras_huecas("ficheros/palabras_huecas.txt");
 	iterator r = iterable_words_in_file(file,100,20," ,;.()");
-	iterator r2 = iterable_filter(iterable_copy(&r),no_hueca);
+	iterator r2 = iterable_filter(iterable_copy_new(&r),no_hueca);
 	return iterable_size(&r);
 }
 
-string_fix word_g;
+string_fix word_find;
 bool es_palabra(enumerate * in){
-	return strcmp(in->value,word_g) == 0;
+	return strcmp(in->value,word_find) == 0;
+}
+
+bool is_prefix(enumerate * in) {
+    return strncmp(word_find, in->value, strlen(word_find)) == 0;
 }
 
 int primera_linea_con_palabra(char * file, char * word){
-	strcpy(word_g,word);
-	iterator r = iterable_words_and_line_in_file(file,100,20," ,;.()");
+	strcpy(word_find,word);
+	iterator r = iterable_words_and_line_in_file(file,1,100,20," ,;.()");
 	enumerate * p = (enumerate *) iterable_first(&r,es_palabra);
 	if(p != NULL ) return p->counter;
 	else return -1;
 }
 
-bool is_prefix(enumerate * in) {
-    return strncmp(word_g, in->value, strlen(word_g)) == 0;
-}
-
-int num_linea(char * file, char * word){
-	strcpy(word_g,word);
-	iterator r = iterable_file_string_fix_tam(file,100);
-	enumerate * p = (enumerate *) iterable_first(&r,is_prefix);
-	if(p != NULL ) return p->counter;
-	else return -1;
-}
-
 int ultima_linea_con_palabra(char * file, char * word){
-	strcpy(word_g,word);
-	iterator r = iterable_words_and_line_in_file(file,100,20," ,;.()");
+	strcpy(word_find,word);
+	iterator r = iterable_words_and_line_in_file(file,1,100,20," ,;.()");
 	enumerate * p = (enumerate *) iterable_last(&r,es_palabra);
 	if(p != NULL ) return p->counter;
 	else return -1;
 }
 
-int n_g;
+int lin_num;
 bool es_numero(enumerate * in){
-	return n_g == in->counter;
+	return lin_num == in->counter;
 }
 
-char * line_n(char * file, int n){
-	n_g = n;
+char * linea_numero(char * file, int n){
+	lin_num = n;
 	iterator r = iterable_file_string_fix_tam(file,100);
 	iterator r2 = iterable_enumerate(&r,1);
 	enumerate * p = (enumerate *) iterable_first(&r2,es_numero);
@@ -120,35 +111,55 @@ char * linea_mas_corta(char * file){
 	return ln;
 }
 
-int nn_g;
-bool con_n(enumerate * in) {
-	int ln = strlen(in->value);
-    bool r = ln> 0 &&  ln <= nn_g;
-//    if(r) printf("%d == %d == %s\n",nn_g,ln,in->value);
-    return r;
-}
-int nn_p;
-bool primeras_lineas(enumerate * in) {
-    bool r = in->counter < nn_g;
-//    if(r) printf("%d == %d == %s\n",nn_g,ln,in->value);
-    return r;
+char * palabras_f_key(char * out, enumerate * in){
+	out = in->value;
+	return out;
 }
 
-void lineas_con_n_caracteres(char * file, int n){
-	char mem[1000];
-	nn_g = n;
-	nn_p = n;
-	iterator r = iterable_file_string_fix_tam(file,100);
-	iterator r2 = iterable_enumerate(&r,1);
-//	iterator r3 = iterable_filter(&r2,con_n);
-	iterator r4 = iterable_filter(&r2,primeras_lineas);
-	iterable_to_console_sep(&r4,"\n","","");
+char * palabras_f_value(int * out, enumerate * in){
+	*out = in->counter;
+	return out;
+}
+
+set_multimap lineas_de_palabras(char * file){
+	iterator r = iterable_words_and_line_in_file(file,1,100,20," ,;.()");
+	set_multimap sm = iterable_grouping_set_map(&r,r.type->types[0],&int_type,
+			palabras_f_key, palabras_f_value);
+	return sm;
+}
+
+void test_palabras_1(){
+	int n  = numero_de_lineas_vacias("ficheros/quijote.txt");
+	printf("%d\n",n);
+}
+
+void test_palabras_2(){
+	int n  = numero_de_palabras("ficheros/quijote.txt");
+	printf("%d\n",n);
 }
 
 void test_palabras_3(){
-	printf("%s\n",linea_mas_corta("ficheros/quijote.txt"));
-//	printf("%d\n",num_linea("ficheros/quijote.txt","de:"));
-	lineas_con_n_caracteres("ficheros/quijote.txt",350);
+	iterator r = iterable_words_and_line_in_file("ficheros/short_quijote.txt",1,100,20," ,;.()");
+	iterable_to_console(&r);
 }
+
+void test_palabras_4(){
+	printf("%s\n",linea_mas_corta("ficheros/quijote.txt"));
+	printf("%d\n",primera_linea_con_palabra("ficheros/quijote.txt","Gaula"));
+	printf("%d\n",ultima_linea_con_palabra("ficheros/quijote.txt","Gaula"));
+	printf("%s\n",linea_numero("ficheros/quijote.txt",3203));
+}
+
+void test_palabras_5(){
+	printf("%.2f\n",longitud_media("ficheros/quijote.txt"));
+}
+
+void test_palabras_6(){
+	set_multimap sm = lineas_de_palabras("ficheros/quijote.txt");
+	iterator r = set_multimap_iterable(&sm);
+	iterable_to_console_sep(&r,"\n","","");
+}
+
+
 
 

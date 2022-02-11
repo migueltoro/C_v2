@@ -108,7 +108,7 @@ token_class token_cls(token * t){
 }
 
 
-type token_type = {"token",NULL,token_tostring,NULL,NULL,free_0,copy_0,sizeof(token),0,NULL};
+type token_type = {"token",NULL,token_tostring,NULL,NULL,free_0,copy_new_0,copy_0,sizeof(token),0,NULL};
 
 tokenizer tokenizer_of(char * text){
 	int n = strlen(text);

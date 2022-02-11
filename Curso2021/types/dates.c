@@ -239,8 +239,8 @@ void * time_pointer_copy(void * out, void * in){
 }
 
 
-type date_type = {"date",time_equals,date_tostring,time_naturalorder,date_parse,free_0,copy_0,sizeof(time_t),0,NULL};
-type time_type = {"time",time_equals,time_tostring,time_naturalorder,time_parse,free_0,copy_0,sizeof(time_t),0,NULL};
+type date_type = {"date",time_equals,date_tostring,time_naturalorder,date_parse,free_0,copy_new_0,copy_0,sizeof(time_t),0,NULL};
+type time_type = {"time",time_equals,time_tostring,time_naturalorder,time_parse,free_0,copy_new_0,copy_0,sizeof(time_t),0,NULL};
 
 bool pd(void * t){
 	time_t e = time_of_date(1,1,1992);

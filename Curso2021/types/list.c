@@ -219,7 +219,7 @@ void list_add_pointer(list * list, void * element) {
 
 void list_add(list * ls, void * element){
 	check_argument(!ls->is_view,__FILE__,__LINE__,"no se puede modificar una vista");
-	void * e = copy(element,NULL,ls->type);
+	void * e = copy_new(element,NULL,ls->type);
 	list_add_pointer(ls,e);
 }
 
@@ -293,17 +293,17 @@ typedef struct{
 }dp_list;
 
 bool iterable_list_has_next(iterator * current_iterable) {
-	dp_list * dp = (dp_list *) current_iterable->dps;
+	dp_list * dp = (dp_list *) current_iterable->dp;
 	return dp->i < list_size(dp->ls);
 }
 
 void * iterable_list_see_next(iterator * current_iterable){
-	dp_list * dp = (dp_list *) current_iterable->dps;
+	dp_list * dp = (dp_list *) current_iterable->dp;
     return list_get(dp->ls,dp->i);
 }
 
 void * iterable_list_next(iterator * current_iterable){
-	dp_list * dp = (dp_list *) current_iterable->dps;
+	dp_list * dp = (dp_list *) current_iterable->dp;
 	int old_i = dp->i;
 	dp->i = dp->i +1;
 	return list_get(dp->ls,old_i);
@@ -312,7 +312,7 @@ void * iterable_list_next(iterator * current_iterable){
 iterator list_iterable(list * ls){
 	dp_list dl = {ls,0};
 	int size_dl = sizeof(dp_list);
-	iterator s_list = iterable_create(ls->type,iterable_list_has_next,iterable_list_next,iterable_list_see_next,NULL,&dl,size_dl);
+	iterator s_list = iterable_create(ls->type,iterable_list_has_next,iterable_list_next,NULL,&dl,size_dl);
 	return s_list;
 }
 
