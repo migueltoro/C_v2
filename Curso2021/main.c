@@ -54,16 +54,16 @@ int main() {
 //test_token();
 //test_tokenizer();
 //test_tupla();
-//test_list_6();
+//test_list_9();
 //test_map();
 //test_dates_2("ficheros/fechas_2.txt");
-//test_set_3();
+//test_set_2();
 //test_multiset();
-//test_list_multimap();
+//test_set_multimap();
 //test_esquemas();
 //test_marca();
 //test_ruta();
-test_palabras_6();
+//test_palabras_6();
 //test_binary_tree_1();
 //test_parse_binary_tree_1();
 //test_tree_1();
@@ -72,6 +72,6 @@ test_palabras_6();
 //test_matrices_3();
 //test_histograma();
 //test_accumulators_0(); //("ficheros/quijote.txt");
-//test_accumulators_7();
+test_accumulators_11();
 }
 

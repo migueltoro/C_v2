@@ -10,8 +10,7 @@
 
 multiset multiset_empty(type * type_element){
 	map t = map_empty(type_element,&int_type);
-	multiset st = {t};
-	return st;
+	return t;
 }
 
 multiset multiset_of(list * ls){
@@ -23,7 +22,7 @@ multiset multiset_of(list * ls){
 }
 
 void multiset_add_n(multiset * st, void * element, int n) {
-	void * e = map_get(&st->hash_table, element);
+	void * e = map_get(st, element);
 	int count;
 	if(e != NULL) {
 		 count = *(int *)  e;
@@ -31,7 +30,7 @@ void multiset_add_n(multiset * st, void * element, int n) {
 	} else {
 		count = n;
 	}
-	map_put(&st->hash_table, element,&count);
+	map_put(st, element,&count);
 }
 
 void multiset_add(multiset * st, void * element){
@@ -39,74 +38,51 @@ void multiset_add(multiset * st, void * element){
 }
 
 int multiset_size(multiset * st){
-	return map_size(&(st->hash_table));
+	return map_size(st);
 }
 
 bool multiset_contains(multiset * st, void * element){
-	return map_contains_key(&(st->hash_table),element);
+	return map_contains_key(st,element);
 }
 
 void multiset_remove_n(multiset * st, void * element, int nu) {
-	if (map_contains_key(&st->hash_table, element)) {
-		void * n = map_get(&st->hash_table, element);
+	if (map_contains_key(st, element)) {
+		void * n = map_get(st, element);
 		int m = MAX(*(int*) n -nu, 0);
-		if(m>0) map_put(&st->hash_table, element, &m);
-		else map_remove(&st->hash_table, element);
+		if(m>0) map_put(st, element, &m);
+		else map_remove(st, element);
 	}
 }
 
 int multiset_count(multiset * st, void * element){
 	int r =0;
-	if (map_contains_key(&st->hash_table, element)) {
-		void * n = map_get(&st->hash_table, element);
+	if (map_contains_key(st, element)) {
+		void * n = map_get(st, element);
 	    r = *(int*) n;
 	}
 	return r;
 }
 
-iterator multiset_items_iterable(multiset * st){
-	return map_items_iterable(&st->hash_table);
+iterator multiset_iterable(multiset * st){
+	return map_items_iterable(st);
 }
 
 char * multiset_tostring(multiset * st, char * mem){
-	return map_tostring(&st->hash_table,mem);
+	return map_tostring(st,mem);
 }
 
 void multiset_free(multiset * st){
-	map_free(&(st->hash_table));
+	map_free(st);
 }
 
 multiset complete_multiset() {
-	char mem[30];
-	int tam = 50;
-	type t = string_fix_type_of_tam(10);
-	multiset st = multiset_empty(type_copy(&t,NULL));
+	int tam = 20;
+	multiset st = multiset_empty(&int_type);
 	for (int i = 0; i < tam; i++) {
-		int a2 = entero_aleatorio(0, 10);
-		char * b2 = tostring(&a2,mem,&int_type);
-		multiset_add(&st,b2);
+		int a = entero_aleatorio(0, 10);
+		multiset_add(&st,&a);
 	}
 	return st;
-}
-
-multiset complete_multiset_2() {
-	char mem[30];
-	int tam = 50;
-	type t = string_fix_type_of_tam(10);
-	list ls = list_empty(type_copy(&t,NULL));
-	for (int i = 0; i < tam; i++) {
-		int a2 = entero_aleatorio(0, 10);
-		char * b2 = tostring(&a2,mem,&int_type);
-		list_add(&ls,b2);
-	}
-	iterator it = list_iterable(&ls);
-	multiset st = iterable_to_multiset(&it);
-	return st;
-}
-
-double * _random(double * out, long * in){
-	*out = double_aleatorio(0, 100);
-	return out;
 }
 
 void test_multiset() {
@@ -116,7 +92,7 @@ void test_multiset() {
 	printf("%d\n", multiset_size(&st));
 	char * s = multiset_tostring(&st, mem);
 	printf("%s\n",s);
-	iterator it = multiset_items_iterable(&st);
+	iterator it = multiset_iterable(&st);
 	iterable_to_console_sep(&it,"\n","","");
 	multiset_free(&st);
 }

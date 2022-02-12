@@ -196,11 +196,12 @@ void free_0(void * e, type * type){
 }
 
 void* copy_new_0(void *in, heap *hp, type * t) {
-	return heap_copy(in,hp,t->size);
+	if(t->size >0 ) return heap_copy(in,hp,t->size);
+	else return NULL;
 }
 
 void copy_0(void *out, void *in, type * t) {
-	memcpy(out,in,t->size);
+	if(t->size >0 ) memcpy(out,in,t->size);
 }
 
 void * reduce_one_indirection(void * in){

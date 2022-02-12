@@ -83,8 +83,8 @@ map iterable_grouping_reduce_map(iterator * st, type * key_type, type * value_ty
 void test_accumulators_1();
 void test_accumulators_2();
 void test_accumulators_3();
-void test_accumulators_4(char * file);
-void test_accumulators_5(char * file);
+void test_accumulators_4();
+void test_accumulators_5();
 void test_accumulators_6();
 
 #endif /* ACCUMULATORS_H_ */

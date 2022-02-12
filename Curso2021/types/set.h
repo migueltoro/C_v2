@@ -14,9 +14,7 @@
 #include "../types/list.h"
 #include "map.h"
 
-typedef struct {
-	map hash_table;
-} set;
+typedef map set;
 
 set set_empty(type* type_element);
 set set_of(list * ls);

@@ -13,9 +13,7 @@
 #include "../types/types.h"
 #include "map.h"
 
-typedef struct {
-	map hash_table;
-} multiset;
+typedef map multiset;
 
 multiset multiset_empty(type * type_element);
 multiset multiset_of(list * ls);
@@ -28,10 +26,9 @@ int multiset_count(multiset * st, void * element);
 
 char * multiset_tostring(multiset * st, char * mem);
 
-iterator multiset_items_iterable(multiset * st);
+iterator multiset_iterable(multiset * st);
 
 void multiset_free(multiset * st);
-void multiset_free_2(multiset * st, void (*f)(void * in));
 
 multiset complete_multiset();
 void test_multiset();

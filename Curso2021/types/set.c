@@ -11,9 +11,8 @@
 
 
 set set_empty(type * type_element){
-	map t = map_empty(type_element,&int_type);
-	set st = {t};
-	return st;
+	map t = map_empty(type_element,&null_type);
+	return t;
 }
 
 set set_of(list * ls){
@@ -25,11 +24,11 @@ set set_of(list * ls){
 }
 
 void set_add(set * st, void * element){
-	map_put(&st->hash_table,element,NULL);
+	map_put(st,element,NULL);
 }
 
 void set_remove(set * st, void * element) {
-	map_remove(&st->hash_table,element);
+	map_remove(st,element);
 }
 
 void set_add_all(set * st, iterator * it){
@@ -40,16 +39,16 @@ void set_add_all(set * st, iterator * it){
 }
 
 int set_size(set * st){
-	return map_size(&st->hash_table);
+	return map_size(&st);
 }
 
 bool set_contains(set * st, void * element){
-	return map_contains_key(&(st->hash_table),element);
+	return map_contains_key(st,element);
 }
 
 iterator set_iterable(set * st){
-	iterator r = map_items_iterable(&st->hash_table);
-	iterator im = iterable_map(iterable_copy_new(&r),st->hash_table.key_type,pair_key);
+	iterator r = map_items_iterable(st);
+	iterator im = iterable_map(iterable_copy_new(&r),type_copy(st->key_type,NULL),pair_key);
 	return im;
 }
 
@@ -59,15 +58,15 @@ set set_map(set * st, type * type_out, void * (*f)(void * out, void * in)){
 	char mem[type_out->size];
 	while(iterable_has_next(&it)){
 		void * e = iterable_next(&it);
-		f(mem,e);
-		set_add(&r,mem);
+		void * t = f(mem,e);
+		set_add(&r,t);
 	}
 	return r;
 }
 
 set set_filter(set * st, bool (*p)(void * in)) {
 	iterator it = set_iterable(st);
-	set r = set_empty(st->hash_table.key_type);
+	set r = set_empty(st->key_type);
 	while (iterable_has_next(&it)) {
 		void * e = iterable_next(&it);
 		if(p(e)) set_add(&r,e);
@@ -83,7 +82,7 @@ char * set_tostring(set * st, char * mem){
 }
 
 list set_tolist(const set * s) {
-	list res = list_empty(s->hash_table.key_type);
+	list res = list_empty(s->key_type);
 	iterator it = set_iterable(s);
 	while(iterable_has_next(&it)) {
 		list_add(&res, iterable_next(&it));
@@ -106,8 +105,8 @@ bool set_equals(const set * s1, const set * s2) {
 
 set * set_parse(set * out, char * text) {
 	iterator it = text_to_iterable_string_fix_tam(text, "{ ,}",string_fix_tam);
-	char tmp[out->hash_table.key_type->size];
-	tmp_type = out->hash_table.key_type;
+	char tmp[out->key_type->size];
+	tmp_type = out->key_type;
 	while(iterable_has_next(&it)) {
 		void * txt = iterable_next(&it);
 		parse_st(tmp,txt);
@@ -128,7 +127,7 @@ set set_parse_s(char * text) {
 }
 
 set set_copy(set *s) {
-	set res = set_empty(s->hash_table.key_type);
+	set res = set_empty(s->key_type);
 	iterator it = set_iterable(s);
 	while (iterable_has_next(&it)) {
 		set_add(&res, iterable_next(&it));
@@ -142,11 +141,12 @@ set * set_copy_p(set *s){
 	return r2;
 }
 
-type set_type = {"set",set_equals, set_tostring, NULL, set_parse, set_free, set_copy_p,sizeof(set),1,NULL};
+type set_type = {"set",set_equals, set_tostring, NULL, set_parse, set_free,
+		copy_new_0,copy_0,sizeof(set),1,NULL};
 
 
 void set_free(set * st){
-	map_free(&(st->hash_table));
+	map_free(st);
 }
 
 set complete_set() {
@@ -207,15 +207,14 @@ void test_set_2() {
 }
 
 void test_set_3() {
-	char mem1[512];
+	char mem[1000];
 	iterator it = iterable_range_long(3, 100, 5);
 	iterator it2 = *iterable_copy_new(&it);
 	set s = set_empty(&long_type);
 	set_add_all(&s,&it);
 	set_add_all(&s,&it2);
-	printf("%s\n",set_tostring(&s, mem1));
 	set s2 = set_map(&s,&long_type,square_long_f);
-	printf("%s\n",set_tostring(&s2, mem1));
+	printf("%s\n",set_tostring(&s2, mem));
 	set s3 = set_filter(&s,es_primo_f);
-	printf("%s\n",set_tostring(&s3, mem1));
+	printf("%s\n",set_tostring(&s3, mem));
 }

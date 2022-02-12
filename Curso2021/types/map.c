@@ -22,8 +22,8 @@ void * hash_table_put_private(map * table, void * key, void * value);
 
 map map_empty(type * key_type, type * value_type){
 	map t;
-	t.key_type = key_type;
-	t.value_type = value_type;
+	t.key_type = type_copy(key_type,NULL);
+	t.value_type = type_copy(value_type,NULL);
 	t.load_factor_limit = 0.75;
 	int capacity_blocks = _primes[_next_prime];
 	t.capacity_blocks = capacity_blocks;
@@ -250,13 +250,17 @@ void * iterable_hash_table_next(iterator * c_iterable){
 	return c_iterable->state;
 }
 
+
 iterator map_items_iterable(map * ht){
-	dp_hash_table dh = {ht,ht->capacity_blocks,0,-1};
-	int size_dh = sizeof(dp_hash_table);
+	dp_hash_table dp = {ht,ht->capacity_blocks,0,-1};
+	int size_dp = sizeof(dp_hash_table);
+	void * dp_p = malloc(size_dp);
+	memcpy(dp_p,&dp,size_dp);
 	type t = generic_type_2(&pair_type,ht->key_type,ht->value_type);
-	iterator s_hash_table = iterable_create(type_copy(&t,NULL),iterable_hash_table_has_next,iterable_hash_table_next,NULL,&dh,size_dh);
-	next_state(s_hash_table.dp);
-	return s_hash_table;
+	iterator r_hash_table = iterable_create(type_copy(&t,NULL),iterable_hash_table_has_next,
+			iterable_hash_table_next,dp_p,size_dp,free);
+	next_state(r_hash_table.dp);
+	return r_hash_table;
 }
 
 
@@ -349,26 +353,7 @@ map complete_table1() {
 		double a2 = double_aleatorio(0, 1000);
 		map_put(&ht,&a1,&a2);
 	}
-	long a1 = 5;
-	map_remove(&ht,&a1);
-	return ht;
-}
-
-map complete_table2() {
-	int tam = 100;
-	map ht = map_empty(&long_type,&double_type);
-	new_rand();
-	for (int i = 0; i < tam; i++) {
-		long a1 = i;
-		double a2 = double_aleatorio(1000, 2000);
-		map_put(&ht,&a1,&a2);
-	}
-	for (int i = 3; i < tam; i++) {
-		long a1 = i;
-		double a2 = double_aleatorio(1000, 2000);
-		map_put(&ht,&a1,&a2);
-	}
-	long a1 = 5;
+	long a1 = 2;
 	map_remove(&ht,&a1);
 	return ht;
 }

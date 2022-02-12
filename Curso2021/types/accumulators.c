@@ -486,15 +486,15 @@ void test_accumulators_1(){
 	char mem[4000];
 	iterator st;
 	st = iterable_range_long(4,500,3);
-	multiset ht = iterable_to_multiset_groups(&st,resto17,&long_type);
+	multiset ht = iterable_to_multiset_groups(&st,&long_type,resto17);
 	char * s = multiset_tostring(&ht,mem);
 	printf("1:  \n%s\n\n",s);
 	st = iterable_range_long(4,500,3);
-	list_multimap ht2 = iterable_grouping_list(&st,resto17,&long_type);
+	list_multimap ht2 = iterable_grouping_list(&st,&long_type,resto17);
 	char * s2 = list_multimap_tostring(&ht2,mem);
 	printf("2:  \n%s\n\n",s2);
 	st = iterable_range_long(4,500,3);
-	set_multimap sm = iterable_grouping_set(&st,resto17,&long_type);
+	set_multimap sm = iterable_grouping_set(&st,&long_type,resto17);
 	set_multimap_tostring(&sm,mem);
 	printf("2.1:  \n%s\n\n",mem);
 	st = iterable_range_double(4,500,3);
@@ -512,16 +512,6 @@ void test_accumulators_1(){
 	st = iterable_range_long(7,500,3);
 	long r1 = *(long *) iterable_first(&st,esmultiplo17);
 	printf("7:  \n%ld\n",r1);
-	iterator rr = iterable_range_long(0, 500, 2);
-	iterator rr1 = iterable_map(&rr, &double_type, _random);
-	set ms = iterable_to_set(&rr1);
-	s = set_tostring(&ms, mem);
-	printf("12: %s\n", s);
-	rr = iterable_range_long(0, 500, 2);
-	rr1 = iterable_map(&rr,&double_type,_random);
-	multiset mms = iterable_to_multiset(&rr1);
-	s = multiset_tostring(&mms, mem);
-	printf("13: %s\n",s);
 }
 
 void test_accumulators_2(){
@@ -543,20 +533,6 @@ void test_accumulators_2(){
     printf("%s\n",MSG_BOOL(b));
 }
 
-void test_accumulators_3(char * file) {
-	string_fix_tam = 100;
-	iterator git1 = iterable_file_string_fix(file);
-	iterator git2 = iterable_filter(&git1, string_fix_not_all_space);
-	string_fix_tam = 20;
-	type t = string_fix_type_of_tam(string_fix_tam);
-	iterator gmap = iterable_flatmap(&git2,type_copy(&t,NULL),text_to_iterable_string_fix_function);
-	set st = iterable_to_set(&gmap);
-	int n = set_size(&st);
-	printf("%d\n", n);
-	set_free(&st);
-	iterables_free(3, &git1, &git2, &gmap);
-}
-
 int * flen(int * len, char * line){
 	*len = strlen(line);
 	return len;
@@ -576,28 +552,6 @@ bool max_len(char * p1, char * p2){
 	return false;
 }
 
-void test_accumulators_4(char * file) {
-	string_fix_tam = 100;
-	iterator g1 = iterable_file_string_fix(file);
-	string_fix_tam = 20;
-	char max[string_fix_tam];
-	type t = string_fix_type_of_tam(string_fix_tam);
-	iterator g3 = iterable_flatmap(&g1,type_copy(&t,NULL),text_to_iterable_string_fix_function);
-	char * r = (char *) iterable_max(&g3,cmp);
-	printf("%s,%d\n",r,strlen(r));
-}
-
-void test_accumulators_5(char * file) {
-	string_fix_tam = 100;
-	iterator g1 = iterable_file_string_fix(file);
-	iterator g2 = iterable_filter(&g1, string_fix_all_space);
-	int n = 0;
-	for(;iterable_has_next(&g2);iterable_next(&g2)){
-		n++;
-	}
-	printf("%d\n",n);
-}
-
 bool str_cat(char * out, char * in){
 	strcat(out,in);
 	return false;
@@ -608,7 +562,7 @@ bool str_var_cat(char * out, char * in){
 	return false;
 }
 
-void test_accumulators_6() {
+void test_accumulators_3() {
 	char mem[4000];
 	double r7;
 	iterator st = iterable_range_long(7, 500, 3);
@@ -654,7 +608,7 @@ void test_accumulators_6() {
 	printf("17: %d", list_size(&ls));
 }
 
-void test_accumulators_7() {
+void test_accumulators_4() {
 	iterator it1 = iterable_primos(2,3);
 	iterator it2 = iterable_map(&it1,&long_type,square_long_f);
 	long suma;
@@ -666,7 +620,7 @@ void test_accumulators_7() {
 	printf("%d\n",s);
 }
 
-void test_accumulators_8() {
+void test_accumulators_5() {
 	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
 	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
 	char b[10000];
@@ -678,7 +632,7 @@ void test_accumulators_8() {
 	printf("2: %s\n", b);
 }
 
-void test_accumulators_9() {
+void test_accumulators_6() {
 	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
 	char p[20];
 	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
@@ -694,7 +648,7 @@ bool p_palabra(char * out, char * in){
 	return r;
 }
 
-void test_accumulators_10() {
+void test_accumulators_7() {
 	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
 	char p[20] = "No existe";
 	c = 'x';
@@ -706,12 +660,12 @@ void test_accumulators_10() {
 	printf("%s\n",s);
 }
 
-void test_accumulators_11() {
+void test_accumulators_8() {
 	char mem[1000];
 	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
 	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
 	multiset r = iterable_to_multiset(&p3);
-	iterator ir = multiset_items_iterable(&r);
+	iterator ir = multiset_iterable(&r);
 	iterable_to_console_sep(&ir,"\n","","");
 }
 
@@ -725,35 +679,18 @@ list lst() {
 	return ls;
 }
 
-void test_accumulators_12() {
+void test_accumulators_9() {
 	list ls = lst();
 	iterator p3 = list_iterable(&ls);
 	multiset r = iterable_to_multiset(&p3);
-	iterator ir = multiset_items_iterable(&r);
+	iterator ir = multiset_iterable(&r);
 	iterable_to_console_sep(&ir, "\n", "", "");
-}
-
-void test_accumulators_13() {
-	char mem[5000];
-	new_rand();
-	iterator r = iterable_random_long(100,0,20) ;
-	multiset ms = iterable_to_multiset(&r);
-	iterator r3 = multiset_items_iterable(&ms);
-	iterable_to_console_sep(&r3, ",", "{", "}");
 }
 
 void freq() {
 	iterator r = iterable_random_long(100,0,20);
 	multiset ms = iterable_to_multiset_groups(&r, &long_type, remainder_f);
-	iterator r3 = multiset_items_iterable(&ms);
-	iterable_to_console_sep(&r3, ",", "{", "}");
-}
-
-void test_accumulators_14() {
-	remainder_base = 13;
-	iterator r = iterable_random_long(100,0,20);
-	multiset ms = iterable_to_multiset_groups(&r,&long_type,remainder_f);
-	iterator r3 = multiset_items_iterable(&ms);
+	iterator r3 = multiset_iterable(&ms);
 	iterable_to_console_sep(&r3, ",", "{", "}");
 }
 
@@ -762,7 +699,7 @@ long * sum(long * out, long *in){
 	return sum;
 }
 
-void test_accumulators_15() {
+void test_accumulators_10() {
 	remainder_base = 13;
 	iterator r = iterable_random_long(100,0,20);
 	map ms = iterable_grouping_reduce_map(&r, &long_type, &long_type,
@@ -771,7 +708,7 @@ void test_accumulators_15() {
 	iterable_to_console_sep(&r3, ",", "{", "}");
 }
 
-void test_accumulators_16() {
+void test_accumulators_11() {
 	iterator r = iterable_words_in_file("ficheros/short_quijote.txt", 100, 20," ,;.()");
 	int n = iterable_size(&r);
 	printf("%d",n);

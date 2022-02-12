@@ -131,29 +131,30 @@ list list_of_file(char * file, int n){
 }
 
 
-list list_of_file_type(char * file, type * type, int n) {
-	iterator it = iterable_file_string_fix_tam(file,n);
-	list ls = list_empty(type);
-	char e[type->size];
+list list_of_file_type(char * file, type * type, int tam_line) {
+	iterator it = iterable_file_string_fix_tam(file,tam_line);
+	list ls = list_empty(type_copy(type,NULL));
+	char mem[type->size];
 	while (iterable_has_next(&it)) {
 		char * line = (char *) iterable_next(&it);
-		parse(e, line, type);
+		void * e = parse(mem, line, type);
 		list_add(&ls,e);
 	}
 	return ls;
 }
 
-list list_of_list_of_file_type(char * file, type * type, char * sep, int n, int m){
-	list res = list_empty(&list_type);
-	iterator it1 = iterable_file_string_fix_tam(file,n);
-	char e[type->size];
+list list_of_list_of_file_type(char * file, type * t, char * sep, int tam_line, int tam_word){
+	type t1 = generic_type_1(&list_type,t);
+	list res = list_empty(type_copy(&t1,NULL));
+	iterator it1 = iterable_file_string_fix_tam(file,tam_line);
+	char mem[t->size];
 	while(iterable_has_next(&it1)) {
 	      char* linea = (char*)iterable_next(&it1);
-	      list ls = list_empty(type);
-	      iterator it2 = text_to_iterable_string_fix_tam(linea,sep,m);
+	      list ls = list_empty(type_copy(t,NULL));
+	      iterator it2 = text_to_iterable_string_fix_tam(linea,sep,tam_word);
 	      while(iterable_has_next(&it2)) {
 	    	  	char * tx = iterable_next(&it2);
-	            parse(e,tx,type);
+	            void * e = parse(mem,tx,t);
                 list_add(&ls,e);
 	      }
 	      list_add(&res, &ls);
@@ -280,8 +281,8 @@ list list_map(list * ls, type * type_element, void * (*f)(void * out, void * in)
 	char temp[type_element->size];
 	for (int i = 0; i < ls->size; i++) {
 		void * e = list_get(ls, i);
-		f(temp,e);
-		list_add(&r, temp);
+		void * t = f(temp,e);
+		list_add(&r, t);
 	}
 	return r;
 }
@@ -310,9 +311,11 @@ void * iterable_list_next(iterator * current_iterable){
 }
 
 iterator list_iterable(list * ls){
-	dp_list dl = {ls,0};
-	int size_dl = sizeof(dp_list);
-	iterator s_list = iterable_create(ls->type,iterable_list_has_next,iterable_list_next,NULL,&dl,size_dl);
+	dp_list dp = {ls,0};
+	int size_dp = sizeof(dp_list);
+	void * dp_p = malloc(size_dp);
+	memcpy(dp_p,&dp,size_dp);
+	iterator s_list = iterable_create(type_copy(ls->type,NULL),iterable_list_has_next,iterable_list_next,dp_p,size_dp,free);
 	return s_list;
 }
 
@@ -375,7 +378,8 @@ list * list_copy_p(list * ls) {
 	return r2;
 }
 
-type list_type = {"list",list_equals, list_tostring, NULL, list_parse, list_free, list_copy_p, sizeof(list),1,NULL};
+type list_type = {"list",list_equals, list_tostring, NULL, list_parse, list_free,
+		copy_new_0, copy_0, sizeof(list),1,NULL};
 
 
 void write_list_to_file(char * file, list * list, char * tostring(const void * source, char * mem)) {
@@ -667,15 +671,15 @@ list list_random_int(int n, int a, int b) {
 	return ls;
 }
 
-void test_list_0_0() {
+void test_list_1() {
 	char mem[10000];
-	list ls1 = list_random_int(3,20,100);
+	list ls1 = list_random_int(24,20,100);
 	char * s = list_tostring(&ls1,mem);
 	printf("%s\n",s);
 	list_free(&ls1);
 }
 
-void test_list_0_1() {
+void test_list_2() {
 	char mem[10000];
 	type t = generic_type_2(&pair_type,&int_type,&double_type);
 	list ls = list_empty(type_copy(&t,NULL));
@@ -691,7 +695,7 @@ void test_list_0_1() {
 	list_free(&ls);
 }
 
-void test_list_0_2() {
+void test_list_3() {
 	char mem1[3000];
 	char mem2[3000];
 	list ls1 = list_random_double(50,20,100);
@@ -709,7 +713,7 @@ void test_list_0_2() {
 	list_free(&ls2);
 }
 
-void test_list_1() {
+void test_list_4() {
 	char mem[3000];
 	list ls1 = list_random_double(50,20,100);
 	list ls2 = list_random_double(50,20,100);
@@ -748,7 +752,7 @@ void test_list_1() {
 	list_free(&ls4);
 }
 
-void test_list_1_1() {
+void test_list_5() {
 	char mem[3000];
 	list ls = list_of_file_type("ficheros/prueba.txt", &punto_type, 30);
 	char *s1 = list_get(&ls, 2);
@@ -761,7 +765,7 @@ void test_list_1_1() {
 	list_tostring(&lm, mem);
 	printf("1: %s\n", mem);
 	char sep[] = " ,";
-	list ls2 = list_of_list_of_file_type("ficheros/datos_entrada.txt",&long_type,sep,50,100);
+	list ls2 = list_of_list_of_file_type("ficheros/datos_entrada.txt",&long_type,sep,100,50);
 	list_tostring(&ls2, mem);
 	printf("%s\n", mem);
 	int n = list_size(&ls2);
@@ -769,7 +773,7 @@ void test_list_1_1() {
 	printf("%d,%d\n", n, m);
 }
 
-void test_list_2(void) {
+void test_list_6(void) {
 	int size = 10;
 	int enteros[size];
 	for(int i=0; i<size; i++) {
@@ -817,7 +821,7 @@ void test_list_2(void) {
 	printf("Dada la cadena \"%s\", list_parse_s ha obtenido la lista:\n%s\n", texto2, list_tostring(&ls5, mem1));
 }
 
-void test_list_3() {
+void test_list_7() {
 	char mem[1000];
 	list ls2 = list_of_int(5, 6, 7, 8, 9, 10);
 	list_tostring(&ls2, mem);
@@ -850,7 +854,7 @@ void test_list_3() {
 	printf("8: %s\n", mem);
 }
 
-void test_list_4() {
+void test_list_8() {
 	char mem[3000];
 	list ls = list_of_file_type("ficheros/numeros.txt", &int_type,10);
 	list_tostring(&ls, mem);
@@ -872,7 +876,7 @@ void test_list_4() {
 	}
 }
 
-void test_list_5() {
+void test_list_9() {
 	char mem[5000];
 	new_rand();
 	list ls1 = list_empty(&double_type);
@@ -891,8 +895,7 @@ void test_list_5() {
 
 }
 
-
-void test_list_6() {
+void test_list_10() {
 	char mem[1000];
 	string_fix texto1 = "[Estas, son, pruebas, de, nuevas, funciones, para, el, tipo, list]";
 	list ls = list_empty(&string_fix_type);
