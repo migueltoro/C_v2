@@ -27,12 +27,12 @@
 //   int tm_isdst;       /* daylight saving time             */
 //};
 
-time_t * date_parse(time_t * out, char * text, type * t);
-time_t * time_parse(time_t * out, char * text, type * t);
-char * time_tostring(const void * p, char * mem, type * t);
-char * date_tostring(const void * p, char * mem, type * t);
-bool time_equals(const void * p1, const void * p2, type * t);
-int time_naturalorder(const void * t1,const  void * t2, type * t);
+time_t * date_parse(time_t * out, char * text);
+time_t * time_parse(time_t * out, char * text);
+char * time_tostring(const void * p, char * mem);
+char * date_tostring(const void * p, char * mem);
+bool time_equals(const void * p1, const void * p2);
+int time_naturalorder(const void * t1,const  void * t2);
 
 time_t time_now();
 time_t time_parse_date_s(char * text);

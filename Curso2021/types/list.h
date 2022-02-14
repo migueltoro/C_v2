@@ -99,7 +99,7 @@ list merge_list_naturalorder(list * ls1, list * ls2);
 void * k_esimo_naturalorder(list * ls,int k);
 
 void list_clear(list * ls);
-void list_free(list * ls);
+void list_free(list * ls, type * t);
 void list_free_2(list * ls, void (*f)(void * in));
 void test_list_1();
 void test_list_2();

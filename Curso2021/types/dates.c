@@ -40,7 +40,7 @@ time_t time_of(int day, int month, int year, int hour, int minute, int second) {
 	return r;
 }
 
-time_t * date_parse(time_t * out, char * text, type * typ){
+time_t * date_parse(time_t * out, char * text){
 	int day;
 	int month;
 	int year;
@@ -50,7 +50,7 @@ time_t * date_parse(time_t * out, char * text, type * typ){
 	return out;
 }
 
-time_t* time_parse(time_t *out, char *text, type *typ) {
+time_t* time_parse(time_t *out, char *text) {
 	int day;
 	int month;
 	int year;
@@ -168,7 +168,7 @@ int time_diff_days(time_t start,time_t end){
 char * dia_semana[] = {"Dom","Lun","Mar","Mie","Jue","Vie","Sab"};
 char * meses[] = {"Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"};
 
-char * time_tostring(const void * p, char * mem, type * typ){
+char * time_tostring(const void * p, char * mem){
 	time_t * t = (time_t *) p;
 	struct tm * r = localtime(t);
 	sprintf(mem,"%02d-%02d-%4d %02d:%02d:%02d",r->tm_mday,r->tm_mon+1,r->tm_year+1900,
@@ -176,7 +176,7 @@ char * time_tostring(const void * p, char * mem, type * typ){
 	return mem;
 }
 
-char * date_tostring(const void * p, char * mem, type * typ){
+char * date_tostring(const void * p, char * mem){
 	time_t * t = (time_t *) p;
 	struct tm * r = localtime(t);
 	sprintf(mem,"%02d-%02d-%4d",r->tm_mday,r->tm_mon+1,r->tm_year+1900);
@@ -211,13 +211,13 @@ char * hours_tostring(const void * p, char * mem){
 	return mem;
 }
 
-bool time_equals(const void * p1, const void * p2, type * t){
+bool time_equals(const void * p1, const void * p2){
 	time_t t1 = *(time_t *) p1;
 	time_t t2 = *(time_t *) p2;
 	return t1 == t2;
 }
 
-int time_naturalorder(const void * p1,const  void * p2, type * t){
+int time_naturalorder(const void * p1,const  void * p2){
 	time_t t1 = *(time_t *) p1;
 	time_t t2 = *(time_t *) p2;
 	double d = difftime(t2,t1);
@@ -244,7 +244,7 @@ type time_type = {"time",time_equals,time_tostring,time_naturalorder,time_parse,
 
 bool pd(void * t){
 	time_t e = time_of_date(1,1,1992);
-	return time_naturalorder(t,&e,NULL) >0;
+	return time_naturalorder(t,&e) >0;
 }
 
 void * add(void * out, void * in){

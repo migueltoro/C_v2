@@ -393,11 +393,11 @@ void write_list_to_file(char * file, list * list, char * tostring(const void * s
 
 void list_clear(list * ls) {
 	type t = * ls->type;
-	list_free(ls);
+	list_free(ls,NULL);
 	*ls = list_empty(type_copy(&t,NULL));
 }
 
-void list_free(list *ls) {
+void list_free(list *ls, type *t) {
 	if (ls != NULL) {
 		type *t = ls->type;
 		for (int i = 0; i < ls->size; i++) {
@@ -676,7 +676,7 @@ void test_list_1() {
 	list ls1 = list_random_int(24,20,100);
 	char * s = list_tostring(&ls1,mem);
 	printf("%s\n",s);
-	list_free(&ls1);
+	list_free(&ls1,NULL);
 }
 
 void test_list_2() {
@@ -692,7 +692,7 @@ void test_list_2() {
 	}
 	char * s = list_tostring(&ls,mem);
 	printf("%s\n",s);
-	list_free(&ls);
+	list_free(&ls,NULL);
 }
 
 void test_list_3() {
@@ -709,8 +709,8 @@ void test_list_3() {
 	printf("ls1 = %s\n", s1);
 	char * s2 = list_tostring(&ls2, mem2);
 	printf("ls2 = %s\n", s2);
-	list_free(&ls1);
-	list_free(&ls2);
+	list_free(&ls1,NULL);
+	list_free(&ls2,NULL);
 }
 
 void test_list_4() {
@@ -723,7 +723,7 @@ void test_list_4() {
 	list ls2s = list_sublist(&ls2,10,20);
 	list_quick_sort_naturalorder(&ls1);
 	list_quick_sort_naturalorder(&ls2);
-	char * s = list_tostring(&ls1, mem);
+	char * s = list_tostring(&ls1,mem);
 	printf("ls1 = %s\n", s);
 	s = list_tostring(&ls2, mem);
 	printf("ls2 = %s\n", s);
@@ -745,11 +745,11 @@ void test_list_4() {
 	list_quick_sort_naturalorder(&ls5);
 	s = list_tostring(&ls5,  mem);
 	printf("ls5 = %s\n", s);
-	list_free(&ls5);
-	list_free(&ls1);
-	list_free(&ls2);
-	list_free(&ls3);
-	list_free(&ls4);
+	list_free(&ls5,NULL);
+	list_free(&ls1,NULL);
+	list_free(&ls2,NULL);
+	list_free(&ls3,NULL);
+	list_free(&ls4,NULL);
 }
 
 void test_list_5() {
@@ -759,7 +759,7 @@ void test_list_5() {
 	printf("s1 = %s\n", s1);
 	char *s = list_tostring(&ls, mem);
 	printf("ls1 = %s\n", s);
-	list_free(&ls);
+	list_free(&ls,NULL);
 	ls = list_of_file("ficheros/numeros.txt", 10);
 	list lm = list_map(&ls, &int_type, int_type.parse);
 	list_tostring(&lm, mem);

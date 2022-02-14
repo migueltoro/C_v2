@@ -115,24 +115,24 @@ multiset iterable_to_multiset_groups(iterator * st, type * key_type, void * (*f_
 	return ms;
 }
 
-list_multimap iterable_to_list_multimap(iterator * items) {
+list_multimap iterable_of_groups_to_list_multimap(iterator * items) {
 	type * t =  items->type;
 	list_multimap lm = list_multimap_empty(types(t,0),types(t,1));
 	while (iterable_has_next(items)) {
 		pair * p = (pair *) iterable_next(items);
-		list_multimap_put(&(lm.hash_table), &p->key, &p->value);
+		list_multimap_put(&lm, &p->key, &p->value);
 	}
 	return lm;
 }
 
 
 
-set_multimap iterable_to_set_multimap(iterator * items) {
+set_multimap iterable_of_groups_to_set_multimap(iterator * items) {
 	type * t = items->type;
 	set_multimap lm = set_multimap_empty(types(t,0),types(t,1));
 	while (iterable_has_next(items)) {
 		pair * p = (pair *) iterable_next(items);
-		set_multimap_put(&(lm.hash_table), &p->key, &p->value);
+		set_multimap_put(&lm, &p->key, &p->value);
 	}
 	return lm;
 }
@@ -505,10 +505,10 @@ void test_accumulators_1(){
 	st = iterable_range_double(4,500,3);
 	st = iterable_range_long(4,500,3);
 	bool r = iterable_all(&st,esmultiplo17);
-	printf("5:  \n%s\n",bool_tostring(&r,mem,NULL));
+	printf("5:  \n%s\n",bool_tostring(&r,mem));
 	st = iterable_range_long(4,500,3);
 	r = iterable_any(&st,esmultiplo17);
-	printf("6:  \n%s\n",bool_tostring(&r,mem,NULL));
+	printf("6:  \n%s\n",bool_tostring(&r,mem));
 	st = iterable_range_long(7,500,3);
 	long r1 = *(long *) iterable_first(&st,esmultiplo17);
 	printf("7:  \n%ld\n",r1);
@@ -582,11 +582,11 @@ void test_accumulators_3() {
 	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
 	string_var emp = string_var_empty();
 	void *sr = accumulate_left(&p3, &emp, str_var_cat);
-	printf("10: %s\n", string_var_tostring(sr, mem, NULL));
+	printf("10: %s\n", string_var_tostring(sr, mem));
 	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
 	emp = string_var_empty();
 	sr = accumulate_right(&p3, &emp, str_var_cat);
-	printf("11: %s\n", string_var_tostring(sr, mem, NULL));
+	printf("11: %s\n", string_var_tostring(sr, mem));
 	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
 	char b[10000];
 	void *r2 = accumulate_left(&p3, b, str_cat);

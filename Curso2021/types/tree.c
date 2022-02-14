@@ -591,7 +591,7 @@ list tree_level(tree * t, int n) {
 	list s;
 	for(int i = 1;i <= n;i++) {
 		s = tree_next_level(&r);
-		list_free(&r);
+		list_free(&r,NULL);
 		r = s;
 	}
 	return r;
@@ -619,7 +619,7 @@ void test_binary_tree_1(){
 	printf("size = %d\n", binary_tree_size(t4));
 	printf("t4 height = %d\n",binary_tree_height(t4));
 	list ls = binary_tree_to_list(t4);
-	char * s = list_tostring(&ls, mem);
+	char * s = list_tostring(&ls,mem);
 	printf("ls = %s\n", s);
 	list_quick_sort(&ls,int_naturalorder);
 	s = list_tostring(&ls, mem);

@@ -95,19 +95,19 @@ void * parse_type(void * out, char * text);
 // int s_type
 
 int int_parse_s(char * text);
-int * int_parse(int * out, char * text, type * type);
-char * int_tostring(const int * e, char * mem, type * type);
-bool int_equals(const int * e1, const int * e2, type * type);
-int int_naturalorder(const int * e1, const int * e2, type * type);
+int * int_parse(int * out, char * text);
+char * int_tostring(const int * e, char * mem);
+bool int_equals(const int * e1, const int * e2);
+int int_naturalorder(const int * e1, const int * e2);
 
 #define to_int(a) *(int *) a
 
 extern type int_type;
 
-char* char_parse(char * out, char * text, type * type);
-char* char_tostring(const char * e, char * mem, type * type);
-bool char_equals(const char * e1, const char * e2, type * type);
-int char_naturalorder(const char * e1, const char * e2, type * type);
+char* char_parse(char * out, char * text);
+char* char_tostring(const char * e, char * mem);
+bool char_equals(const char * e1, const char * e2);
+int char_naturalorder(const char * e1, const char * e2);
 
 #define to_char(a) *(char *) a
 
@@ -117,10 +117,10 @@ extern type char_type;
 #define MSG_BOOL(x) (x==0?"false":"true")
 #endif
 
-bool* bool_parse(bool * out, char * in, type * type);
-char* bool_tostring(const bool * e, char * out, type * type);
-bool bool_equals(const bool * e1, const bool * e2, type * type);
-int bool_naturalorder(const bool * e1,const bool * e2, type * type);
+bool* bool_parse(bool * out, char * in);
+char* bool_tostring(const bool * e, char * out);
+bool bool_equals(const bool * e1, const bool * e2);
+int bool_naturalorder(const bool * e1,const bool * e2);
 
 #define to_bool(a) *(bool *) a
 
@@ -129,10 +129,10 @@ extern type bool_type;
 // long s_type
 
 long long_parse_s(char * text);
-long * long_parse(long * out, char * text, type * type);
-char * long_tostring(const long * e, char * mem, type * type);
-bool long_equals(const long * e1, const long * e2, type * type);
-int long_naturalorder(const long * e1, const long * e2, type * type);
+long * long_parse(long * out, char * text);
+char * long_tostring(const long * e, char * mem);
+bool long_equals(const long * e1, const long * e2);
+int long_naturalorder(const long * e1, const long * e2);
 
 #define to_long(a) *(long *) a
 
@@ -141,20 +141,20 @@ extern type long_type;
 // long long s_type
 
 long long long_long_parse_s(char * text);
-long long * long_long_parse(long long * out, char * text, type * type);
-char * long_long_tostring(const long long * e, char * mem, type * type);
-bool long_long_equals(const long long * e1, const long long * e2, type * type);
-int long_long_naturalorder(const long long * e1, const long long * e2, type * type);
+long long * long_long_parse(long long * out, char * text);
+char * long_long_tostring(const long long * e, char * mem);
+bool long_long_equals(const long long * e1, const long long * e2);
+int long_long_naturalorder(const long long * e1, const long long * e2);
 
 extern type long_long_type;
 
 // float s_type
 
 float float_parse_s(char * text);
-float * float_parse(float * out, char * text, type * type);
-char * float_tostring(const float * e, char * mem, type * type);
-bool float_equals(const float * e1, const float * e2, type * type);
-int float_naturalorder(const float * e1,const float * e2, type * type);
+float * float_parse(float * out, char * text);
+char * float_tostring(const float * e, char * mem);
+bool float_equals(const float * e1, const float * e2);
+int float_naturalorder(const float * e1,const float * e2);
 
 #define to_float(a) *(float *) a
 
@@ -163,10 +163,10 @@ extern type float_type;
 // double s_type
 
 double double_parse_s(char * text);
-double * double_parse(double * out, char * text, type * type);
-char * double_tostring(const double * e, char * mem, type * type);
-bool double_equals(const double * e1, const double * e2, type * type);
-int double_naturalorder(const double * e1, const double * e2, type * type);
+double * double_parse(double * out, char * text);
+char * double_tostring(const double * e, char * mem);
+bool double_equals(const double * e1, const double * e2);
+int double_naturalorder(const double * e1, const double * e2);
 
 #define to_double(a) *(double *) a
 
@@ -180,10 +180,10 @@ typedef struct{
 }int_pair;
 
 int_pair int_pair_parse_s(char * text);
-int_pair * int_pair_parse(int_pair * out, char * text, type * type);
-char * int_pair_tostring(const int_pair * p, char * mem, type * type);
-bool int_pair_equals(const int_pair * t1, const int_pair * t2, type * type);
-int int_pair_naturalorder(const int_pair * t1,const int_pair * t2, type * type);
+int_pair * int_pair_parse(int_pair * out, char * text);
+char * int_pair_tostring(const int_pair * p, char * mem);
+bool int_pair_equals(const int_pair * t1, const int_pair * t2);
+int int_pair_naturalorder(const int_pair * t1,const int_pair * t2);
 
 #define to_int_pair(a) *(int_pair *) a
 
@@ -197,10 +197,10 @@ typedef struct{
 }long_pair;
 
 long_pair long_pair_parse_s(char * text);
-long_pair * long_pair_parse(long_pair * out, char * text, type * type);
-char * long_pair_tostring(const long_pair * p, char * mem, type * type);
-bool long_pair_equals(const long_pair * t1, const long_pair * t2, type * type);
-int long_pair_naturalorder(const long_pair * t1,const long_pair * t2, type * type);
+long_pair * long_pair_parse(long_pair * out, char * text);
+char * long_pair_tostring(const long_pair * p, char * mem);
+bool long_pair_equals(const long_pair * t1, const long_pair * t2);
+int long_pair_naturalorder(const long_pair * t1,const long_pair * t2);
 
 #define to_long_pair(a) *(long_pair *) a
 
@@ -224,10 +224,10 @@ int punto_ord_distancia_al_origen(const punto * p1, const punto * p2);
 Cuadrante punto_cuadrante(const punto * p);
 
 punto punto_parse_s(char * text);
-punto * punto_parse(punto * out, char * text, type * type);
-char * punto_tostring(const punto * p, char * mem, type * type);
-bool punto_equals(const punto * p1, const punto * p2, type * type);
-int punto_naturalorder(const punto * t1,const  punto * t2, type * type);
+punto * punto_parse(punto * out, char * text);
+char * punto_tostring(const punto * p, char * mem);
+bool punto_equals(const punto * p1, const punto * p2);
+int punto_naturalorder(const punto * t1,const  punto * t2);
 
 #define to_punto(a) *(punto *) a
 
@@ -289,10 +289,10 @@ typedef struct {
 	char * data;
 }string_var;
 
-string_var * string_var_parse(string_var * out, char * text, type * type);
-char * string_var_tostring(const string_var * e, char * mem, type * type);
-bool string_var_equals(const string_var * e1, const string_var * e2, type * type);
-int string_var_naturalorder(const string_var * e1,const  string_var * e2, type * type);
+string_var * string_var_parse(string_var * out, char * text);
+char * string_var_tostring(const string_var * e, char * mem);
+bool string_var_equals(const string_var * e1, const string_var * e2);
+int string_var_naturalorder(const string_var * e1,const  string_var * e2);
 
 
 extern type string_var_type;
@@ -333,10 +333,10 @@ char * string_fix_concat(char * out, const char * in, type * t);
 char * string_fix_copy(char * out, const char * in, type * t);
 char * string_fix_remove_eol(char * out, char * in);
 
-char * string_fix_parse(char * out, char * text, type * type);
-char * string_fix_tostring(const char * e, char * mem, type * type);
-bool string_fix_equals(const char * e1, const char * e2, type * type);
-int string_fix_naturalorder(const char * e1,const char * e2, type * type);
+char * string_fix_parse(char * out, char * text);
+char * string_fix_tostring(const char * e, char * mem);
+bool string_fix_equals(const char * e1, const char * e2);
+int string_fix_naturalorder(const char * e1,const char * e2);
 
 bool string_fix_is_empty(char * in);
 bool string_fix_not_is_empty(char * in);

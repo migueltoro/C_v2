@@ -218,21 +218,21 @@ int int_parse_s(char * text){
 	return p;
 }
 
-int * int_parse(int * out, char * text, type * type){
+int * int_parse(int * out, char * text){
 	sscanf(text,"%d",out);
 	return out;
 }
 
-char * int_tostring(const int * e, char * mem, type * type){
+char * int_tostring(const int * e, char * mem){
     sprintf(mem,"%d",*e);
     return mem;
 }
 
-bool int_equals(const int * e1, const int * e2, type * type){
+bool int_equals(const int * e1, const int * e2){
     return *e1 == *e2;
 }
 
-int int_naturalorder(const int * e1,const int * e2, type * type){
+int int_naturalorder(const int * e1,const int * e2){
     int a = *e1;
     int b = *e2;
     int r;
@@ -246,23 +246,23 @@ type int_type = {"int",int_equals,int_tostring,int_naturalorder,int_parse,free_0
 
 // char type
 
-char * char_parse(char * out, char * text, type * type){
+char * char_parse(char * out, char * text){
 	sscanf(text,"%c",out);
 	return out;
 }
 
-char * char_tostring(const char * e, char * mem, type * type){
+char * char_tostring(const char * e, char * mem){
     sprintf(mem,"%c",*e);
     return mem;
 }
 
-bool char_equals(const char * e1, const char * e2, type * type){
+bool char_equals(const char * e1, const char * e2){
 	char r1 = *e1;
 	char r2 = *e2;
 	return r1 == r2;
 }
 
-int char_naturalorder(const char * e1,const char * e2, type * type){
+int char_naturalorder(const char * e1,const char * e2){
     int a = *e1;
     int b = *e2;
     int r;
@@ -276,24 +276,24 @@ type char_type = {"char",char_equals, char_tostring, char_naturalorder, char_par
 
 // bool type
 
-bool * bool_parse(bool * out, char * in, type * type) {
+bool * bool_parse(bool * out, char * in) {
 	sscanf(in,"%d",out);
 	return out;
 }
 
-char * bool_tostring(const bool * e, char * out, type * type) {
+char * bool_tostring(const bool * e, char * out) {
 	bool r = *e;
 	sprintf(out,"%s",r?"true":"false");
     return out;
 }
 
-bool bool_equals(const bool * e1, const bool * e2, type * type) {
+bool bool_equals(const bool * e1, const bool * e2) {
 	bool r1 = *e1;
 	bool r2 = *e2;
 	return r1 == r2;
 }
 
-int bool_naturalorder(const bool * e1,const bool * e2, type * type) {
+int bool_naturalorder(const bool * e1,const bool * e2) {
     int a = *e1;
     int b = *e2;
     int r;
@@ -314,21 +314,21 @@ long long_parse_s(char * text){
 	return p;
 }
 
-long * long_parse(long * out, char * text, type * type){
+long * long_parse(long * out, char * text){
 	sscanf(text,"%ld",out);
 	return out;
 }
 
-char * long_tostring(const long * e, char * mem, type * type){
+char * long_tostring(const long * e, char * mem){
     sprintf(mem,"%ld",*e);
     return mem;
 }
 
-bool long_equals(const long * e1,const long * e2, type * type){
+bool long_equals(const long * e1,const long * e2){
     return *e1 == *e2;
 }
 
-int long_naturalorder(const long * e1,const long * e2, type * type){
+int long_naturalorder(const long * e1,const long * e2){
     long a = *e1;
     long b = *e2;
     long r;
@@ -349,21 +349,21 @@ long long long_long_parse_s(char * text){
 	return p;
 }
 
-long long * long_long_parse(long long * out, char * text, type * type){
+long long * long_long_parse(long long * out, char * text){
 	sscanf(text,"%lld",out);
 	return out;
 }
 
-char * long_long_tostring(const long long * e, char * mem, type * type){
+char * long_long_tostring(const long long * e, char * mem){
     sprintf(mem,"%lld",*e);
     return mem;
 }
 
-bool long_long_equals(const long long * e1,const long long * e2, type * type){
+bool long_long_equals(const long long * e1,const long long * e2){
     return *e1 == *e2;
 }
 
-int long_long_naturalorder(const long long * e1,const long long * e2, type * type){
+int long_long_naturalorder(const long long * e1,const long long * e2){
     long a = *e1;
     long b = *e2;
     long r;
@@ -384,21 +384,21 @@ float float_parse_s(char * text){
 	return p;
 }
 
-float * float_parse(float * out, char * text, type * type){
+float * float_parse(float * out, char * text){
 	sscanf(text,"%f",out);
 	return out;
 }
 
-char * float_tostring(const float * e, char * mem, type * type){
+char * float_tostring(const float * e, char * mem){
     sprintf(mem,"%.2f",*e);
     return mem;
 }
 
-bool float_equals(const float * e1, const float * e2, type * type){
+bool float_equals(const float * e1, const float * e2){
     return *e1 == *e2;
 }
 
-int float_naturalorder(const float * e1, const float * e2, type * type){
+int float_naturalorder(const float * e1, const float * e2){
     float a = *e1;
     float b = *e2;
     int r;
@@ -419,21 +419,21 @@ double double_parse_s(char * text){
 	return p;
 }
 
-double * double_parse(double * out, char * text, type * type){
+double * double_parse(double * out, char * text){
 	sscanf(text,"%lf",out);
 	return out;
 }
 
-char * double_tostring(const double * e, char * mem, type * type){
+char * double_tostring(const double * e, char * mem){
     sprintf(mem,"%0.2lf",*e);
     return mem;
 }
 
-bool double_equals(const double * e1, const double * e2, type * type){
+bool double_equals(const double * e1, const double * e2){
     return *e1 == *e2;
 }
 
-int double_naturalorder(const double * e1, const double * e2, type * type){
+int double_naturalorder(const double * e1, const double * e2){
     double a = *e1;
     double b = *e2;
     int r;
@@ -454,25 +454,25 @@ int_pair int_pair_parse_s(char * text){
 	return p;
 }
 
-int_pair * int_pair_parse(int_pair * out, char * text, type * type){
+int_pair * int_pair_parse(int_pair * out, char * text){
 	sscanf(text,"(%d,%d)",&out->a,&out->b);
 	return out;
 }
 
-char * int_pair_tostring(const int_pair * p, char * mem, type * type){
+char * int_pair_tostring(const int_pair * p, char * mem){
 	sprintf(mem,"(%d,%d)",p->a,p->b);
 	return mem;
 }
 
-bool int_pair_equals(const int_pair * p1, const int_pair * p2, type * type){
+bool int_pair_equals(const int_pair * p1, const int_pair * p2){
 	return p1->a == p2->a && p1->b == p2->b;
 }
 
-int int_pair_naturalorder(const int_pair * p1, const int_pair * p2, type * type){
+int int_pair_naturalorder(const int_pair * p1, const int_pair * p2){
 	int_pair np1 = *p1;
 	int_pair np2 = *p2;
-	int r  = int_naturalorder(&np1.a,&np2.a,NULL);
-	if(r==0) r  = int_naturalorder(&np1.b,&np2.b,NULL);
+	int r  = int_naturalorder(&np1.a,&np2.a);
+	if(r==0) r  = int_naturalorder(&np1.b,&np2.b);
 	return r;
 }
 
@@ -489,25 +489,25 @@ long_pair long_pair_parse_s(char * text){
 	return p;
 }
 
-long_pair * long_pair_parse(long_pair * out, char * text, type * type){
+long_pair * long_pair_parse(long_pair * out, char * text){
 	sscanf(text,"(%ld,%ld)",&out->a,&out->b);
 	return out;
 }
 
-char * long_pair_tostring(const long_pair * p, char * mem, type * type){
+char * long_pair_tostring(const long_pair * p, char * mem){
 	sprintf(mem,"(%ld,%ld)",p->a,p->b);
 	return mem;
 }
 
-bool long_pair_equals(const long_pair * p1, const long_pair * p2, type * type){
+bool long_pair_equals(const long_pair * p1, const long_pair * p2){
 	return p1->a == p2->a && p1->b == p2->b;
 }
 
-int long_pair_naturalorder(const long_pair * p1, const long_pair * p2, type * type){
+int long_pair_naturalorder(const long_pair * p1, const long_pair * p2){
 	long_pair np1 = *p1;
 	long_pair np2 = *p2;
-	int r  = long_naturalorder(&np1.a,&np2.a,NULL);
-	if(r==0) r  = long_naturalorder(&np1.b,&np2.b,NULL);
+	int r  = long_naturalorder(&np1.a,&np2.a);
+	if(r==0) r  = long_naturalorder(&np1.b,&np2.b);
 	return r;
 }
 
@@ -536,7 +536,7 @@ punto punto_parse_s(char * text){
 	return pt;
 }
 
-punto * punto_parse(punto * out, char * text, type * type){
+punto * punto_parse(punto * out, char * text){
 	sscanf(text,"(%lf,%lf)",&out->x,&out->y);
 	return out;
 }
@@ -547,19 +547,19 @@ double punto_distancia_al_origen(const punto * p){
 	return sqrt(x2+y2);
 }
 
-char * punto_tostring(const punto * p, char * mem, type * type){
+char * punto_tostring(const punto * p, char * mem){
 	sprintf(mem,"(%.2lf,%.2lf)",p->x,p->y);
 	return mem;
 }
 
-bool punto_equals(const punto * p1, const punto * p2, type * type){
+bool punto_equals(const punto * p1, const punto * p2){
 	return p1->x == p2->x && p1->y == p2->y;
 }
 
-int punto_naturalorder(const punto * p1, const punto * p2, type * type){
+int punto_naturalorder(const punto * p1, const punto * p2){
 	double d1 = punto_distancia_al_origen(p1);
 	double d2 = punto_distancia_al_origen(p2);
-	return double_naturalorder(&d1,&d2,NULL);
+	return double_naturalorder(&d1,&d2);
 }
 
 type punto_type = {"punto",punto_equals,punto_tostring,punto_naturalorder,punto_parse,free_0,
@@ -833,21 +833,21 @@ void string_var_free(string_var * in, type * t){
 	free(st->data);
 }
 
-string_var * string_var_parse(string_var * out, char * text, type * type){
+string_var * string_var_parse(string_var * out, char * text){
 	string_var_add_string_fix(out,text);
 	return out;
 }
 
-char * string_var_tostring(const string_var * e, char * mem, type * type) {
+char * string_var_tostring(const string_var * e, char * mem) {
 	strcpy(mem,e->data);
 	return mem;
 }
 
-bool string_var_equals(const string_var * e1, const string_var * e2, type * type) {
+bool string_var_equals(const string_var * e1, const string_var * e2) {
 	return strcmp(e1->data, e2->data) == 0;
 }
 
-int string_var_naturalorder(const string_var * e1, const string_var * e2, type * type) {
+int string_var_naturalorder(const string_var * e1, const string_var * e2) {
 	return strcmp(e1->data, e2->data);
 }
 
@@ -949,21 +949,21 @@ char * string_fix_copy(char * out, const char * in, type * t){
 	return out;
 }
 
-char * string_fix_parse(char * out, char * text, type * type){
+char * string_fix_parse(char * out, char * text){
 	strcpy(out,text);
 	return out;
 }
 
-char * string_fix_tostring(const char * e, char * mem, type * type){
+char * string_fix_tostring(const char * e, char * mem){
 	strcpy(mem,e);
 	return mem;
 }
 
-bool string_fix_equals(const char * e1, const char * e2, type * type){
+bool string_fix_equals(const char * e1, const char * e2){
 	return strcmp(e1,e2) == 0;
 }
 
-int string_fix_naturalorder(const char * e1,const char * e2, type * type){
+int string_fix_naturalorder(const char * e1,const char * e2){
 	return strcmp(e1,e2);
 }
 
@@ -1022,7 +1022,7 @@ void test_string(){
 	printf("3: %d,%.2lf,%d\n",a,b,c);
 	char pt[] = "(3.4,-7.9)";
 	punto p = punto_parse_s(pt);
-	printf("4: %s\n",punto_tostring(&p,mem,NULL));
+	printf("4: %s\n",punto_tostring(&p,mem));
 	char pa[] = "(4,-9)";
 	int_pair pp = int_pair_parse_s(pa);
 	printf("5: %s\n",tostring(&pp,mem,&int_pair_type));

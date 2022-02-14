@@ -15,10 +15,7 @@
 #include "map.h"
 
 
-typedef struct {
-	map hash_table;
-	type * value_type;
-} list_multimap;
+typedef map list_multimap;
 
 
 list_multimap list_multimap_empty(type * key_type, type * value_type);
@@ -41,10 +38,7 @@ void list_multimap_free(list_multimap * lm);
 
 void test_list_multimap();
 
-typedef struct {
-	map hash_table;
-	type * value_type;
-} set_multimap;
+typedef map set_multimap;
 
 set_multimap set_multimap_empty(type * key_type, type * value_type);
 int set_multimap_size(set_multimap * table);

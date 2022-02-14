@@ -46,7 +46,7 @@ int main() {
 //test_types();
 //test_generic_types_2();
 //test_types_1();
-//test_string();
+test_string();
 //test_math2();
 //test_ejemplos1();
 //test_ejemplos_files();
@@ -54,7 +54,7 @@ int main() {
 //test_token();
 //test_tokenizer();
 //test_tupla();
-//test_list_9();
+//test_list_3();
 //test_map();
 //test_dates_2("ficheros/fechas_2.txt");
 //test_set_2();
@@ -72,6 +72,6 @@ int main() {
 //test_matrices_3();
 //test_histograma();
 //test_accumulators_0(); //("ficheros/quijote.txt");
-test_accumulators_11();
+//test_accumulators_11();
 }
 

@@ -22,11 +22,11 @@ typedef struct {
 }marca;
 
 marca marca_of(time_t time, coordenadas_3d coordenadas);
-marca * marca_parse(marca * out, const char * in, type * t);
-char * marca_tostring(marca * m, char * mem, type * t);
+marca * marca_parse(marca * out, const char * in);
+char * marca_tostring(marca * m, char * mem);
 
-bool marca_equals(const marca * e1, const marca * e2, type * t);
-int marca_naturalorder(const marca * e1, const marca * e2, type * t);
+bool marca_equals(const marca * e1, const marca * e2);
+int marca_naturalorder(const marca * e1, const marca * e2);
 
 
 extern type marca_type;

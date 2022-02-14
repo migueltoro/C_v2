@@ -26,10 +26,10 @@ typedef struct {
 }smax;
 
 smax smax_of(int li,int ls,int suma);
-int * smax_parse(smax * out, char * text, type * t);
-char * smax_tostring(const smax * e, char * mem, type * t);
-bool smax_equals(const smax * e1, const smax * e2, type * t);
-int smax_naturalorder(const smax * e1,const smax * e2, type * t);
+int * smax_parse(smax * out, char * text);
+char * smax_tostring(const smax * e, char * mem);
+bool smax_equals(const smax * e1, const smax * e2);
+int smax_naturalorder(const smax * e1,const smax * e2);
 
 extern type smax_type;
 

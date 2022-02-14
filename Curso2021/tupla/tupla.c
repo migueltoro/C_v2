@@ -12,21 +12,21 @@ smax smax_of(int li,int ls,int suma){
 	return s;
 }
 
-int * smax_parse(smax * out, char * text, type * t){
+int * smax_parse(smax * out, char * text){
 	sscanf(text,"(%d,%d,%d)",&(out->li),&(out->ls),&(out->suma));
 	return out;
 }
 
-char * smax_tostring(const smax * e, char * mem, type * t){
+char * smax_tostring(const smax * e, char * mem){
     sprintf(mem,"(%d,%d,%d)",e->li,e->ls,e->suma);
     return mem;
 }
 
-bool smax_equals(const smax * e1, const smax * e2, type * t){
+bool smax_equals(const smax * e1, const smax * e2){
     return e1->li == e2->li && e1->ls == e2->ls && e1->suma == e2->suma;
 }
 
-int smax_naturalorder(const smax * e1,const smax * e2, type * t){
+int smax_naturalorder(const smax * e1,const smax * e2){
     int a = e1->suma;
     int b = e2->suma;
     int r;

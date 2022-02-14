@@ -20,7 +20,7 @@ list niveles_cumplen_predicado_1(tree * t) {
 			level = tree_level(t, 0);
 		} else {
 			list level_t = tree_next_level(&level);
-			list_free(&level);
+			list_free(&level,NULL);
 			level = level_t;
 		}
 		list lev_2 = list_filter(&level, tree_is_not_empty);
@@ -28,11 +28,11 @@ list niveles_cumplen_predicado_1(tree * t) {
 		iterator it = list_iterable(&lev_label);
 		bool b = iterable_all(&it, es_primo_f);
 		list_add(&r, &b);
-		list_free(&lev_2);
-		list_free(&lev_label);
+		list_free(&lev_2,NULL);
+		list_free(&lev_label,NULL);
 		iterable_free(&it);
 	}
-	list_free(&level);
+	list_free(&level,NULL);
 	return r;
 }
 
@@ -88,9 +88,9 @@ void test_ejemplos_trees_1() {
 		tree * t = tree_parse(line);
 		tree * t2 = tree_map(t, &int_type, int_parse);
 		list r = niveles_cumplen_predicado_2(t2,pp);
-		printf("Tree = %s, Niveles = %s\n",tree_tostring(t2,mem),list_tostring(&r,mem2));
 		heap_clear(&heap_tree);
-		list_free(&r);
+		printf("Tree = %s, Niveles = %s\n",tree_tostring(t2,mem),list_tostring(&r,mem2));
+		list_free(&r,NULL);
 	}
 	iterable_free(&it);
 }
