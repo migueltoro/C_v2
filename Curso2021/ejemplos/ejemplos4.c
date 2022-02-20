@@ -13,7 +13,7 @@ void testEjercicio1(char * path){
 	list listaPrimos = list_empty(&int_type);
 	while(iterable_has_next(&it)){
 		char * linea = (char*) iterable_next(&it);
-		iterator it2 = text_to_iterable_string_fix_tam(linea, " ,",string_fix_tam);
+		iterator it2 = iterable_split_text_tam(linea, " ,",string_fix_tam);
 		while(iterable_has_next(&it2)){
 			char *trozos = (char*) iterable_next(&it2);
 			int num  = int_parse_s(trozos);

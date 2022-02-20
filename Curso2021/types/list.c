@@ -151,7 +151,7 @@ list list_of_list_of_file_type(char * file, type * t, char * sep, int tam_line, 
 	while(iterable_has_next(&it1)) {
 	      char* linea = (char*)iterable_next(&it1);
 	      list ls = list_empty(type_copy(t,NULL));
-	      iterator it2 = text_to_iterable_string_fix_tam(linea,sep,tam_word);
+	      iterator it2 = iterable_split_text_tam(linea,sep,tam_word);
 	      while(iterable_has_next(&it2)) {
 	    	  	char * tx = iterable_next(&it2);
 	            void * e = parse(mem,tx,t);
@@ -350,7 +350,7 @@ bool list_equals(const list * ls1, const list * ls2) {
 string_fix list_delimiters = "[ ,]";
 
 list * list_parse(list * out, char * text) {
-	iterator it = text_to_iterable_string_fix_tam(text,list_delimiters,string_fix_tam);
+	iterator it = iterable_split_text_tam(text,list_delimiters,string_fix_tam);
 	char tmp[out->type->size];
 	while(iterable_has_next(&it)){
 		void * txt = iterable_next(&it);
@@ -363,7 +363,7 @@ list * list_parse(list * out, char * text) {
 
 list list_parse_s(char * text) {
 	list res = list_empty(&string_fix_type);
-	iterator it = text_to_iterable_string_fix_tam(text, list_delimiters,string_fix_tam);
+	iterator it = iterable_split_text_tam(text, list_delimiters,string_fix_tam);
 	while(iterable_has_next(&it)){
 			void * e = iterable_next(&it);
 			list_add(&res,e);

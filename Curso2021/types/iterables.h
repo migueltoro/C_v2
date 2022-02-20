@@ -61,9 +61,9 @@ iterator iterable_file_string_fix(char * file);
 iterator iterable_file_string_fix_tam(char * file, int line_tam);
 iterator iterable_words_in_file(char * file, int line_tam, int word_tam, char * sep);
 iterator iterable_words_and_line_in_file(char * file, int init, int line_tam, int word_tam, char * sep);
-iterator text_to_iterable_string_fix(char * text, const char * delimiters);
-iterator text_to_iterable_string_fix_tam(char * text, const char * delimiters, int tam);
-iterator * text_to_iterable_string_fix_function(char * text);
+iterator iterable_split_text(char * text, const char * delimiters);
+iterator iterable_split_text_tam(char * text, const char * delimiters, int tam);
+iterator * iterable_split_text_function(char * text);
 iterator iterable_random_long(long n, long a, long b);
 
 iterator iterable_primos(int a, int b);

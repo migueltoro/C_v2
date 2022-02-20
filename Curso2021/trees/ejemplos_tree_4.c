@@ -34,7 +34,7 @@ bool existe_camino(binary_tree* t, list * ls){
 }
 
 list list_parse_2(char * text) {
-	iterator it = text_to_iterable_string_fix_tam(text," ,[]",string_fix_tam);
+	iterator it = iterable_split_text_tam(text," ,[]",string_fix_tam);
 	list r = list_empty(&char_type);
 	while (iterable_has_next(&it)) {
 		char * e1 = (char*) iterable_next(&it);
@@ -52,7 +52,7 @@ void test_ejemplos_trees_4() {
 	iterator it = iterable_file_string_fix("ficheros/trees_4.txt");
 	while (iterable_file_has_next(&it)) {
 		char* line = (char*) iterable_file_next(&it);
-		iterator it2 = text_to_iterable_string_fix_tam(line,"#",string_fix_tam);
+		iterator it2 = iterable_split_text_tam(line,"#",string_fix_tam);
 		char * tree_line = iterable_next(&it2);
 		char * list_line = iterable_next(&it2);
 		binary_tree * t = binary_tree_parse(tree_line);

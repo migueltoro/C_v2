@@ -390,11 +390,11 @@ void dependencies_split_free(dp_split * ds){
 	free(ds);
 }
 
-iterator text_to_iterable_string_fix(char * text, const char * delimiters){
-	return text_to_iterable_string_fix_tam(text,delimiters,string_fix_tam);
+iterator iterable_split_text(char * text, const char * delimiters){
+	return iterable_split_text_tam(text,delimiters,string_fix_tam);
 }
 
-iterator text_to_iterable_string_fix_tam(char * text, const char * delimiters, int tam) {
+iterator iterable_split_text_tam(char * text, const char * delimiters, int tam) {
 	type t = string_fix_type_of_tam(tam);
 	if(string_fix_all_space(text)) return iterable_empty(type_copy(&t,NULL));
 	dp_split dp;
@@ -414,8 +414,8 @@ string_fix text_to_iterable_delimiters = " ,;.()";
 
 int string_fix_function_tam;
 
-iterator * text_to_iterable_string_fix_function(char * text) {
-	iterator it = text_to_iterable_string_fix_tam(text, text_to_iterable_delimiters,string_fix_function_tam);
+iterator * iterable_split_text_function(char * text) {
+	iterator it = iterable_split_text_tam(text, text_to_iterable_delimiters,string_fix_function_tam);
 	return iterable_copy_new(&it);
 }
 
@@ -429,8 +429,8 @@ void free_dependencies_file(dp_file * df){
 	free(df);
 }
 
-bool iterable_file_has_next(iterator * c_iterable) {
-	dp_file * dp = (dp_file *) c_iterable->dp;
+bool iterable_file_has_next(iterator * c_it) {
+	dp_file * dp = (dp_file *) c_it->dp;
 	return dp->has_next;
 }
 
@@ -448,7 +448,7 @@ iterator iterable_file_string_fix(char * file) {
 	return iterable_file_string_fix_tam(file,string_fix_tam);
 }
 
-iterator iterable_file_string_fix_tam(char * file, int n) {
+iterator iterable_file_string_fix_tam(char * file, int line_tam) {
 	FILE * st = fopen(file,"r");
 	char  ms[Tam_String];
 	if(st==NULL) sprintf(ms,"no se encuentra el fichero %s",file);
@@ -457,11 +457,11 @@ iterator iterable_file_string_fix_tam(char * file, int n) {
 	int size_dp = sizeof(dp_file);
 	void * dp_p = malloc(size_dp);
 	memcpy(dp_p,&dp,size_dp);
-	type t = string_fix_type_of_tam(n);
+	type t = string_fix_type_of_tam(line_tam);
 	iterator it_file = iterable_create(type_copy(&t,NULL),iterable_file_has_next,iterable_file_next,
 			dp_p,size_dp,free_dependencies_file);
 	dp_file * dp2 = (dp_file *)it_file.dp;
-	char * r = fgets(it_file.state,n,dp2->file);
+	char * r = fgets(it_file.state,line_tam,dp2->file);
 	dp2->has_next = r!=NULL;
 	return it_file;
 }
@@ -471,7 +471,7 @@ iterator iterable_words_in_file(char *file, int line_tam, int word_tam, char * s
 	strcpy(text_to_iterable_delimiters,sep);
 	iterator r1 = iterable_file_string_fix_tam(file, line_tam);
 	string_fix_function_tam = word_tam;
-	iterator r2 = iterable_flatmap(iterable_copy_new(&r1), type_copy(&t,NULL),text_to_iterable_string_fix_function);
+	iterator r2 = iterable_flatmap(iterable_copy_new(&r1), type_copy(&t,NULL),iterable_split_text_function);
 	return r2;
 }
 
@@ -488,7 +488,7 @@ iterator * enumerate_expand_f(enumerate * in){
 	int counter = in->counter;
 	char * value = in->value;
 	counter_expand = counter;
-	iterator r = text_to_iterable_string_fix_tam(value,text_to_iterable_delimiters,word_tam_expand);
+	iterator r = iterable_split_text_tam(value,text_to_iterable_delimiters,word_tam_expand);
 	iterator r2 = iterable_map(&r,type_expand,word_to_enumerate);
 	return iterable_copy_new(&r2);
 }
@@ -656,15 +656,15 @@ void test_iterables_1() {
 void test_iterables_2() {
 	char delimiters[] = " ,;.()";
 	char text1[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
-	iterator sp = text_to_iterable_string_fix_tam(text1,delimiters,40);
+	iterator sp = iterable_split_text_tam(text1,delimiters,40);
 	iterable_to_console(&sp);
 	printf("\n_______________\n");
 	char text2[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
-	iterator * p3 = text_to_iterable_string_fix_function(text2);
+	iterator * p3 = iterable_split_text_function(text2);
 	iterable_to_console(p3);
 	printf("\n_______________\n");
 	char text3[] = "Quédese eso del barbero a mi cargo, dijo SAncho, y al de vuestra merced se quede el procurar venir a ser rey y el hacerme conde. Así será, respondió Don Quijote. ";
-	p3 = text_to_iterable_string_fix_function(text3);
+	p3 = iterable_split_text_function(text3);
 	iterable_to_console(p3);
 }
 
@@ -680,12 +680,12 @@ void test_iterables_3(){
 	string_fix_copy(text_to_iterable_delimiters," ,",&string_fix_type);
 	iterator r = iterable_file_string_fix_tam("ficheros/quijote.txt",50);
 	string_fix_function_tam = 15;
-	iterator r2 = iterable_flatmap(&r,&t,text_to_iterable_string_fix_function);
+	iterator r2 = iterable_flatmap(&r,&t,iterable_split_text_function);
 //	iterable_to_console_sep(&r2,",","{","}");
 	printf("%d\n",iterable_size(&r2));
 	printf("\n_________________\n");
 	char text[] = "(23....,45.)";
-	iterator it = text_to_iterable_string_fix_tam("(23....,45.)"," ,.()",20);
+	iterator it = iterable_split_text_tam("(23....,45.)"," ,.()",20);
 	iterable_to_console_sep(&it,",","{","}");
 }
 

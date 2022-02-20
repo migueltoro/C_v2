@@ -46,7 +46,7 @@ void lecturaFichero1Iter(char * fichero) {
 	list l = leeFichero1(fichero);
 	int i = 0;
 	while (i < l.size) {
-		iterator it2 = text_to_iterable_string_fix_tam(list_get(&l, i), "#",string_fix_tam);
+		iterator it2 = iterable_split_text_tam(list_get(&l, i), "#",string_fix_tam);
 		char* a = (char*) iterable_next(&it2);
 		char* b = (char*) iterable_next(&it2);
 		printf("Entrada: (%s,%s) \n", a, b);

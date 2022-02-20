@@ -104,7 +104,7 @@ bool set_equals(const set * s1, const set * s2) {
 }
 
 set * set_parse(set * out, char * text) {
-	iterator it = text_to_iterable_string_fix_tam(text, "{ ,}",string_fix_tam);
+	iterator it = iterable_split_text_tam(text, "{ ,}",string_fix_tam);
 	char tmp[out->key_type->size];
 	tmp_type = out->key_type;
 	while(iterable_has_next(&it)) {
@@ -118,7 +118,7 @@ set * set_parse(set * out, char * text) {
 
 set set_parse_s(char * text) {
 	set res = set_empty(&string_fix_type);
-	iterator it = text_to_iterable_string_fix_tam(text, "{ ,}",string_fix_tam);
+	iterator it = iterable_split_text_tam(text, "{ ,}",string_fix_tam);
 	while(iterable_has_next(&it)) {
 		set_add(&res, iterable_next(&it));
 	}

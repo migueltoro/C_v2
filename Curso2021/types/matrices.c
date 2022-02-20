@@ -25,7 +25,7 @@ matrix matrix_of_file(char *file, type *type, int nf, int nc) {
 	int f = 0;
 	while (iterable_has_next(&it1)) {
 		char *linea = (char*) iterable_next(&it1);
-		iterator it2 = text_to_iterable_string_fix_tam(linea," ,",50);
+		iterator it2 = iterable_split_text_tam(linea," ,",50);
 		int c = 0;
 		while (iterable_has_next(&it2)) {
 			char *tx = iterable_next(&it2);

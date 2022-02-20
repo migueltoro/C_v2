@@ -579,29 +579,29 @@ void test_accumulators_3() {
 	printf("2.1:  \n%ld\n", r7);
 	char text[] =
 			"El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
-	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	iterator p3 = iterable_split_text_tam(text, " ;.", 20);
 	string_var emp = string_var_empty();
 	void *sr = accumulate_left(&p3, &emp, str_var_cat);
 	printf("10: %s\n", string_var_tostring(sr, mem));
-	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	p3 = iterable_split_text_tam(text, " ;.", 20);
 	emp = string_var_empty();
 	sr = accumulate_right(&p3, &emp, str_var_cat);
 	printf("11: %s\n", string_var_tostring(sr, mem));
-	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	p3 = iterable_split_text_tam(text, " ;.", 20);
 	char b[10000];
 	void *r2 = accumulate_left(&p3, b, str_cat);
 	printf("12: %s\n", b);
-	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	p3 = iterable_split_text_tam(text, " ;.", 20);
 	b[0] = '\0';
 	r2 = accumulate_right(&p3, b, str_cat);
 	printf("13: %s\n", b);
 	printf("14: %d\n", strlen(b));
-	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	p3 = iterable_split_text_tam(text, " ;.", 20);
 	type t = string_fix_type_of_tam(20);
 	list ls = list_empty(&t);
 	r2 = accumulate_left(&p3,&ls,list_add);
 	printf("15: %s\n", list_tostring(&ls,mem));
-	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	p3 = iterable_split_text_tam(text, " ;.", 20);
 	list_clear(&ls);
 	r2 = accumulate_right(&p3,&ls,list_add);
 	printf("16: %s\n",list_tostring(&ls,mem));
@@ -622,11 +622,11 @@ void test_accumulators_4() {
 
 void test_accumulators_5() {
 	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
-	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	iterator p3 = iterable_split_text_tam(text, " ;.", 20);
 	char b[10000];
 	void *r2 = accumulate_left(&p3, b, str_cat);
 	printf("1: %s\n", b);
-	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	p3 = iterable_split_text_tam(text, " ;.", 20);
 	b[0] = '\0';
 	r2 = accumulate_right(&p3, b, str_cat);
 	printf("2: %s\n", b);
@@ -635,7 +635,7 @@ void test_accumulators_5() {
 void test_accumulators_6() {
 	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
 	char p[20];
-	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	iterator p3 = iterable_split_text_tam(text, " ;.", 20);
 	char * s = (char *) reduce_left(&p3,p,max_len);
 	printf("%s\n",s);
 }
@@ -652,10 +652,10 @@ void test_accumulators_7() {
 	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
 	char p[20] = "No existe";
 	c = 'x';
-	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	iterator p3 = iterable_split_text_tam(text, " ;.", 20);
 	void * s = accumulate_left(&p3,p,p_palabra);
 	printf("%s\n",s);
-	p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	p3 = iterable_split_text_tam(text, " ;.", 20);
 	s = accumulate_right(&p3,p,p_palabra);
 	printf("%s\n",s);
 }
@@ -663,7 +663,7 @@ void test_accumulators_7() {
 void test_accumulators_8() {
 	char mem[1000];
 	char text[] = "El    Gobierno abre la puerta a no;llevar los Presupuestos.Generales de 2019 al Congreso si no logra los apoyos suficientes para sacarlos adelante. Esa opción que ya deslizaron fuentes próximas al presidente la ha confirmado la portavoz, Isabel Celaá, en la rueda de prensa posterior a la reunión del gabinete en la que ha asegurado que el Consejo de Ministras tomará la decisión sobre llevar o no las cuentas públicas al Parlamento una vez concluyan las negociaciones de la ministra María Jesús Montero. ";
-	iterator p3 = text_to_iterable_string_fix_tam(text, " ;.", 20);
+	iterator p3 = iterable_split_text_tam(text, " ;.", 20);
 	multiset r = iterable_to_multiset(&p3);
 	iterator ir = multiset_iterable(&r);
 	iterable_to_console_sep(&ir,"\n","","");
