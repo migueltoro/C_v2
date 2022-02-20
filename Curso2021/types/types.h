@@ -177,13 +177,13 @@ extern type double_type;
 typedef struct{
 	int a;
 	int b;
-}int_pair;
+}pair_int;
 
-int_pair int_pair_parse_s(char * text);
-int_pair * int_pair_parse(int_pair * out, char * text);
-char * int_pair_tostring(const int_pair * p, char * mem);
-bool int_pair_equals(const int_pair * t1, const int_pair * t2);
-int int_pair_naturalorder(const int_pair * t1,const int_pair * t2);
+pair_int int_pair_parse_s(char * text);
+pair_int * int_pair_parse(pair_int * out, char * text);
+char * int_pair_tostring(const pair_int * p, char * mem);
+bool int_pair_equals(const pair_int * t1, const pair_int * t2);
+int int_pair_naturalorder(const pair_int * t1,const pair_int * t2);
 
 #define to_int_pair(a) *(int_pair *) a
 
@@ -194,44 +194,50 @@ extern type int_pair_type;
 typedef struct{
 	long a;
 	long b;
-}long_pair;
+}pair_long;
 
-long_pair long_pair_parse_s(char * text);
-long_pair * long_pair_parse(long_pair * out, char * text);
-char * long_pair_tostring(const long_pair * p, char * mem);
-bool long_pair_equals(const long_pair * t1, const long_pair * t2);
-int long_pair_naturalorder(const long_pair * t1,const long_pair * t2);
+pair_long long_pair_parse_s(char * text);
+pair_long * long_pair_parse(pair_long * out, char * text);
+char * long_pair_tostring(const pair_long * p, char * mem);
+bool long_pair_equals(const pair_long * t1, const pair_long * t2);
+int long_pair_naturalorder(const pair_long * t1,const pair_long * t2);
 
 #define to_long_pair(a) *(long_pair *) a
 
 extern type long_pair_type;
+
 
 // punto
 
 typedef struct {
 	double x;
 	double y;
-} double_pair;
+} pair_double;
 
 
-typedef enum {PRIMERO,SEGUNDO,TERCERO,CUARTO} Cuadrante;
+pair_double pair_double_parse_s(char * text);
+pair_double * pair_double_parse(pair_double * out, char * text);
+char * pair_double_tostring(const pair_double * p, char * mem);
+bool pair_double_equals(const pair_double * p1, const pair_double * p2);
+int pair_double_naturalorder(const pair_double * t1,const  pair_double * t2);
 
-
-double punto_distancia_al_origen(const double_pair * p);
-int punto_ord_distancia_al_origen(const double_pair * p1, const double_pair * p2);
-
-
-Cuadrante punto_cuadrante(const double_pair * p);
-
-double_pair punto_parse_s(char * text);
-double_pair * punto_parse(double_pair * out, char * text);
-char * punto_tostring(const double_pair * p, char * mem);
-bool punto_equals(const double_pair * p1, const double_pair * p2);
-int punto_naturalorder(const double_pair * t1,const  double_pair * t2);
+pair_double pair_double_of(double x, double y);
 
 #define to_pair_double(a) *(pair_double *) a
 
 extern type pair_double_type;
+
+typedef pair_double punto;
+
+typedef enum {PRIMERO,SEGUNDO,TERCERO,CUARTO} Cuadrante;
+
+double punto_distancia_al_origen(const punto * p);
+int punto_ord_distancia_al_origen(const punto * p1, const punto * p2);
+
+
+punto punto_of(double x, double y);
+
+Cuadrante punto_cuadrante(const punto * p);
 
 // pair type
 

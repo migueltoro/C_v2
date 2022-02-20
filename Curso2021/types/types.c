@@ -448,75 +448,111 @@ type double_type = {"double",double_equals,double_tostring,double_naturalorder,d
 
 // int_pair
 
-int_pair int_pair_parse_s(char * text){
-	int_pair p;
+pair_int int_pair_parse_s(char * text){
+	pair_int p;
 	sscanf(text,"(%d,%d)",&p.a,&p.b);
 	return p;
 }
 
-int_pair * int_pair_parse(int_pair * out, char * text){
+pair_int * int_pair_parse(pair_int * out, char * text){
 	sscanf(text,"(%d,%d)",&out->a,&out->b);
 	return out;
 }
 
-char * int_pair_tostring(const int_pair * p, char * mem){
+char * int_pair_tostring(const pair_int * p, char * mem){
 	sprintf(mem,"(%d,%d)",p->a,p->b);
 	return mem;
 }
 
-bool int_pair_equals(const int_pair * p1, const int_pair * p2){
+bool int_pair_equals(const pair_int * p1, const pair_int * p2){
 	return p1->a == p2->a && p1->b == p2->b;
 }
 
-int int_pair_naturalorder(const int_pair * p1, const int_pair * p2){
-	int_pair np1 = *p1;
-	int_pair np2 = *p2;
+int int_pair_naturalorder(const pair_int * p1, const pair_int * p2){
+	pair_int np1 = *p1;
+	pair_int np2 = *p2;
 	int r  = int_naturalorder(&np1.a,&np2.a);
 	if(r==0) r  = int_naturalorder(&np1.b,&np2.b);
 	return r;
 }
 
 
-type int_pair_type = {"ini_pair",int_pair_equals,int_pair_tostring,int_pair_naturalorder,int_pair_parse,free_0,
-		copy_new_0,copy_0,sizeof(int_pair),0,NULL};
+type int_pair_type = {"pair_int",int_pair_equals,int_pair_tostring,int_pair_naturalorder,int_pair_parse,free_0,
+		copy_new_0,copy_0,sizeof(pair_int),0,NULL};
 
 /////
 // int_pair
 
-long_pair long_pair_parse_s(char * text){
-	long_pair p;
+pair_long long_pair_parse_s(char * text){
+	pair_long p;
 	sscanf(text,"(%ld,%ld)",&p.a,&p.b);
 	return p;
 }
 
-long_pair * long_pair_parse(long_pair * out, char * text){
+pair_long * long_pair_parse(pair_long * out, char * text){
 	sscanf(text,"(%ld,%ld)",&out->a,&out->b);
 	return out;
 }
 
-char * long_pair_tostring(const long_pair * p, char * mem){
+char * long_pair_tostring(const pair_long * p, char * mem){
 	sprintf(mem,"(%ld,%ld)",p->a,p->b);
 	return mem;
 }
 
-bool long_pair_equals(const long_pair * p1, const long_pair * p2){
+bool long_pair_equals(const pair_long * p1, const pair_long * p2){
 	return p1->a == p2->a && p1->b == p2->b;
 }
 
-int long_pair_naturalorder(const long_pair * p1, const long_pair * p2){
-	long_pair np1 = *p1;
-	long_pair np2 = *p2;
+int long_pair_naturalorder(const pair_long * p1, const pair_long * p2){
+	pair_long np1 = *p1;
+	pair_long np2 = *p2;
 	int r  = long_naturalorder(&np1.a,&np2.a);
 	if(r==0) r  = long_naturalorder(&np1.b,&np2.b);
 	return r;
 }
 
 
-type long_pair_type = {"long_pair",long_pair_equals,long_pair_tostring,long_pair_naturalorder,long_pair_parse,free_0,
-		copy_new_0,copy_0,sizeof(long_pair),0,NULL};
+type long_pair_type = {"pair_long",long_pair_equals,long_pair_tostring,long_pair_naturalorder,long_pair_parse,free_0,
+		copy_new_0,copy_0,sizeof(pair_long),0,NULL};
 
-/////
-Cuadrante punto_cuadrante(const double_pair * p) {
+
+
+pair_double pair_double_parse_s(char * text){
+	pair_double pt;
+	sscanf(text,"(%lf,%lf)",&pt.x,&pt.y);
+	return pt;
+}
+
+pair_double * pair_double_parse(pair_double * out, char * text){
+	sscanf(text,"(%lf,%lf)",&out->x,&out->y);
+	return out;
+}
+
+char * pair_double_tostring(const pair_double * p, char * mem){
+	sprintf(mem,"(%.2lf,%.2lf)",p->x,p->y);
+	return mem;
+}
+
+bool pair_double_equals(const pair_double * p1, const pair_double * p2){
+	return p1->x == p2->x && p1->y == p2->y;
+}
+
+int pair_double_naturalorder(const pair_double * p1, const pair_double * p2){
+	double d1 = punto_distancia_al_origen(p1);
+	double d2 = punto_distancia_al_origen(p2);
+	return double_naturalorder(&d1,&d2);
+}
+
+type pair_double_type = {"pair_double",pair_double_equals,pair_double_tostring,pair_double_naturalorder,pair_double_parse,free_0,
+		copy_new_0,copy_0,sizeof(pair_double),0,NULL};
+
+pair_double double_pair_of(double x, double y){
+	pair_double r = {x,y};
+	return r;
+}
+
+
+Cuadrante punto_cuadrante(const pair_double * p) {
 	Cuadrante r;
 	if(p->x >=0 && p->y>=0){
 		r = PRIMERO;
@@ -530,41 +566,26 @@ Cuadrante punto_cuadrante(const double_pair * p) {
 	return r;
 }
 
-double_pair punto_parse_s(char * text){
-	double_pair pt;
-	sscanf(text,"(%lf,%lf)",&pt.x,&pt.y);
-	return pt;
+punto punto_of(double x, double y){
+	punto r = {x,y};
+	return r;
 }
 
-double_pair * punto_parse(double_pair * out, char * text){
-	sscanf(text,"(%lf,%lf)",&out->x,&out->y);
-	return out;
-}
-
-double punto_distancia_al_origen(const double_pair * p){
+double punto_distancia_al_origen(const punto * p){
 	double x2 = p->x*p->x;
 	double y2 = p->y*p->y;
 	return sqrt(x2+y2);
 }
 
-char * punto_tostring(const double_pair * p, char * mem){
-	sprintf(mem,"(%.2lf,%.2lf)",p->x,p->y);
-	return mem;
+int punto_ord_distancia_al_origen(const punto * p1, const punto * p2){
+	double r1 = punto_distancia_al_origen(p1);
+	double r2 = punto_distancia_al_origen(p2);
+	return double_naturalorder(&r1,&r2);
 }
 
-bool punto_equals(const double_pair * p1, const double_pair * p2){
-	return p1->x == p2->x && p1->y == p2->y;
-}
-
-int punto_naturalorder(const double_pair * p1, const double_pair * p2){
-	double d1 = punto_distancia_al_origen(p1);
-	double d2 = punto_distancia_al_origen(p2);
-	return double_naturalorder(&d1,&d2);
-}
-
-type pair_double_type = {"punto",punto_equals,punto_tostring,punto_naturalorder,punto_parse,free_0,
-		copy_new_0,copy_0,sizeof(double_pair),0,NULL};
-
+type punto_type = {"punto",pair_double_equals,pair_double_tostring,
+		punto_distancia_al_origen,pair_double_parse,free_0,
+		copy_new_0,copy_0,sizeof(pair_double),0,NULL};
 
 // pair type
 
@@ -1021,10 +1042,10 @@ void test_string(){
 	sscanf(te,"(%d,%lf,%d)",&a,&b,&c);
 	printf("3: %d,%.2lf,%d\n",a,b,c);
 	char pt[] = "(3.4,-7.9)";
-	double_pair p = punto_parse_s(pt);
-	printf("4: %s\n",punto_tostring(&p,mem));
+	pair_double p = pair_double_parse_s(pt);
+	printf("4: %s\n",pair_double_tostring(&p,mem));
 	char pa[] = "(4,-9)";
-	int_pair pp = int_pair_parse_s(pa);
+	pair_int pp = int_pair_parse_s(pa);
 	printf("5: %s\n",tostring(&pp,mem,&int_pair_type));
 	char tt2[200] = "34 389   23.5 -37.90 (3,-5) (34.1,-67.8)";
 	char delimiters2[] = " ";
@@ -1038,8 +1059,8 @@ void test_string(){
 	long b1 = long_parse_s(tt[1]);
 	float c1 = float_parse_s(tt[2]);
 	double d1 = double_parse_s(tt[3]);
-	int_pair e1 = int_pair_parse_s(tt[4]);
-	double_pair f1 = punto_parse_s(tt[5]);
+	pair_int e1 = int_pair_parse_s(tt[4]);
+	pair_double f1 = pair_double_parse_s(tt[5]);
 	printf("8: %d,%ld,%f,%lf\n",a1,b1,c1,d1);
 	printf("9: %s\n",tostring(&e1,mem,&int_pair_type));
 	printf("10: %s\n",tostring(&f1,mem,&pair_double_type));

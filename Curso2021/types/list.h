@@ -81,7 +81,7 @@ iterator list_iterable(list * ls);
 
 extern type list_type;
 
-int_pair bh(list * ls, void * pivot, int i, int j, int (*order)(const void * e1, const void * e2));
+pair_int bh(list * ls, void * pivot, int i, int j, int (*order)(const void * e1, const void * e2));
 void list_quick_sort(list * ls, int (* order)(const void * e1, const void * e2));
 void basic_sort(list * ls, int (*order)(const void * e1, const void * e2));
 int bs(list * ls, void * element, int (* order)(const void * e1, const void * e2));
@@ -90,7 +90,7 @@ list merge_list(list * ls1, list * ls2, int (* order)(const void * e1, const voi
 
 void * k_esimo(list * ls,int k, int (*order)(const void * e1, const void * e2));
 
-int_pair bh_naturalorder(list * ls, void * pivot, int i, int j);
+pair_int bh_naturalorder(list * ls, void * pivot, int i, int j);
 void list_quick_sort_naturalorder(list * ls);
 void basic_sort_naturalorder(list * ls);
 int bs_naturalorder(list * ls, void * element);

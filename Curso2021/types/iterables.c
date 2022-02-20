@@ -595,7 +595,7 @@ void iterables_free(int n, ...) {
 }
 
 
-bool ft(double_pair * in){
+bool ft(pair_double * in){
 	char mem[50];
 	Cuadrante c = punto_cuadrante(in);
 	return c == PRIMERO;
@@ -647,7 +647,7 @@ void test_iterables_0_3() {
 void test_iterables_1() {
 	char mem[500];
 	iterator r = iterable_file_string_fix_tam("ficheros/prueba.txt",30);
-	iterator r2 = iterable_map(&r, &pair_double_type, punto_parse);
+	iterator r2 = iterable_map(&r, &pair_double_type, pair_double_parse);
 	iterator r3 = iterable_filter(&r2, ft);
 	iterable_tostring(&r3, mem);
 	printf("%s\n", mem);

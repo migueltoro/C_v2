@@ -222,7 +222,7 @@ long mcd(long a, long b) {
 	return u;
 }
 
-long * mcd_f(long * out, long_pair * in){
+long * mcd_f(long * out, pair_long * in){
 	*out = mcd(in->a,in->b);
 	return out;
 }

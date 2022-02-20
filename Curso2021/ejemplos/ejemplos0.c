@@ -20,7 +20,7 @@ double n_problema1(list ls){
 list n_problema2(list ls) {
 	list r = list_empty(&double_type);
 	for (int i = 0; i <list_size(&ls); i++) {
-		double x = (*(double_pair*)list_get(&ls,i)).x;
+		double x = (*(pair_double*)list_get(&ls,i)).x;
 		list_add(&r,&x);
 	}
 	return r;
@@ -71,10 +71,10 @@ double n_problema6(list ls, double umbral) {
 	return b;
 }
 
-double_pair * n_problema8(list ls, int (*cmp)(const void *, const void *)) {
-	double_pair * r = NULL;
+pair_double * n_problema8(list ls, int (*cmp)(const void *, const void *)) {
+	pair_double * r = NULL;
 	for (int i = 0; i <list_size(&ls); i++) {
-		double_pair * p = (double_pair *) list_get(&ls,i);
+		pair_double * p = (pair_double *) list_get(&ls,i);
 		if (r == NULL || cmp(p, r) > 0)
 			r = p;
 	}
@@ -84,7 +84,7 @@ double_pair * n_problema8(list ls, int (*cmp)(const void *, const void *)) {
 map n_problema11(list ls){
 	map r = map_empty(&int_type,&list_type);
 	for (int i = 0; i <list_size(&ls); i++) {
-		double_pair * p = (double_pair *) list_get(&ls,i);
+		pair_double * p = (pair_double *) list_get(&ls,i);
 		Cuadrante c = punto_cuadrante(p);
 		if(map_contains_key(&r,&c)){
 			list * ls = map_get(&r,&c);
@@ -103,7 +103,7 @@ list n_problema61(char * file){
 	iterator f = iterable_file_string_fix(file);
 	while(iterable_has_next(&f)){
 		char * s = (char *) iterable_next(&f);
-		double_pair e = punto_parse_s(s);
+		pair_double e = pair_double_parse_s(s);
 		list_add(&r,&e);
 	}
 	return r;
@@ -147,7 +147,7 @@ void test_ejemplos_1(){
 
 	char mem[256];
 	char * s;
-	double_pair ap[] = { { 1., 2. }, { -1., 2.1 }, { 3.1, 2.1 }, { 1.3, 27.0 }, { 1.,-2. } };
+	pair_double ap[] = { { 1., 2. }, { -1., 2.1 }, { 3.1, 2.1 }, { 1.3, 27.0 }, { 1.,-2. } };
 	list r2 = list_of(ap, 5, &pair_double_type);
 	list rp = n_problema2(r2);
 	s = list_tostring(&r2,mem);
@@ -179,7 +179,7 @@ void test_ejemplos_1(){
 
 	printf("\n\n");
 
-	double_pair * p = n_problema8(r2, punto_naturalorder);
+	pair_double * p = n_problema8(r2, pair_double_naturalorder);
 	printf("%s\n",tostring(p,mem,&pair_double_type));
 
 	printf("\n\n");
@@ -207,7 +207,7 @@ void test_ejemplos_1(){
 }
 
 void test_ejemplos1(){
-		double_pair p = {-2.1,-3.2};
+		pair_double p = {-2.1,-3.2};
 		Cuadrante c = punto_cuadrante(&p);
 		int ci = c;
 		printf("%d",ci);

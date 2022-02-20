@@ -452,7 +452,7 @@ bool inv(list * ls, void * p, int a, int b, int c, int (*order)(const void * e1,
 	return r;
 }
 
-int_pair bh(list * ls, void * pivot, int i, int j, int (*order)(const void * e1, const void * e2)) {
+pair_int bh(list * ls, void * pivot, int i, int j, int (*order)(const void * e1, const void * e2)) {
 	int a =i, b=i, c=j;
 	while (c - b > 0) {
 		void * elem = list_get(ls,b);
@@ -468,7 +468,7 @@ int_pair bh(list * ls, void * pivot, int i, int j, int (*order)(const void * e1,
 			b++;
 		}
 	}
-	int_pair r = {a, b};
+	pair_int r = {a, b};
 	return r;
 }
 
@@ -480,7 +480,7 @@ void * k_esimo_g(list * ls, int k, int i, int j, int (*order)(const void * e1, c
 		r = list_get(ls,i);
 	} else {
 		void * pivote = piv(ls, i, j);
-		int_pair p = bh(ls, pivote, i, j, order);
+		pair_int p = bh(ls, pivote, i, j, order);
 		if(k>=p.a && k <p.b) r = list_get(ls,p.a);
 		else if(k<p.a) r = k_esimo_g(ls,k,i,p.a,order);
 		else r = k_esimo_g(ls,k,p.b,j,order);
@@ -513,7 +513,7 @@ void list_quick_sort_g(list * ls, int i, int j, int (*order)(const void * e1, co
 		basic_sort_g(ls, i, j, order);
 	} else {
 		void * pivote = piv(ls,i,j);
-		int_pair p = bh(ls, pivote, i, j, order);
+		pair_int p = bh(ls, pivote, i, j, order);
 		list_quick_sort_g(ls, i, p.a, order);
 		list_quick_sort_g(ls, p.b, j, order);
 	}
@@ -615,7 +615,7 @@ int _tmp_order(const void * e1, const void * e2){
 	return order(e1,e2,_list_type);
 }
 
-int_pair bh_naturalorder(list * ls, void * pivot, int i, int j){
+pair_int bh_naturalorder(list * ls, void * pivot, int i, int j){
 	_list_type = ls->type;
 	return bh(ls,pivot,i,j,_tmp_order);
 }

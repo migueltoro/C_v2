@@ -98,7 +98,7 @@ void new_rand();
  * @return Un entero aleatorio r tal que a &le; = r &lt; b
  */
 int entero_aleatorio(int a, int b);
-int * entero_aleatorio_f(int * out, int_pair * in);
+int * entero_aleatorio_f(int * out, pair_int * in);
 
 extern long entero_aleatorio_long_a;
 extern long entero_aleatorio_long_b;
@@ -122,7 +122,7 @@ double * double_aleatorio_f(double * out, double * in);
  * @return Calcula el máximo común divisor de los valores ablsolutos de los parámetros
  */
 long mcd(long a, long b);
-long * mcd_f(long * out, long_pair * in);
+long * mcd_f(long * out, pair_long * in);
 
 long square_long(long a);
 long * square_long_f(long * out, long * in);
