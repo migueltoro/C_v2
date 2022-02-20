@@ -72,8 +72,8 @@ void * iterable_map_next(iterator * c_it) {
 	return dp->map_function(c_it->state, r);
 }
 
-iterator iterable_map(iterator * dp_it, type * type, void * (*map_function)(void * out, const void * in)) {
-	dp_map dp = {iterable_copy_new(dp_it),map_function};
+iterator iterable_map(iterator * dp_it, type * type, void * (*function)(void * out, const void * in)) {
+	dp_map dp = {iterable_copy_new(dp_it),function};
 	int size_dp = sizeof(dp_map);
 	void * dp_p = malloc(size_dp);
 	memcpy(dp_p,&dp,size_dp);
@@ -114,12 +114,12 @@ void* iterable_flatmap_next(iterator *c_it) {
 
 
 iterator iterable_flatmap(iterator *dp_it, type *type,
-		iterator* (*map_function)(void *in)) {
+		iterator* (*function)(void *in)) {
 	iterator a_it = iterable_empty(type);
-	dp_flatmap dp = { iterable_copy_new(dp_it), &a_it, map_function };
+	dp_flatmap dp = { iterable_copy_new(dp_it), &a_it, function };
 	do {
 		void *e = iterable_next(dp.dp_it);
-		dp.a_it = map_function(e);
+		dp.a_it = function(e);
 	} while (!iterable_has_next(dp.a_it));
 	int size_dp = sizeof(dp_flatmap);
 	dp_flatmap *dp_p = malloc(size_dp);
@@ -167,8 +167,8 @@ void * iterable_filter_next(iterator * c_iterable) {
 }
 
 
-iterator iterable_filter(iterator * dp_it, bool (*filter_predicate)(void *)) {
-	dp_filter dp = {iterable_copy_new(dp_it),filter_predicate,true};
+iterator iterable_filter(iterator * dp_it, bool (*filter)(void *)) {
+	dp_filter dp = {iterable_copy_new(dp_it),filter,true};
 	int size_dp = sizeof(dp_filter);
 	void * dp_p = malloc(size_dp);
 	memcpy(dp_p,&dp,size_dp);
