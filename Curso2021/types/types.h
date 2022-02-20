@@ -179,15 +179,15 @@ typedef struct{
 	int b;
 }pair_int;
 
-pair_int int_pair_parse_s(char * text);
-pair_int * int_pair_parse(pair_int * out, char * text);
-char * int_pair_tostring(const pair_int * p, char * mem);
-bool int_pair_equals(const pair_int * t1, const pair_int * t2);
-int int_pair_naturalorder(const pair_int * t1,const pair_int * t2);
+pair_int pair_int_parse_s(char * text);
+pair_int * pair_int_parse(pair_int * out, char * text);
+char * pair_int_tostring(const pair_int * p, char * mem);
+bool pair_int_equals(const pair_int * t1, const pair_int * t2);
+int pair_int_naturalorder(const pair_int * t1,const pair_int * t2);
 
 #define to_int_pair(a) *(int_pair *) a
 
-extern type int_pair_type;
+extern type pair_int_type;
 
 // long_pair
 
@@ -196,15 +196,15 @@ typedef struct{
 	long b;
 }pair_long;
 
-pair_long long_pair_parse_s(char * text);
-pair_long * long_pair_parse(pair_long * out, char * text);
-char * long_pair_tostring(const pair_long * p, char * mem);
-bool long_pair_equals(const pair_long * t1, const pair_long * t2);
-int long_pair_naturalorder(const pair_long * t1,const pair_long * t2);
+pair_long pair_long_parse_s(char * text);
+pair_long * pair_long_parse(pair_long * out, char * text);
+char * pair_long_tostring(const pair_long * p, char * mem);
+bool pair_long_equals(const pair_long * t1, const pair_long * t2);
+int pair_long_naturalorder(const pair_long * t1,const pair_long * t2);
 
 #define to_long_pair(a) *(long_pair *) a
 
-extern type long_pair_type;
+extern type pair_long_type;
 
 
 // punto

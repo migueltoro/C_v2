@@ -448,27 +448,27 @@ type double_type = {"double",double_equals,double_tostring,double_naturalorder,d
 
 // int_pair
 
-pair_int int_pair_parse_s(char * text){
+pair_int pair_int_parse_s(char * text){
 	pair_int p;
 	sscanf(text,"(%d,%d)",&p.a,&p.b);
 	return p;
 }
 
-pair_int * int_pair_parse(pair_int * out, char * text){
+pair_int * pair_int_parse(pair_int * out, char * text){
 	sscanf(text,"(%d,%d)",&out->a,&out->b);
 	return out;
 }
 
-char * int_pair_tostring(const pair_int * p, char * mem){
+char * pair_int_tostring(const pair_int * p, char * mem){
 	sprintf(mem,"(%d,%d)",p->a,p->b);
 	return mem;
 }
 
-bool int_pair_equals(const pair_int * p1, const pair_int * p2){
+bool pair_int_equals(const pair_int * p1, const pair_int * p2){
 	return p1->a == p2->a && p1->b == p2->b;
 }
 
-int int_pair_naturalorder(const pair_int * p1, const pair_int * p2){
+int pair_int_naturalorder(const pair_int * p1, const pair_int * p2){
 	pair_int np1 = *p1;
 	pair_int np2 = *p2;
 	int r  = int_naturalorder(&np1.a,&np2.a);
@@ -477,33 +477,33 @@ int int_pair_naturalorder(const pair_int * p1, const pair_int * p2){
 }
 
 
-type int_pair_type = {"pair_int",int_pair_equals,int_pair_tostring,int_pair_naturalorder,int_pair_parse,free_0,
+type pair_int_type = {"pair_int",pair_int_equals,pair_int_tostring,pair_int_naturalorder,pair_int_parse,free_0,
 		copy_new_0,copy_0,sizeof(pair_int),0,NULL};
 
 /////
 // int_pair
 
-pair_long long_pair_parse_s(char * text){
+pair_long pair_long_parse_s(char * text){
 	pair_long p;
 	sscanf(text,"(%ld,%ld)",&p.a,&p.b);
 	return p;
 }
 
-pair_long * long_pair_parse(pair_long * out, char * text){
+pair_long * pair_long_parse(pair_long * out, char * text){
 	sscanf(text,"(%ld,%ld)",&out->a,&out->b);
 	return out;
 }
 
-char * long_pair_tostring(const pair_long * p, char * mem){
+char * pair_long_tostring(const pair_long * p, char * mem){
 	sprintf(mem,"(%ld,%ld)",p->a,p->b);
 	return mem;
 }
 
-bool long_pair_equals(const pair_long * p1, const pair_long * p2){
+bool pair_long_equals(const pair_long * p1, const pair_long * p2){
 	return p1->a == p2->a && p1->b == p2->b;
 }
 
-int long_pair_naturalorder(const pair_long * p1, const pair_long * p2){
+int pair_long_naturalorder(const pair_long * p1, const pair_long * p2){
 	pair_long np1 = *p1;
 	pair_long np2 = *p2;
 	int r  = long_naturalorder(&np1.a,&np2.a);
@@ -512,7 +512,7 @@ int long_pair_naturalorder(const pair_long * p1, const pair_long * p2){
 }
 
 
-type long_pair_type = {"pair_long",long_pair_equals,long_pair_tostring,long_pair_naturalorder,long_pair_parse,free_0,
+type pair_long_type = {"pair_long",pair_long_equals,pair_long_tostring,pair_long_naturalorder,pair_long_parse,free_0,
 		copy_new_0,copy_0,sizeof(pair_long),0,NULL};
 
 
@@ -1045,8 +1045,8 @@ void test_string(){
 	pair_double p = pair_double_parse_s(pt);
 	printf("4: %s\n",pair_double_tostring(&p,mem));
 	char pa[] = "(4,-9)";
-	pair_int pp = int_pair_parse_s(pa);
-	printf("5: %s\n",tostring(&pp,mem,&int_pair_type));
+	pair_int pp = pair_int_parse_s(pa);
+	printf("5: %s\n",tostring(&pp,mem,&pair_int_type));
 	char tt2[200] = "34 389   23.5 -37.90 (3,-5) (34.1,-67.8)";
 	char delimiters2[] = " ";
 	char * tt[10];
@@ -1059,10 +1059,10 @@ void test_string(){
 	long b1 = long_parse_s(tt[1]);
 	float c1 = float_parse_s(tt[2]);
 	double d1 = double_parse_s(tt[3]);
-	pair_int e1 = int_pair_parse_s(tt[4]);
+	pair_int e1 = pair_int_parse_s(tt[4]);
 	pair_double f1 = pair_double_parse_s(tt[5]);
 	printf("8: %d,%ld,%f,%lf\n",a1,b1,c1,d1);
-	printf("9: %s\n",tostring(&e1,mem,&int_pair_type));
+	printf("9: %s\n",tostring(&e1,mem,&pair_int_type));
 	printf("10: %s\n",tostring(&f1,mem,&pair_double_type));
 	char aa[] = "En un lugar de la mancha de cuyo nombre no quiero acordarme";
 	char * s = string_fix_substring(mem,aa,10,13);
