@@ -754,7 +754,7 @@ void test_list_4() {
 
 void test_list_5() {
 	char mem[3000];
-	list ls = list_of_file_type("ficheros/prueba.txt", &punto_type, 30);
+	list ls = list_of_file_type("ficheros/prueba.txt", &pair_double_type, 30);
 	char *s1 = list_get(&ls, 2);
 	printf("s1 = %s\n", s1);
 	char *s = list_tostring(&ls, mem);
@@ -843,7 +843,7 @@ void test_list_7() {
 	list_tostring(&ls4, mem);
 	printf("6: %s\n", mem);
 	list ls5 = list_of_string(5, "(2.,3.)", "(2.,3.)", "(2.,3.)", "(2.,3.)", "(2.,3.)");
-	list ls6 = list_map(&ls5,&punto_type,punto_type.parse);
+	list ls6 = list_map(&ls5,&pair_double_type,pair_double_type.parse);
 	list_tostring(&ls6, mem);
 	printf("7: %s\n", mem);
 	int a[] = {6, 7, 8, 9, 10};
@@ -914,7 +914,7 @@ void test_list_10() {
 	string_fix_copy(texto1,"{[(23.,5.)_(4.,7.)];[(5.6,-7.8)_(5.6,-7.8)]}",&string_fix_type);
 	string_fix_copy(list_delimiters, "{ ;}",&string_fix_type);
 	string_fix_copy(pair_delimiters, "[ _]",&string_fix_type);
-	type t = generic_type_2(&pair_type,&punto_type,&punto_type);
+	type t = generic_type_2(&pair_type,&pair_double_type,&pair_double_type);
 	ls = list_empty(type_copy(&t,NULL));
 	list_parse(&ls, texto1);
 	printf("4: %s\n",list_tostring(&ls, mem));

@@ -211,27 +211,27 @@ extern type long_pair_type;
 typedef struct {
 	double x;
 	double y;
-} punto;
+} double_pair;
 
 
 typedef enum {PRIMERO,SEGUNDO,TERCERO,CUARTO} Cuadrante;
 
 
-double punto_distancia_al_origen(const punto * p);
-int punto_ord_distancia_al_origen(const punto * p1, const punto * p2);
+double punto_distancia_al_origen(const double_pair * p);
+int punto_ord_distancia_al_origen(const double_pair * p1, const double_pair * p2);
 
 
-Cuadrante punto_cuadrante(const punto * p);
+Cuadrante punto_cuadrante(const double_pair * p);
 
-punto punto_parse_s(char * text);
-punto * punto_parse(punto * out, char * text);
-char * punto_tostring(const punto * p, char * mem);
-bool punto_equals(const punto * p1, const punto * p2);
-int punto_naturalorder(const punto * t1,const  punto * t2);
+double_pair punto_parse_s(char * text);
+double_pair * punto_parse(double_pair * out, char * text);
+char * punto_tostring(const double_pair * p, char * mem);
+bool punto_equals(const double_pair * p1, const double_pair * p2);
+int punto_naturalorder(const double_pair * t1,const  double_pair * t2);
 
-#define to_punto(a) *(punto *) a
+#define to_pair_double(a) *(pair_double *) a
 
-extern type punto_type;
+extern type pair_double_type;
 
 // pair type
 

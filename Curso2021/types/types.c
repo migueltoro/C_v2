@@ -516,7 +516,7 @@ type long_pair_type = {"long_pair",long_pair_equals,long_pair_tostring,long_pair
 		copy_new_0,copy_0,sizeof(long_pair),0,NULL};
 
 /////
-Cuadrante punto_cuadrante(const punto * p) {
+Cuadrante punto_cuadrante(const double_pair * p) {
 	Cuadrante r;
 	if(p->x >=0 && p->y>=0){
 		r = PRIMERO;
@@ -530,40 +530,40 @@ Cuadrante punto_cuadrante(const punto * p) {
 	return r;
 }
 
-punto punto_parse_s(char * text){
-	punto pt;
+double_pair punto_parse_s(char * text){
+	double_pair pt;
 	sscanf(text,"(%lf,%lf)",&pt.x,&pt.y);
 	return pt;
 }
 
-punto * punto_parse(punto * out, char * text){
+double_pair * punto_parse(double_pair * out, char * text){
 	sscanf(text,"(%lf,%lf)",&out->x,&out->y);
 	return out;
 }
 
-double punto_distancia_al_origen(const punto * p){
+double punto_distancia_al_origen(const double_pair * p){
 	double x2 = p->x*p->x;
 	double y2 = p->y*p->y;
 	return sqrt(x2+y2);
 }
 
-char * punto_tostring(const punto * p, char * mem){
+char * punto_tostring(const double_pair * p, char * mem){
 	sprintf(mem,"(%.2lf,%.2lf)",p->x,p->y);
 	return mem;
 }
 
-bool punto_equals(const punto * p1, const punto * p2){
+bool punto_equals(const double_pair * p1, const double_pair * p2){
 	return p1->x == p2->x && p1->y == p2->y;
 }
 
-int punto_naturalorder(const punto * p1, const punto * p2){
+int punto_naturalorder(const double_pair * p1, const double_pair * p2){
 	double d1 = punto_distancia_al_origen(p1);
 	double d2 = punto_distancia_al_origen(p2);
 	return double_naturalorder(&d1,&d2);
 }
 
-type punto_type = {"punto",punto_equals,punto_tostring,punto_naturalorder,punto_parse,free_0,
-		copy_new_0,copy_0,sizeof(punto),0,NULL};
+type pair_double_type = {"punto",punto_equals,punto_tostring,punto_naturalorder,punto_parse,free_0,
+		copy_new_0,copy_0,sizeof(double_pair),0,NULL};
 
 
 // pair type
@@ -1021,7 +1021,7 @@ void test_string(){
 	sscanf(te,"(%d,%lf,%d)",&a,&b,&c);
 	printf("3: %d,%.2lf,%d\n",a,b,c);
 	char pt[] = "(3.4,-7.9)";
-	punto p = punto_parse_s(pt);
+	double_pair p = punto_parse_s(pt);
 	printf("4: %s\n",punto_tostring(&p,mem));
 	char pa[] = "(4,-9)";
 	int_pair pp = int_pair_parse_s(pa);
@@ -1039,10 +1039,10 @@ void test_string(){
 	float c1 = float_parse_s(tt[2]);
 	double d1 = double_parse_s(tt[3]);
 	int_pair e1 = int_pair_parse_s(tt[4]);
-	punto f1 = punto_parse_s(tt[5]);
+	double_pair f1 = punto_parse_s(tt[5]);
 	printf("8: %d,%ld,%f,%lf\n",a1,b1,c1,d1);
 	printf("9: %s\n",tostring(&e1,mem,&int_pair_type));
-	printf("10: %s\n",tostring(&f1,mem,&punto_type));
+	printf("10: %s\n",tostring(&f1,mem,&pair_double_type));
 	char aa[] = "En un lugar de la mancha de cuyo nombre no quiero acordarme";
 	char * s = string_fix_substring(mem,aa,10,13);
 	printf("%s\n",aa);
