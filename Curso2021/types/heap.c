@@ -33,7 +33,6 @@ void * heap_get_memory(heap * heap,int size){
 	void * element = (void *) malloc(size);
 	heap_add(heap, element);
 	heap->size_memory = heap->size_memory +size;
-	heap->num_access_heap++;
 //	printf("\n%d==%d==%d\n",size,heap->size_memory,heap->num_access_memory_heap);
 	return element;
 }
@@ -46,7 +45,6 @@ void* heap_copy(void *source, heap *heap, int size_element) {
 	if (heap != NULL) {
 		heap_add(heap, element);
 		heap->size_memory += size_element;
-		heap->num_access_heap++;
 	}
 //	printf("\n%d==%d=%d\n",size_element,heap->size_memory,heap->num_access_memory_heap);
 	return element;
@@ -76,7 +74,6 @@ void heap_clear(heap * heap) {
 	heap->size=0;
 	heap->tam=10;
 	heap->size_memory = 0;
-	heap->num_access_heap = 0;
 	heap->elements=malloc(10 * sizeof(void *));
 }
 

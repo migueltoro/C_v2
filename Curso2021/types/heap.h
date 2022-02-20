@@ -14,13 +14,12 @@
 #include <stdlib.h>
 #include "../types/preconditions.h"
 
-;
+
 typedef struct {
 	int size;
 	int tam;
 	void ** elements;
 	int size_memory;
-	int num_access_heap;
 } heap;
 
 
