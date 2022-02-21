@@ -476,6 +476,11 @@ int pair_int_naturalorder(const pair_int * p1, const pair_int * p2){
 	return r;
 }
 
+pair_int pair_int_of(int a, int b){
+	pair_int r = {a,b};
+	return r;
+}
+
 
 type pair_int_type = {"pair_int",pair_int_equals,pair_int_tostring,pair_int_naturalorder,pair_int_parse,free_0,
 		copy_new_0,copy_0,sizeof(pair_int),0,NULL};

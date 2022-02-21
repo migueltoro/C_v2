@@ -468,7 +468,7 @@ pair_int bh(list * ls, void * pivot, int i, int j, int (*order)(const void * e1,
 			b++;
 		}
 	}
-	pair_int r = {a, b};
+	pair_int r = pair_int_of(a, b);
 	return r;
 }
 

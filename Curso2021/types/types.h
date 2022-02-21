@@ -185,6 +185,8 @@ char * pair_int_tostring(const pair_int * p, char * mem);
 bool pair_int_equals(const pair_int * t1, const pair_int * t2);
 int pair_int_naturalorder(const pair_int * t1,const pair_int * t2);
 
+pair_int pair_int_of(int a, int b);
+
 #define to_int_pair(a) *(int_pair *) a
 
 extern type pair_int_type;
