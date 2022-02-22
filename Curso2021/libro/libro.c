@@ -128,6 +128,12 @@ set_multimap lineas_de_palabras(char * file){
 	return sm;
 }
 
+multiset frecuencias_de_palabras(char * file){
+	iterator r = iterable_words_in_file(file,100,20," ,;.()");
+	multiset ms = iterable_to_multiset(&r);
+	return ms;
+}
+
 void test_palabras_1(){
 	int n  = numero_de_lineas_vacias("ficheros/quijote.txt");
 	printf("%d\n",n);
@@ -159,6 +165,13 @@ void test_palabras_6(){
 	iterator r = set_multimap_iterable(&sm);
 	iterable_to_console_sep(&r,"\n","","");
 }
+
+void test_palabras_7(){
+	multiset ms =frecuencias_de_palabras("ficheros/quijote.txt");
+	iterator ims = multiset_iterable(&ms);
+	iterable_to_console_sep(&ims,"\n","","");
+}
+
 
 
 

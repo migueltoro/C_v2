@@ -217,15 +217,6 @@ bool iterable_hash_table_has_next(iterator * c_iterable) {
 	return dp->i < dp->nb;
 }
 
-void * iterable_hash_table_see_next(iterator * c_iterable){
-	dp_hash_table * dp = (dp_hash_table *) c_iterable->dp;
-	map * table = dp->ht;
-	pair * state = (pair *)c_iterable->state;
-	state->key = table->data[dp->j].key;
-	state->value = table->data[dp->j].value;
-    return c_iterable->state;
-}
-
 void next_state(dp_hash_table * dp){
 	map * table = dp->ht;
 	int i = dp->i;

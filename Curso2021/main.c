@@ -63,7 +63,7 @@ test_string();
 //test_esquemas();
 //test_marca();
 //test_ruta();
-//test_palabras_6();
+test_palabras_7();
 //test_binary_tree_1();
 //test_parse_binary_tree_1();
 //test_tree_1();

@@ -472,9 +472,6 @@ bool esmultiplo44(const long *in){
 	return (*in)%44 == 0;
 }
 
-
-double * _random(double * out, long * in);
-
 void test_accumulators_0(){
 	char mem[4000];
 	iterator st = iterable_range_long(4,500,3);
