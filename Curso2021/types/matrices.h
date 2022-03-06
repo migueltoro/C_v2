@@ -24,10 +24,7 @@
 typedef struct {
 	type * type;
 	char * datos;
-	int __nc;
-	int iv;
 	int nf;
-	int jv;
 	int nc;
 }matrix;
 
@@ -53,6 +50,7 @@ int matrix_get_int(matrix * s, int f, int c);
 
 void matrix_free(matrix * m);
 
+matrix matrix_submatrix(matrix * s, int i0, int j0, int nf, int nc);
 matrix matrix_view(matrix * s, int ns);
 void matrix_print(matrix * s, char * text);
 matrix matrix_copy(matrix * in);

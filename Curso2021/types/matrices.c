@@ -9,7 +9,7 @@
 
 matrix matrix_of_array(void * a, int nf, int nc, type * type_element){
 	type * t = type_element;
-	matrix r = {t,a,nc,0,nf,0,nc};
+	matrix r = {t,a,nf,nc};
 	return r;
 }
 
@@ -48,7 +48,8 @@ int matrix_nc(matrix * s){
 }
 
 void * matrix_get(matrix * s, int f, int c){
-	return s->datos + s->type->size*(s->__nc*(s->iv+f)+ s->jv+ c);
+	int size = s->type->size;
+	return s->datos + size*(f*s->nc+c);
 }
 
 int matrix_get_int(matrix * s, int f, int c) {
@@ -56,7 +57,8 @@ int matrix_get_int(matrix * s, int f, int c) {
 }
 
 void matrix_set(matrix * s, int f, int c, void * value){
-	copy_size(s->datos + s->type->size*(s->__nc*(s->iv+f)+ s->jv+ c), value, s->type->size);
+	int size = s->type->size;
+	copy_size(s->datos + size*(f*s->nc+c), value, s->type->size);
 }
 
 void matrix_set_value(matrix * s, void * value) {
@@ -88,18 +90,29 @@ list matrix_corners(matrix * s){
 	return r;
 }
 
+matrix matrix_submatrix(matrix * s, int i0, int j0, int nf, int nc){
+	check_argument(i0+nf <= s->nf,__FILE__, __LINE__, "Submatrix no válida");
+	check_argument(j0+nc <= s->nc,__FILE__, __LINE__, "Submatrix no válida");
+	matrix r = matrix_of(nf, nc, s->type);
+	for(int i = 0;i<nf;i++){
+		for(int j = 0; j< nc; j++){
+			matrix_set(&r,i,j,matrix_get(s,i0+i,j0+j));
+		}
+	}
+	return r;
+}
+
 matrix matrix_view(matrix * s, int nv){
 	int nf = s->nf/2;
 	int nc = s->nc/2;
 	matrix r;
 	r.datos= s->datos;
-	r.__nc = s->__nc;
 	r.type = s->type;
 	switch(nv){
-	case 0:  r.iv = s->iv; r.nf = nf; r.jv = s->jv; r.nc = nc; break;
-	case 1:  r.iv = s->iv; r.nf = nf; r.jv = s->jv + nc; r.nc = s->nc-nc;  break;
-	case 2:  r.iv = s->iv + nf; r.nf = s->nf-nf; r.jv = s->jv; r.nc = nc; break;
-	case 3:  r.iv = s->iv + nf; r.nf = s->nf-nf; r.jv = s->jv + nc; r.nc = s->nc-nc;  break;
+	case 0:  r = matrix_submatrix(s,0,0,nf,nc); break;
+	case 1:  r = matrix_submatrix(s,0,nc,nf,s->nc-nc); break;
+	case 2:  r = matrix_submatrix(s,nf,0,s->nf-nf,nc);  break;
+	case 3:  r = matrix_submatrix(s,nf,nc,s->nf-nf,s->nc-nc);  break;
 	default: check_argument(false,__FILE__, __LINE__, "Opción no válida");
 	}
 	return r;
@@ -152,13 +165,33 @@ void  matrix_copy_2(matrix * out, matrix * in) {
 	}
 }
 
-matrix matrix_compose(matrix * m0, matrix * m1, matrix * m2, matrix * m3){
-	matrix out = matrix_of(m0->nf+m2->nf,m0->nc+m1->nc,m0->type);
-	matrix_views v1 = views_of_matrix(&out);
-	matrix_copy_2(&v1.m0,m0);
-	matrix_copy_2(&v1.m1,m1);
-	matrix_copy_2(&v1.m2,m2);
-	matrix_copy_2(&v1.m3,m3);
+matrix matrix_compose(matrix *m0, matrix *m1, matrix *m2, matrix *m3) {
+	matrix out = matrix_of(m0->nf + m2->nf, m0->nc + m1->nc, m0->type);
+	int i, j;
+	for (i = 0; i < m0->nf; i++) {
+		for (j = 0; j < m0->nc; j++) {
+			void *val = matrix_get(m0, i, j);
+			matrix_set(&out, i, j, val);
+		}
+	}
+	for (i = 0; i < m1->nf; i++) {
+		for (j = 0; j < m1->nc; j++) {
+			void *val = matrix_get(m1, i, j);
+			matrix_set(&out, i, j+m0->nc, val);
+		}
+	}
+	for (i = 0; i < m2->nf; i++) {
+		for (j = 0; j < m2->nc; j++) {
+			void *val = matrix_get(m2, i, j);
+			matrix_set(&out, i+m0->nf, j, val);
+		}
+	}
+	for (i = 0; i < m3->nf; i++) {
+		for (j = 0; j < m3->nc; j++) {
+			void *val = matrix_get(m3, i, j);
+			matrix_set(&out, i+m0->nf, j+m0->nc, val);
+		}
+	}
 	return out;
 }
 
@@ -202,7 +235,10 @@ matrix multiply_recursiva(matrix * in1, matrix * in2) {
 		matrix t2_m3 = multiply_recursiva(&v1.m3,&v2.m3);
 		matrix t1 = matrix_compose(&t1_m0,&t1_m1,&t1_m2,&t1_m3);
 		matrix t2 = matrix_compose(&t2_m0,&t2_m1,&t2_m2,&t2_m3);
+		matrix_free(&t1_m0);matrix_free(&t1_m1);matrix_free(&t1_m2);matrix_free(&t1_m3);
+		matrix_free(&t2_m0);matrix_free(&t2_m1);matrix_free(&t2_m2);matrix_free(&t2_m3);
 		out = sum_iterativa(&t1,&t2);
+		matrix_free(&t1);matrix_free(&t2);
 	}
 	return out;
 }
@@ -231,6 +267,7 @@ matrix sum_recursiva(matrix * in1, matrix * in2) {
 		matrix m1 = sum_recursiva(&v1.m1,&v2.m1);
 		matrix m2 = sum_recursiva(&v1.m2,&v2.m2);
 		matrix m3 = sum_recursiva(&v1.m3,&v2.m3);
+		matrix_free(&m0);matrix_free(&m1);matrix_free(&m2);matrix_free(&m3);
 		return matrix_compose(&m0,&m1,&m2,&m3);
 	} else {
 		return sum_iterativa(in1,in2);
@@ -276,8 +313,8 @@ void test_matrices_3(){
 	matrix r = matrix_of_file("ficheros/datos_entrada.txt",&int_type,49,5);
 	matrix_print(&r, "1____");
 	list cn = matrix_corners(&r);
-	list_tostring(&cn,mem);
-	printf("2___ %s\n",mem);
+	char * cs = list_tostring(&cn,mem);
+	printf("2___ %s\n",cs);
 	matrix m = matrix_view(&r,1);
 	matrix_print(&m, "3___");
 	matrix_views v = views_of_matrix(&r);
@@ -304,4 +341,13 @@ void test_matrices_4(){
 	matrix_print(&v,"4___");
 	matrix r1 = matrix_copy(&r2);
 	matrix_print(&r1,"5___");
+}
+
+void test_matrices_5(){
+	int mat1[3][3] = { { 1, 1, 2 }, { 2, 3, 4}, {5, 6, 7}};
+	matrix r = matrix_of_array(mat1,3,3,&int_type);
+	matrix_print(&r,"1___");
+	matrix s = matrix_submatrix(&r,1,1,2,2);
+	matrix_print(&s,"2___");
+
 }

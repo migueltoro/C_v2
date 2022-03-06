@@ -525,7 +525,7 @@ char * iterable_tostring_sep(iterator * st,char * sep,char * prefix,char * suffi
 	return mem;
 }
 
-string_var iterable_tostring_sep_big(iterator * st,char * sep,char * prefix,char * suffix){
+string_var iterable_tostring_sep_var(iterator * st,char * sep,char * prefix,char * suffix){
 	string_fix m;
 	bool first = true;
 	string_var s = string_var_empty();
@@ -541,8 +541,8 @@ string_var iterable_tostring_sep_big(iterator * st,char * sep,char * prefix,char
 	return s;
 }
 
-string_var iterable_tostring_big(iterator * st){
-	return iterable_tostring_sep_big(st,",","{","}");
+string_var iterable_tostring_var(iterator * st){
+	return iterable_tostring_sep_var(st,",","{","}");
 }
 
 void iterable_to_console(iterator * st){

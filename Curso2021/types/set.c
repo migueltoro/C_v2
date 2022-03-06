@@ -39,7 +39,7 @@ void set_add_all(set * st, iterator * it){
 }
 
 int set_size(set * st){
-	return map_size(&st);
+	return map_size(st);
 }
 
 bool set_contains(set * st, void * element){
@@ -76,9 +76,10 @@ set set_filter(set * st, bool (*p)(void * in)) {
 
 char * set_tostring(set * st, char * mem){
 	iterator it = set_iterable(st);
-	iterable_tostring_sep(&it,",","{","}",mem);
+	string_var s = iterable_tostring_sep_var(&it,",","{","}");
+	st->st = s;
 	iterable_free(&it);
-	return mem;
+	return s.data;
 }
 
 list set_tolist(const set * s) {

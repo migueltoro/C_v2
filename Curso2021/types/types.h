@@ -284,7 +284,6 @@ pair * pair_of_value(pair * p, void * value);
 
 void pair_free(pair * p, type * t);
 
-
 #define to_pair(a) *(pair *) a
 
 extern type pair_type;

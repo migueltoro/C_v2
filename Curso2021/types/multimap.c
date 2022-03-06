@@ -67,8 +67,8 @@ bool list_multimap_contains_key(list_multimap * lm, void * key){
 }
 
 char * list_multimap_tostring(list_multimap * lm, char * mem){
-	map_tostring(lm,mem);
-	return mem;
+	char * s = map_tostring(lm,mem);
+	return s;
 }
 
 void list_multimap_toconsole(list_multimap * lm){
@@ -198,8 +198,8 @@ bool set_multimap_contains_key(set_multimap * lm, void * key){
 }
 
 char * set_multimap_tostring(set_multimap * lm, char * mem){
-	map_tostring(lm,mem);
-	return mem;
+	char * s = map_tostring(lm,mem);
+	return s;
 }
 
 iterator set_multimap_iterable(set_multimap * sm){
@@ -221,8 +221,8 @@ void test_set_multimap() {
 		int key = (int) n % 5;
 		set_multimap_put(&lm1, &key, &n);
 	}
-	set_multimap_tostring(&lm1, mem);
-	printf("%s\n", mem);
+	char * s = set_multimap_tostring(&lm1, mem);
+	printf("1 %s\n", s);
 	iterator it2 = iterable_range_long(3, 200, 7);
 	set_multimap lm2 = set_multimap_empty(&int_type, &long_type);
 	while (iterable_has_next(&it2)) {
@@ -230,9 +230,9 @@ void test_set_multimap() {
 		int key = (int) n % 5;
 		set_multimap_put(&lm2, &key, &n);
 	}
-	set_multimap_tostring(&lm2, mem);
-	printf("%s\n", mem);
+	s = set_multimap_tostring(&lm2, mem);
+	printf("2 %s\n", s);
 	set_multimap lm3 = set_multimap_add(&lm1, &lm2);
-	set_multimap_tostring(&lm3, mem);
-	printf("%s\n", mem);
+	s = set_multimap_tostring(&lm3, mem);
+	printf("3 %s\n",s);
 }

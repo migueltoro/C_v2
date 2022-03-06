@@ -28,6 +28,7 @@ typedef struct {
 	int capacity_data;
 	int first_free_data;
 	float load_factor_limit;
+	string_var st;
 } map;
 
 map map_empty(type * key_type, type * value_type);

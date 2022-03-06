@@ -95,7 +95,7 @@ void test_esquemas() {
 	set_multimap sm = grupos_set_en_fichero_1("ficheros/numeros_2.txt",&long_type, &long_type, rest);
 	iterator it2 = set_multimap_iterable(&sm);
 	printf("3:\n");
-	string_var s= iterable_tostring_sep_big(&it2, "\n", "", "");
+	string_var s= iterable_tostring_sep_var(&it2, "\n", "", "");
 	printf("4:\n\%s",string_var_data(&s));
 	set_multimap_free(&sm);
 	iterable_free(&it2);

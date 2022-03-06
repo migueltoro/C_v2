@@ -5,6 +5,7 @@
  *      Author: migueltoro
  */
 
+#include "../types/iterables.h"
 #include "../types/accumulators.h"
 
 void * accumulate_left(iterator * st, void * base, bool (*add)(void * out, const void * e)) {
@@ -237,6 +238,13 @@ set_multimap iterable_grouping_set_map(iterator *st, type *key_type,
 		set_multimap_put(&lm, key, t);
 	}
 	return lm;
+}
+
+set_multimap map_reverse(map * m){
+	iterator r = map_items_iterable(m);
+	set_multimap sm = iterable_grouping_set_map(iterable_copy_new(&r),m->value_type,m->key_type,
+			pair_value, pair_key);
+	return sm;
 }
 
 
@@ -668,9 +676,9 @@ void test_accumulators_8() {
 
 list lst() {
 	new_rand();
-	list ls = list_empty(&int_type);
-	for (int i = 0; i < 100; i++) {
-		int r = entero_aleatorio(0, 30);
+	list ls = list_empty(&double_type);
+	for (int i = 0; i < 1000; i++) {
+		double r = double_aleatorio(0, 30);
 		list_add(&ls, &r);
 	}
 	return ls;
@@ -682,6 +690,22 @@ void test_accumulators_9() {
 	multiset r = iterable_to_multiset(&p3);
 	iterator ir = multiset_iterable(&r);
 	iterable_to_console_sep(&ir, "\n", "", "");
+}
+
+int * key_groups(int * out, double *in){
+	if(*in <10) *out = 1;
+	else if(*in <20) *out = 2;
+	else *out = 3;
+	return out;
+}
+
+void test_accumulators_9_1() {
+	list ls = lst();
+	iterator p3 = list_iterable(&ls);
+	multiset r = iterable_to_multiset_groups(&p3,&int_type,key_groups);
+	set_multimap sm = map_reverse(&r);
+	iterator r2 = set_multimap_iterable(&sm);
+	iterable_to_console_sep(&r2, "\n", "", "");
 }
 
 void freq() {

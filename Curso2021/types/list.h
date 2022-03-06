@@ -29,6 +29,7 @@ typedef struct {
 	int size;
 	int tam;
 	void ** elements;
+	string_var st;
 } list;
 
 void swap_in_list(list * ls, int a, int b);

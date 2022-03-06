@@ -248,35 +248,43 @@ iterator map_items_iterable(map * ht){
 	void * dp_p = malloc(size_dp);
 	memcpy(dp_p,&dp,size_dp);
 	type t = generic_type_2(&pair_type,ht->key_type,ht->value_type);
-	iterator r_hash_table = iterable_create(type_copy(&t,NULL),iterable_hash_table_has_next,
+	iterator r = iterable_create(type_copy(&t,NULL),iterable_hash_table_has_next,
 			iterable_hash_table_next,dp_p,size_dp,free);
-	next_state(r_hash_table.dp);
-	return r_hash_table;
+	next_state(r.dp);
+	return r;
 }
 
+iterator map_keys_iterable(map * ht){
+	iterator r = map_items_iterable(ht);
+	iterator r2 = iterable_map(iterable_copy_new(&r),ht->key_type,pair_key);
+	return r2;
+}
 
 char * map_tostring(map * table, char * mem) {
+	table->st = string_var_empty();
+	string_var * r = &table->st;
 	char m1[Tam_String];
 	char m2[Tam_String];
-	char m[Tam_String];
 	bool first = true;
-	strcpy(mem, "{");
+	string_var_add_string_fix(r, "{");
 	iterator st = map_items_iterable(table);
 	while (iterable_has_next(&st)) {
 		pair * next = (pair *) iterable_next(&st);
 		char * k = tostring(next->key,m1,table->key_type);
 		char * v = tostring(next->value,m2,table->value_type);
-		sprintf(m,"(%s:%s)",k,v);
 		if (first) {
 			first = false;
-			strcat(mem, m);
 		} else {
-			strcat(mem, ",");
-			strcat(mem, m);
+			string_var_add_string_fix(r, ",");
 		}
+		string_var_add_string_fix(r, "(");
+		string_var_add_string_fix(r, k);
+		string_var_add_string_fix(r, ":");
+		string_var_add_string_fix(r, v);
+		string_var_add_string_fix(r, ")");
 	}
-	strcat(mem, "}");
-	return mem;
+	string_var_add_string_fix(r, "}");
+	return r->data;
 }
 
 void map_toconsole(map * table){
@@ -331,7 +339,7 @@ void map_free(map *table) {
 
 
 map complete_table1() {
-	int tam = 100;
+	int tam = 1000;
 	map ht = map_empty(&long_type,&double_type);
 	new_rand();
 	for (int i = 0; i < tam; i++) {
@@ -351,16 +359,16 @@ map complete_table1() {
 
 
 void test_map() {
-	char mem[3000];
+//	char mem[3000];
 	printf("Hash Table test\n\n");
 	printf("2:\n");
 	map ht = complete_table1();
-	map ht2 = map_copy(&ht);
-	map_toconsole(&ht2);
-	printf("%s\n",map_tostring(&ht2,mem));
-	printf("\n6: \n");
-	iterator iht = map_items_iterable(&ht2);
-	iterable_to_console_sep(&iht,"\n","","\n");
+//	map ht2 = map_copy(&ht);
+//	map_toconsole(&ht2);
+	printf("3\n%s\n",map_tostring(&ht,NULL));
+	printf("\n6: %d\n",strlen(ht.st.data));
+//	iterator iht = map_items_iterable(&ht2);
+//	iterable_to_console_sep(&iht,"\n","","\n");
 }
 
 

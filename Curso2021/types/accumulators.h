@@ -78,7 +78,7 @@ map iterable_grouping_reduce(iterator * st, type * key_type,
 map iterable_grouping_reduce_map(iterator * st, type * key_type, type * value_type,
 		void * (*f_key)(void * out, void * in),
 		bool (*add)(void * out, const void * e), void * (*f_map)(void * out, void * in));
-
+set_multimap map_reverse(map * m);
 
 void test_accumulators_1();
 void test_accumulators_2();

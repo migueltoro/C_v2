@@ -83,8 +83,8 @@ char * iterable_tostring(iterator * st, char * mem);
 char * iterable_tostring_sep(iterator * st, char * sep, char * prefix, char * suffix, char * mem);
 void iterable_to_console(iterator * st);
 void iterable_to_console_sep(iterator * st, char * sep, char * prefix, char * suffix);
-string_var iterable_tostring_sep_big(iterator * st,char * sep,char * prefix,char * suffix);
-string_var iterable_tostring_big(iterator * st);
+string_var iterable_tostring_sep_var(iterator * st,char * sep,char * prefix,char * suffix);
+string_var iterable_tostring_var(iterator * st);
 
 void write_iterable_to_file(char * file, iterator * st);
 

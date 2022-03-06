@@ -9,7 +9,6 @@
 
 void swap_in_list(list * ls, int a, int b);
 
-
 void swap_in_list(list * ls, int a, int b){
 	void * tmp = ls->elements[a];
 	ls->elements[a] = ls->elements[b];
@@ -33,12 +32,12 @@ list list_empty(type * type_element){
 }
 
 list list_empty_tam(type * type_element,int tam){
-	list r = {false,type_element,0,tam,malloc(tam*sizeof(void *)),heap_empty()};
+	list r = {false,type_element,0,tam,malloc(tam*sizeof(void *))};
 	return r;
 }
 
 list list_of(void * data, int size, type * type_element){
-	list r = {false,type_element,0,size,malloc(size*sizeof(void *)),heap_empty()};
+	list r = {false,type_element,0,size,malloc(size*sizeof(void *))};
 	char * d = (char *) data;
 	for(int i=0; i<size;i++){
 		r.elements[i] = d+i*r.type->size;
@@ -194,7 +193,7 @@ list list_sublist(list * ls, int a, int b){
 	check_position_index(a,ls->size,__FILE__,__LINE__);
 	check_position_index(b,ls->size,__FILE__,__LINE__);
 	check_argument(b>a,__FILE__,__LINE__,"limites inconsistentes a = %d, b = %d",a,b);
-	list r = {true,ls->type,b-a,b-a,ls->elements+a};
+	list r = {true,ls->type,b-a,b-a,ls->elements+a,ls->st};
 	return r;
 }
 
@@ -321,9 +320,10 @@ iterator list_iterable(list * ls){
 
 char * list_tostring(list * ls, char * mem){
 	iterator st = list_iterable(ls);
-	iterable_tostring_sep(&st,",","[","]",mem);
+	string_var s = iterable_tostring_sep_var(&st,",","[","]");
+	ls->st = s;
 	iterable_free(&st);
-	return mem;
+	return s.data;
 }
 
 bool list_contains(list * list, const void * e) {

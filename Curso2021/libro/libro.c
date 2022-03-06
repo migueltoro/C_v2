@@ -167,12 +167,34 @@ void test_palabras_6(){
 }
 
 void test_palabras_7(){
-	multiset ms =frecuencias_de_palabras("ficheros/quijote.txt");
+	multiset ms =frecuencias_de_palabras("ficheros/short_quijote.txt");
 	iterator ims = multiset_iterable(&ms);
 	iterable_to_console_sep(&ims,"\n","","");
 }
 
+void test_palabras_8() {
+	multiset ms = frecuencias_de_palabras("ficheros/quijote.txt");
+	set_multimap sm = map_reverse(&ms);
+	iterator r0 = map_keys_iterable(&sm);
+	iterable_to_console_sep(&r0, ",", "{", "}");
+	iterator r = map_keys_iterable(&sm);
+	printf("\n");
+	set * s;
+	int a;
+	for (;iterable_has_next(&r);) {
+		a = *(int *)iterable_next(&r);
+		s = (set *) map_get(&sm,&a);
+		iterator it = set_iterable(s);
+		printf("%d == ",a);
+		iterable_to_console_sep(&it,",","{","}\n");
+		iterable_free(&it);
+	}
+}
 
+void test_palabras_9(){
+	iterator r = iterable_words_in_file("ficheros/quijote.txt",100,20," ,;.()");
+	printf("%d",iterable_size(&r));
+}
 
 
 

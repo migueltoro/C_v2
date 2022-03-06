@@ -46,7 +46,7 @@ int main() {
 //test_types();
 //test_generic_types_2();
 //test_types_1();
-test_string();
+//test_string();
 //test_math2();
 //test_ejemplos1();
 //test_ejemplos_files();
@@ -59,19 +59,19 @@ test_string();
 //test_dates_2("ficheros/fechas_2.txt");
 //test_set_2();
 //test_multiset();
-//test_set_multimap();
+//test_list_multimap();
 //test_esquemas();
 //test_marca();
 //test_ruta();
-test_palabras_7();
+//test_palabras_8();
 //test_binary_tree_1();
 //test_parse_binary_tree_1();
 //test_tree_1();
 //test_parse_tree_2();
 //test_ejemplos_trees_4();
-//test_matrices_3();
+test_matrices_1();
 //test_histograma();
 //test_accumulators_0(); //("ficheros/quijote.txt");
-//test_accumulators_11();
+//test_accumulators_9_1();
 }
 

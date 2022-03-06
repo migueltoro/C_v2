@@ -634,9 +634,9 @@ pair * pair_parse(pair * out, char * text, type * t){
 char * pair_tostring(const pair * e, char * mem, type * t){
 	char m1[Tam_String];
 	char m2[Tam_String];
-	tostring(e->key,m1,t->types[0]);
-	tostring(e->value,m2,t->types[1]);
-	sprintf(mem,"(%s,%s)",m1,m2);
+	char * k = tostring(e->key,m1,t->types[0]);
+	char * v = tostring(e->value,m2,t->types[1]);
+	sprintf(mem,"(%s,%s)",k,v);
 	return mem;
 }
 
@@ -703,8 +703,8 @@ enumerate * enumerate_parse(enumerate * out, char * text, type * t) {
 
 char * enumerate_tostring(const enumerate * e, char * mem, type * t){
 	char a[Tam_String];
-	tostring(e->value,a,t->types[0]);
-	sprintf(mem,"(%d,%s)",e->counter,a);
+	char * s = tostring(e->value,a,t->types[0]);
+	sprintf(mem,"(%d,%s)",e->counter,s);
 	return mem;
 }
 bool enumerate_equals(const enumerate * e1, const enumerate * e2, type * t){
@@ -794,7 +794,7 @@ type optional_type = {"optional",optional_equals,optional_tostring,optional_natu
 // string type
 
 #define INITIAL_TAM 250
-#define INC_TAM 500
+#define INC_TAM 250
 
 
 string_var string_var_empty(){
