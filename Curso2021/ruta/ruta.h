@@ -9,6 +9,7 @@
 #define RUTA_H_
 
 #include "../ruta/marca.h"
+#include "../ruta/intervalo.h"
 #include "../types/types.h"
 #include "../types/iterables.h"
 #include "../types/accumulators.h"

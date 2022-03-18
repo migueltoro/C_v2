@@ -51,9 +51,9 @@ time_t time_minus_days(time_t date, int days);
 time_t time_minus_months(time_t date, int months);
 time_t time_minus_years(time_t date, int years);
 
-int time_diff_seconds(time_t start,time_t end);
-int time_diff_minutes(time_t start,time_t end);
-int time_diff_hours(time_t start,time_t end);
+double time_diff_seconds(time_t start,time_t end);
+double time_diff_minutes(time_t start,time_t end);
+double time_diff_hours(time_t start,time_t end);
 int time_diff_years(time_t start,time_t end);
 int time_diff_months(time_t start,time_t end);
 int time_diff_days(time_t start,time_t end);

@@ -37,7 +37,7 @@ typedef struct {
 
 matrix matrix_of_array(void * a, int nf, int nc, type * type_element);
 matrix matrix_of(int nf, int nc, type * type_element);
-matrix matrix_of_file(char * file, type * type, int n, int m);
+matrix matrix_of_file(char * file, type * type, int nf, int nc);
 
 void * matrix_get(matrix * s, int f, int c);
 void matrix_set(matrix * s, int f, int c, void * value);

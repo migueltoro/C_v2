@@ -30,12 +30,14 @@ double * _f_dis(double * out, pair * in){
 	return out;
 }
 
+intervalo ruta_intervalo(ruta * r, int i){
+	return intervalo_of(list_get(&r->marcas,i),list_get(&r->marcas,i+1));
+}
+
 double ruta_longitud(ruta * r){
 	double s = 0;
 	for(int i =0; i<r->marcas.size-1;i++){
-		coordenadas_3d c1 = ((marca *)list_get(&r->marcas,i))->coordenadas;
-		coordenadas_3d c2 = ((marca *)list_get(&r->marcas,i+1))->coordenadas;
-		s = s + coordenadas_3d_distance(c1,c2);
+		s = s + intervalo_longitud(ruta_intervalo(r,i));
 	}
 	return s;
 }
@@ -48,25 +50,16 @@ void ruta_printf(ruta * r){
 	}
 }
 
-double ruta_duracion(ruta * r){
-	int size = list_size(&r->marcas);
-	time_t initial_time = ((marca * )list_get(&r->marcas,0))->time;
-	time_t last_time = ((marca *) list_get(&r->marcas,size-1))->time;
-	return time_diff_hours(last_time,initial_time);
+double ruta_tiempo(ruta *r) {
+	double s = 0;
+	for (int i = 0; i < r->marcas.size - 1; i++) {
+		s = s + intervalo_tiempo(ruta_intervalo(r, i));
+	}
+	return s;
 }
 
 double ruta_velocidad_media(ruta * r) {
-	return ruta_longitud(r)/ruta_duracion(r);
-}
-
-double ruta_velocidad_intervalo(ruta * r, int i) {
-	time_t t0 = ((marca *) list_get(&r->marcas,i))->time;
-	time_t t1 = ((marca *) list_get(&r->marcas,i+1))->time;
-	coordenadas_3d c0 = ((marca *) list_get(&r->marcas,i))->coordenadas;
-	coordenadas_3d c1 = ((marca *) list_get(&r->marcas,i+1))->coordenadas;
-	double d = coordenadas_3d_distance(c0,c1);
-	double time = time_diff_hours(t1,t0);
-	return d/time;
+	return ruta_longitud(r)/ruta_tiempo(r);
 }
 
 coordenadas_2d * marca_to_c2(coordenadas_2d * out, marca * in){
@@ -88,10 +81,10 @@ void test_ruta(){
 	printf("\nCentro de coordenadas en = %s\n",coordenadas_2d_tostring(&c2,mem));
 	double rs1 = ruta_longitud(&r);
 	printf("\nLongitud = %lf kilometros \n",rs1);
-	double rs2 = ruta_duracion(&r);
-	printf("\nDuración = %lf horas \n",rs2);
-	double rs3 = ruta_velocidad_intervalo(&r,3);
-	printf("\nVelocidad %lf km/h en intervalo 3\n",rs3);
+	double rs2 = ruta_tiempo(&r);
+	printf("\nTiempo = %lf horas \n",rs2);
+	double rs3 = intervalo_tiempo(ruta_intervalo(&r,14));
+	printf("\nTiempo %lf km/h en intervalo 3\n",rs3);
 //	double rs4 = ruta_velocidad_media(&r);
 	double rs4 = rs1/rs2;
 	printf("\nVelocidad media = %lf km/h \n",rs4);

@@ -12,7 +12,6 @@ marca marca_of(time_t time, coordenadas_3d coordenadas){
 	return m;
 }
 
-
 marca * marca_parse(marca * out, const char * in) {
 	int n = strlen(in);
 	char cp[n+2];
@@ -54,12 +53,26 @@ int marca_naturalorder(const marca * e1, const marca * e2){
 	return time_naturalorder(e1->time,e2->time);
 }
 
-type marca_type = {"marca",marca_equals,marca_tostring,marca_naturalorder,marca_parse,free_0,copy_0,sizeof(marca),0,NULL};
+//typedef struct gtp {
+//	char name[15];
+//	bool (*equals)(const void * e1, const void * e2, struct gtp * t);
+//	char * (*tostring)(const void * e, char * mem, struct gtp * t);
+//	int (*order)(const void * e1, const void * e2, struct gtp * t);
+//	void * (*parse)(void * out, char * text, struct gtp * t);
+//	void (*free)(void * e, struct gtp * t);
+//	void * (*copy_new)(void * in, heap * h, struct gtp * t);
+//	void (*copy)(void * out, void * in, struct gtp * t);
+//	int size;
+//	int num_types;
+//	struct gtp * types[2];
+//}type;
+
+type marca_type = {"marca",marca_equals,marca_tostring,marca_naturalorder,marca_parse,free_0,copy_new_0,copy_0,sizeof(marca),0,NULL};
 
 void test_marca() {
 	char mem[250];
 	char in[] =	"00:02:36, 36.75061631016433,-5.148278838023543,715.4000244140625";
 	marca m;
-	parse(&m, in,&marca_type);
+	parse(&m,in,&marca_type);
 	printf("9: %s\n", marca_tostring(&m, mem));
 }

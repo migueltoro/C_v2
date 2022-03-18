@@ -80,8 +80,8 @@ void * reduce_right(iterator * st, void * base, bool (*add)(void * out, const vo
 list iterable_to_list(iterator * st){
 	list r = list_empty(st->type);
 	while(iterable_has_next(st)){
-		char * s = iterable_next(st);
-		list_add(&r,s);
+		void * e = iterable_next(st);
+		list_add(&r,e);
 	}
 	return r;
 }

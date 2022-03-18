@@ -62,14 +62,14 @@ int main() {
 //test_list_multimap();
 //test_esquemas();
 //test_marca();
-//test_ruta();
+test_ruta();
 //test_palabras_8();
 //test_binary_tree_1();
 //test_parse_binary_tree_1();
 //test_tree_1();
 //test_parse_tree_2();
 //test_ejemplos_trees_4();
-test_matrices_1();
+//test_matrices_1();
 //test_histograma();
 //test_accumulators_0(); //("ficheros/quijote.txt");
 //test_accumulators_9_1();

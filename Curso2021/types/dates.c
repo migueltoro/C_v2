@@ -131,16 +131,16 @@ time_t time_minus_years(time_t date, int years) {
 	return mktime(r);
 }
 
-int time_diff_seconds(time_t start,time_t end){
-	return (int) difftime(end,start);
+double time_diff_seconds(time_t start,time_t end){
+	return difftime(end,start);
 }
 
-int time_diff_minutes(time_t start,time_t end){
-	return (int) difftime(end,start)/60;
+double time_diff_minutes(time_t start,time_t end){
+	return difftime(end,start)/60;
 }
 
-int time_diff_hours(time_t start,time_t end){
-	return (int) difftime(end,start)/3600;
+double time_diff_hours(time_t start,time_t end){
+	return difftime(end,start)/3600;
 }
 
 int time_diff_years(time_t start,time_t end){

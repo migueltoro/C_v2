@@ -21,6 +21,7 @@ typedef struct {
 	coordenadas_3d coordenadas;
 }marca;
 
+
 marca marca_of(time_t time, coordenadas_3d coordenadas);
 marca * marca_parse(marca * out, const char * in);
 char * marca_tostring(marca * m, char * mem);
