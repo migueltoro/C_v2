@@ -18,8 +18,6 @@ typedef struct{
 	list marcas;
 }ruta;
 
-extern type marca_type;
-
 ruta * ruta_of_file(ruta * r, char * file);
 double ruta_longitud(ruta * r);
 double ruta_duracion(ruta * r);

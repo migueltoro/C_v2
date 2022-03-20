@@ -551,7 +551,7 @@ int pair_double_naturalorder(const pair_double * p1, const pair_double * p2){
 type pair_double_type = {"pair_double",pair_double_equals,pair_double_tostring,pair_double_naturalorder,pair_double_parse,free_0,
 		copy_new_0,copy_0,sizeof(pair_double),0,NULL};
 
-pair_double double_pair_of(double x, double y){
+pair_double pair_double_of(double x, double y){
 	pair_double r = {x,y};
 	return r;
 }

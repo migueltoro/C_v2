@@ -13,28 +13,21 @@ marca marca_of(time_t time, coordenadas_3d coordenadas){
 }
 
 marca * marca_parse(marca * out, const char * in) {
-	int n = strlen(in);
-	char cp[n+2];
-	strcpy(cp,in);
-	char * campos[4];
-	int nc = 0;
-	char * tok = strtok(cp,",");
-	while(tok!=NULL){
-		campos[nc] = tok;
-		tok = strtok(NULL,",");
-		nc++;
-	}
-	char mens[Tam_String];
-	sprintf(mens,"numero de campos %d",nc);
-	check_argument(nc==4,__FILE__,__LINE__,mens);
+	iterator it = iterable_split_text(in,",");
+	list ls = iterable_to_list(&it);
+	char mens[30];
+	sprintf(mens,"numero de campos %d",list_size(&ls));
+	check_argument(list_size(&ls)==4,__FILE__,__LINE__,mens);
 	marca m;
-	m.time = hour_parse(campos[0]);
+	m.time = hour_parse(list_get(&ls,0));
 	coordenadas_3d coordenadas = coordenadas_3d_of(
-			double_parse_s(campos[1]),
-			double_parse_s(campos[2]),
-			double_parse_s(campos[3]) / 1000);
+			double_parse_s(list_get(&ls,1)),
+			double_parse_s(list_get(&ls,2)),
+			double_parse_s(list_get(&ls,3)) / 1000);
 	m.coordenadas = coordenadas;
 	*out = m;
+	iterable_free(&it);
+	list_free(&ls);
 	return out;
 }
 
@@ -52,20 +45,6 @@ bool marca_equals(const marca * e1, const marca * e2){
 int marca_naturalorder(const marca * e1, const marca * e2){
 	return time_naturalorder(e1->time,e2->time);
 }
-
-//typedef struct gtp {
-//	char name[15];
-//	bool (*equals)(const void * e1, const void * e2, struct gtp * t);
-//	char * (*tostring)(const void * e, char * mem, struct gtp * t);
-//	int (*order)(const void * e1, const void * e2, struct gtp * t);
-//	void * (*parse)(void * out, char * text, struct gtp * t);
-//	void (*free)(void * e, struct gtp * t);
-//	void * (*copy_new)(void * in, heap * h, struct gtp * t);
-//	void (*copy)(void * out, void * in, struct gtp * t);
-//	int size;
-//	int num_types;
-//	struct gtp * types[2];
-//}type;
 
 type marca_type = {"marca",marca_equals,marca_tostring,marca_naturalorder,marca_parse,free_0,copy_new_0,copy_0,sizeof(marca),0,NULL};
 

@@ -45,13 +45,11 @@ double * double_sum(double * out, double * in){
 }
 
 double * lat(double * out, const coordenadas_2d * c){
-	*out = c->latitud;
-	return out;
+	return &c->latitud;
 }
 
 double * lng(double * out, const coordenadas_2d * c){
-	*out = c->longitud;
-	return out;
+	return &c->longitud;
 }
 
 coordenadas_2d  coordenadas_2d_center(list lc){
@@ -62,9 +60,9 @@ coordenadas_2d  coordenadas_2d_center(list lc){
 	iterator ilng = iterable_map(&it,&double_type,lng);
 	double average_lng = iterable_average(&ilng);
 	coordenadas_2d c = coordenadas_2d_of(average_lat,average_lng);
-//	iterable_free(&it);
-//	iterable_free(&ilat);
-//	iterable_free(&ilng);
+	iterable_free(&it);
+	iterable_free(&ilat);
+	iterable_free(&ilng);
 	return c;
 }
 

@@ -22,9 +22,9 @@ typedef struct {
 }intervalo;
 
 intervalo intervalo_of(marca * p, marca * f);
-double intervalo_tiempo(intervalo in);
-double intervalo_longitud(intervalo in);
-double intervalo_velocidad(intervalo in);
-double intervalo_desnivel(intervalo in);
+double intervalo_tiempo(intervalo * in);
+double intervalo_longitud(intervalo * in);
+double intervalo_velocidad(intervalo  * in);
+double intervalo_desnivel(intervalo * in);
 
 #endif /* INTERVALO_H_ */

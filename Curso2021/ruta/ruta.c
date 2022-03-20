@@ -13,8 +13,8 @@ ruta * ruta_of_file(ruta * r, char * file){
 	iterator i2 = iterable_map(&i1,&marca_type,marca_parse);
 	list ls = iterable_to_list(&i2);
 	r->marcas = ls;
-//	iterable_free(&i1);
-//	iterable_free(&i2);
+	iterable_free(&i1);
+	iterable_free(&i2);
 	return r;
 }
 
@@ -37,7 +37,8 @@ intervalo ruta_intervalo(ruta * r, int i){
 double ruta_longitud(ruta * r){
 	double s = 0;
 	for(int i =0; i<r->marcas.size-1;i++){
-		s = s + intervalo_longitud(ruta_intervalo(r,i));
+		intervalo in = ruta_intervalo(r,i);
+		s = s + intervalo_longitud(&in);
 	}
 	return s;
 }
@@ -53,7 +54,8 @@ void ruta_printf(ruta * r){
 double ruta_tiempo(ruta *r) {
 	double s = 0;
 	for (int i = 0; i < r->marcas.size - 1; i++) {
-		s = s + intervalo_tiempo(ruta_intervalo(r, i));
+		intervalo in = ruta_intervalo(r,i);
+		s = s + intervalo_tiempo(&in);
 	}
 	return s;
 }
@@ -66,6 +68,17 @@ coordenadas_2d * marca_to_c2(coordenadas_2d * out, marca * in){
 	out->latitud = in->coordenadas.latitud;
 	out->longitud = in->coordenadas.longitud;
 	return out;
+}
+
+pair_double ruta_desnivel(ruta *r) {
+	double dc = 0;
+	double dd = 0;
+	for (int i = 0; i < r->marcas.size - 1; i++) {
+		intervalo in = ruta_intervalo(r, i);
+		if(intervalo_desnivel(&in) > 0) dc = dc + intervalo_longitud(&in);
+		if(intervalo_desnivel(&in) < 0) dd = dd + intervalo_longitud(&in);
+	}
+	return pair_double_of(dc,dd);
 }
 
 void test_ruta(){
@@ -83,9 +96,12 @@ void test_ruta(){
 	printf("\nLongitud = %lf kilometros \n",rs1);
 	double rs2 = ruta_tiempo(&r);
 	printf("\nTiempo = %lf horas \n",rs2);
-	double rs3 = intervalo_tiempo(ruta_intervalo(&r,14));
+	intervalo in = ruta_intervalo(&r,14);
+	double rs3 = intervalo_tiempo(&in);
 	printf("\nTiempo %lf km/h en intervalo 3\n",rs3);
 //	double rs4 = ruta_velocidad_media(&r);
 	double rs4 = rs1/rs2;
 	printf("\nVelocidad media = %lf km/h \n",rs4);
+	pair_double p = ruta_desnivel(&r);
+	printf("\nDesnivel creciente = %lf km/h,  desnivel decreciente = %lf km/h\n",p.x,p.y);
 }

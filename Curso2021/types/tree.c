@@ -591,7 +591,7 @@ list tree_level(tree * t, int n) {
 	list s;
 	for(int i = 1;i <= n;i++) {
 		s = tree_next_level(&r);
-		list_free(&r,NULL);
+		list_free(&r);
 		r = s;
 	}
 	return r;
